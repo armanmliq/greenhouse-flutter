@@ -1,0 +1,4 @@
+Bug List = 
+
+- textfield copy paste huruf appear
+- 

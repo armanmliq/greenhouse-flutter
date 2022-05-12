@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "922020977336",
+    "firebase_url": "https://esp32-7fe29-default-rtdb.firebaseio.com",
+    "project_id": "esp32-7fe29",
+    "storage_bucket": "esp32-7fe29.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922020977336:android:5ac02906cca84208fab24d",
+        "android_client_info": {
+          "package_name": "com.example.greenhouse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "922020977336-nm327u2gqb3ra3m61e6d1r62tuo1j61i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.greenhouse",
+            "certificate_hash": "52098c09043413d2b7d65c39279c39ddb2684caf"
+          }
+        },
+        {
+          "client_id": "922020977336-2b8fii8j64ufc6908qvi177hmfuhagsd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSp4im_YmhZN0vFkQpwf9DyQNjYvnVIdA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "922020977336-2b8fii8j64ufc6908qvi177hmfuhagsd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
