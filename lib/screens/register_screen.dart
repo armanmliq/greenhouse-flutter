@@ -26,8 +26,8 @@ class _SingupState extends State<Singup> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Registration Success'),
-        content: const Text('Your Account Already Registered'),
+        title: const Text('Registration'),
+        content: const Text('Your Account Success Registered'),
         actions: [
           FlatButton(
               onPressed: () {
@@ -64,7 +64,7 @@ class _SingupState extends State<Singup> {
   bool isConfirmPasswordev = true;
   bool _isLoading = false;
   Gender? selected;
-  final Map<String, String> _authData = {
+  Map<String, String> _authData = {
     'username': '',
     'email': '',
     'password': '',
@@ -108,8 +108,8 @@ class _SingupState extends State<Singup> {
     //try sign up
     try {
       bool? response = await Provider.of<AuthService>(context, listen: false)
-          .signUp(_authData['email'], _authData['password']);
-      print('THIS IS RESPONSE ${response!}');
+          .signUp(_authData['email']!, _authData['password']!,
+              _authData['username']!);
       if (response != false) {
         _showSuccessDialog(context);
       }
@@ -299,9 +299,7 @@ class _SingupState extends State<Singup> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                              left: 11, right: 3, top: 14, bottom: 14),
-                          errorStyle: const TextStyle(fontSize: 9, height: 0.2),
+                          errorStyle: const TextStyle(fontSize: 6, height: 0.2),
                           enabledBorder: InputBorder.none,
                           border: InputBorder.none,
                           prefixIcon: Icon(
@@ -352,8 +350,7 @@ class _SingupState extends State<Singup> {
                           });
                         },
                         decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.only(
-                                left: 11, right: 3, top: 14, bottom: 14),
+                            //
                             errorStyle:
                                 const TextStyle(fontSize: 9, height: 0.2),
                             enabledBorder: InputBorder.none,
@@ -428,8 +425,6 @@ class _SingupState extends State<Singup> {
                           });
                         },
                         decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.only(
-                                left: 11, right: 3, top: 14, bottom: 14),
                             errorStyle:
                                 const TextStyle(fontSize: 9, height: 0.2),
                             enabledBorder: InputBorder.none,
@@ -522,7 +517,7 @@ class _SingupState extends State<Singup> {
                           onTap: () {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
-                              return LoginScreen();
+                              return const LoginScreen();
                             }));
                           },
                           child: Text("sign in",

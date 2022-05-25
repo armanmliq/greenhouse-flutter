@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:greenhouse/models/sensor.dart';
+import 'package:greenhouse/constant/constant.dart' as constant;
+import 'package:intl/intl.dart';
+import 'package:glassmorphism/glassmorphism.dart';
 
 class cardItem extends StatelessWidget {
   final String iconVar;
   final double widthImage;
   final double heightImage;
   final String textVar;
-  final String valuVar;
+  late String valuVar;
   final String unitVar;
+  final String type;
 
-  const cardItem({
+  cardItem({
+    required this.type,
     required this.iconVar,
     required this.widthImage,
     required this.heightImage,
@@ -20,56 +25,211 @@ class cardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return CardContentItem(
+      type: type,
+      textVar: textVar,
+      widthImage: widthImage,
+      heightImage: heightImage,
+      iconVar: iconVar,
+      valuVar: valuVar,
+      unitVar: unitVar,
+    );
+  }
+}
+
+class CardContentItem extends StatelessWidget {
+  const CardContentItem({
+    Key? key,
+    required this.type,
+    required this.textVar,
+    required this.widthImage,
+    required this.heightImage,
+    required this.iconVar,
+    required this.valuVar,
+    required this.unitVar,
+  }) : super(key: key);
+
+  final String textVar;
+  final double widthImage;
+  final double heightImage;
+  final String iconVar;
+  final String valuVar;
+  final String unitVar;
+  final String type;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Text(
-          textVar,
-          style: GoogleFonts.aBeeZee(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
-          ),
-        ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               width: widthImage,
               height: heightImage,
-              child: Image.asset(
-                iconVar,
-                width: widthImage,
-                height: heightImage,
-              ),
+              child:
+                  Image.asset(iconVar, width: widthImage, height: heightImage),
             ),
-            const SizedBox(
-              width: 4,
-            ),
+            Text(textVar,
+                style: const TextStyle(
+                    color: constant.cardTitleColor, fontSize: 13)),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 8),
-                Text(
-                  valuVar,
-                  style: const TextStyle(
-                    fontSize: 30,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 3),
+
+                    //build widget for value
+                    ValueInfoWidget(valuVar: valuVar, type: type),
+
+                    Text(unitVar,
+                        style: const TextStyle(
+                            fontSize: 12, color: constant.cardTextUnitColor))
+                  ],
                 ),
-                Text(
-                  unitVar,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('terdeteksi perubahan',
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: constant.CardLastChangeUpdateTextColor,
+                        )),
+                    //build lastchange info widget
+                    LastChangeInfoWidget(
+                      valuVar: valuVar,
+                      type: type,
+                    )
+                  ],
+                )
               ],
-            )
+            ),
           ],
         ),
       ],
     );
+  }
+}
+
+class ValueInfoWidget extends StatelessWidget {
+  const ValueInfoWidget({
+    Key? key,
+    required this.valuVar,
+    required this.type,
+  }) : super(key: key);
+
+  final String valuVar;
+  final String type;
+
+  @override
+  Widget build(BuildContext context) {
+    final sensor = Sensor();
+    late bool isDataNotError;
+    valuVar == 'null' ? isDataNotError = false : isDataNotError = true;
+    if (isDataNotError) {
+      Sensor().CheckAndSave(type, valuVar);
+      return Text(
+        valuVar,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: constant.GridValueTextColor,
+          fontSize: 30,
+        ),
+      );
+    } else {
+      return FutureBuilder(
+        future: sensor.ReadInternalDataOf(type),
+        builder: (context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            print('data value of $type ::: ${snapshot.data}');
+            return Text(
+              snapshot.data!,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: constant.GridValueTextColor,
+                fontSize: 30,
+              ),
+            );
+          } else {
+            return const Text(
+              '-.-',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: constant.GridValueTextColor,
+                fontSize: 30,
+              ),
+            );
+          }
+        },
+      );
+    }
+  }
+}
+
+class LastChangeInfoWidget extends StatelessWidget {
+  LastChangeInfoWidget({
+    Key? key,
+    required this.type,
+    required this.valuVar,
+  }) : super(key: key);
+
+  final String type;
+  final String valuVar;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Sensor().isDataDifferent(type, valuVar),
+      builder: (context, AsyncSnapshot<bool> isDifferent) {
+        if (isDifferent.hasData) {
+          isDifferent.data! ? dateTimeNowText() : dateTimeFromInternalText();
+        }
+        return dateTimeFromInternalText();
+      },
+    );
+  }
+
+  final f = DateFormat('yyyy-MM-dd / hh:mm');
+
+  Widget dateTimeNowText() {
+    final DateTime lastChange = DateTime.now();
+    final text = f.format(lastChange).toString();
+    return Text(
+      text,
+      style: const TextStyle(
+          fontSize: 9, color: constant.CardLastChangeUpdateTextColor),
+    );
+  }
+
+  Widget dateTimeFromInternalText() {
+    return FutureBuilder(
+      future: Sensor().ReadInternalDataOf('${type}UpdateTime'),
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData && snapshot.data != 'null') {
+          print('>>>>>>>>>> snapDate ${snapshot.data}');
+          final date = DateTime.parse(snapshot.data!);
+          final text = f.format(date).toString();
+          return Text(
+            text,
+            style: const TextStyle(
+              fontSize: 9,
+              color: constant.CardLastChangeUpdateTextColor,
+            ),
+          );
+        } else {
+          return dateTextError();
+        }
+      },
+    );
+  }
+
+  Widget dateTextError() {
+    return const Text('-.-', style: TextStyle(fontSize: 9));
   }
 }

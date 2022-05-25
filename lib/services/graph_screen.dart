@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
-import 'package:intl/intl.dart';
 
 List<SensorHistory> SensorHistoryList = [];
 String? minVal;
@@ -47,9 +45,9 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
         animationDuration: const Duration(milliseconds: 100),
         length: 4,
         child: Scaffold(
-          backgroundColor: constant.AppBarColor,
+          backgroundColor: constant.BackgroundCardButtonColor,
           appBar: AppBar(
-            backgroundColor: constant.backgroundColor,
+            backgroundColor: Colors.red,
             bottom: const TabBar(
               indicatorSize: TabBarIndicatorSize.label,
               indicatorWeight: 1,
@@ -85,7 +83,7 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
                 SensorType: 'TEMPERATURE',
               ),
               ChartBuilder(
-                SensorType: 'HUMIDITY',
+                SensorType: 'KELEMBAPAN',
               ),
             ],
           ),
@@ -132,7 +130,7 @@ class _ChartBuilderState extends State<ChartBuilder> {
           .then((DataSnapshot snapshot) {
         setState(() {
           dataFetch = snapshot.value as Map;
-          //print('>>>>>${widget.SensorType} >>>> $dataFetch');
+          print(dataFetch);
         });
         constant.grafikData = snapshot.value as Map;
       });
@@ -173,52 +171,66 @@ class _GraphWidgetState extends State<GraphWidget> {
   @override
   Widget build(BuildContext context) {
     if (widget.dataFetch.isNotEmpty || true) {
+      print('GraphWidget ==>> ${widget.dataFetch}');
+      //sensorhistorylist = MapfromSnapshot
       SensorHistoryList = [];
 
       //SORT MAP KEYS (Base Timestamp)
       var sortedKeys = widget.dataFetch.keys.toList()..sort();
-      var reverseKey = sortedKeys.reversed;
-      log('after ${sortedKeys.reversed}');
-
       var sortedMap = {
-        for (var key in reverseKey) key: widget.dataFetch[key]!,
+        for (var key in sortedKeys) key: widget.dataFetch[key]!,
       };
       try {
         //
         if (sortedMap.isNotEmpty) {
+          //ADD MAP TO Sensor History List
+          print(sortedMap);
           sortedMap.forEach(
             (k, v) {
-              DateTime localDate = DateTime.fromMillisecondsSinceEpoch(
-                int.parse(k) * 1000,
-              ).toLocal();
+              double value = 0;
+              try {
+                double value = double.parse(v);
+                // find max
+                if (findMaxNull < value) {
+                  print('>>  ${value.runtimeType}');
+                  findMaxNull = value;
+                }
+                //Find Low
+                if (findLowNull > value || findLowNull == 0) {
+                  findLowNull = value;
+                  print(findLowNull);
+                }
+              } catch (e) {
+                print('error double.parse(v)');
+                return;
+              }
+
+              //Print the date
+              try {
+                // print(
+                //   DateTime.fromMillisecondsSinceEpoch(
+                //     int.parse(k) * 1000,
+                //   ),
+                // );
+              } catch (e) {
+                //
+              }
+
               //add to graph list
               try {
                 //add only current day
                 var dateGraph =
                     DateTime.fromMillisecondsSinceEpoch(int.parse(k) * 1000);
-                final now = DateTime.now();
-                if (dateGraph.compareTo(now) == 0 || true) {
-                  double value = 0;
-                  //print(localDate);
-                  try {
-                    double value = double.parse(v);
-                    // find max
-                    if (findMaxNull < value) {
-                      print('>>  ${value.runtimeType}');
-                      findMaxNull = value;
-                    }
-                    //Find Low
-                    if (findLowNull > value || findLowNull == 0) {
-                      findLowNull = value;
-                      print(findLowNull);
-                    }
-                  } catch (e) {
-                    // print('error double.parse(v)');
-                    return;
-                  }
+                print('v ${dateGraph.day}');
+                print('now ${DateTime.now().day}');
+                print('-------------------------');
+                if (dateGraph.day == DateTime.now().day) {
                   SensorHistoryList.add(
                     SensorHistory(
-                      localDate,
+                      DateTime.fromMillisecondsSinceEpoch(
+                        int.parse(k),
+                        isUtc: true,
+                      ),
                       double.parse(v),
                     ),
                   );
@@ -228,66 +240,60 @@ class _GraphWidgetState extends State<GraphWidget> {
               }
             },
           );
+          print('================ FIND MAX LOW  =================');
+          print('MAX : $findMaxNull');
+          print('LOW : $findLowNull');
         }
       } catch (e) {
         print(e);
       }
     }
-
     if (SensorHistoryList.isEmpty) {
       SensorHistory(DateTime.now(), 0.0);
     }
-
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(18.0),
           child: Container(
-            height: constant.height! * 0.6,
-            color: constant.backgroundColor,
+            height: constant.height! * 0.5,
+            color: constant.graphPlotAreadColor,
             child: SfCartesianChart(
-              zoomPanBehavior: ZoomPanBehavior(
-                enablePinching: true,
-                enablePanning: true,
-                zoomMode: ZoomMode.x,
-              ),
-              enableAxisAnimation: false,
-              primaryXAxis: DateTimeAxis(
-                enableAutoIntervalOnZooming: true,
-                dateFormat: DateFormat.jms(),
-                borderColor: Colors.red,
-              ),
-              primaryYAxis: NumericAxis(
-                minimum: findLowNull,
-                maximum: findMaxNull == 0 ? 100 : findMaxNull,
-                majorTickLines: const MajorTickLines(size: 0),
-                labelAlignment: LabelAlignment.end,
-              ),
               tooltipBehavior: TooltipBehavior(
                 enable: true,
+                header: widget.SensorType,
               ),
-              plotAreaBackgroundColor: constant.cardButtonColor,
-              borderColor: Colors.black,
+              zoomPanBehavior: ZoomPanBehavior(enablePinching: true),
+              enableAxisAnimation: true,
+              primaryYAxis: NumericAxis(
+                  majorTickLines: const MajorTickLines(size: 0),
+                  // Changes the y-axis labels alignment to end.
+                  labelAlignment: LabelAlignment.end),
+              plotAreaBackgroundColor: constant.graphPlotAreadColor,
+              borderColor: constant.BackgroundCardButtonColor,
               title: ChartTitle(
-                textStyle: const TextStyle(fontSize: 12),
-                text: 'Hari Ini',
-                backgroundColor: constant.cardColor,
+                textStyle: const TextStyle(fontSize: 25),
+                text: 'HARI INI',
+                backgroundColor: Colors.black,
               ),
-              backgroundColor: constant.backgroundColor,
+              plotAreaBorderWidth: 5,
+              backgroundColor: constant.BackgroundCardButtonColor,
+              primaryXAxis: DateTimeAxis(),
               series: <ChartSeries>[
                 // Renders line chart
                 LineSeries<SensorHistory, DateTime>(
-                  enableTooltip: true,
                   xAxisName: 'time',
                   yAxisName: '${widget.SensorType} ',
-                  color: Colors.white,
-                  width: 2,
+                  color: Colors.blue,
+                  width: 4,
                   markerSettings: const MarkerSettings(
+                    color: Colors.white,
                     isVisible: true,
-                    color: Colors.black,
+
+                    // Marker shape is set to diamond
                     shape: DataMarkerType.circle,
-                    height: 6,
-                    width: 6,
+                    height: 7,
+                    width: 7,
                   ),
                   dataSource: SensorHistoryList,
                   xValueMapper: (SensorHistory history, _) => history.unix,
@@ -340,26 +346,21 @@ class TextHighLowItem extends StatelessWidget {
         color: constant.cardColor,
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
             children: [
-              Column(
-                children: [
-                  Text(
-                    TitleText,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                    ),
-                  ),
-                  Text(
-                    Value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                    ),
-                  ),
-                ],
+              Text(
+                TitleText,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 25,
+                ),
+              ),
+              Text(
+                Value,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 30,
+                ),
               ),
             ],
           ),
@@ -367,12 +368,4 @@ class TextHighLowItem extends StatelessWidget {
       ),
     );
   }
-}
-
-Map inverse(Map f) {
-  Map inverse = {};
-  f.values.toSet().forEach((y) {
-    inverse[y] = f.keys.where((x) => f[x] == y).toSet();
-  });
-  return inverse;
 }

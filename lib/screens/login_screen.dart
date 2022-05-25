@@ -17,14 +17,15 @@ enum AuthMode { Login, Signup }
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login-screen';
 
+  const LoginScreen({Key? key}) : super(key: key);
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  AuthMode _authMode = AuthMode.Login;
-  Map<String, String> _authData = {
+  final Map<String, String> _authData = {
     'email': '',
     'password': '',
   };
@@ -76,16 +77,18 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     try {
+      var response;
       print('pass validate');
       // Log user in
-      final response = await AuthService()
+      response = await AuthService()
           .signIn(_emailController.text, _passwordController.text);
-      if (response!.isNotEmpty) {
+
+      if (response.isNotEmpty) {
         Navigator.of(context).pushReplacement(
           PageTransition(
             child: HomeScreen(),
             type: PageTransitionType.leftToRight,
-            duration: const Duration(microseconds: 200),
+            duration: const Duration(milliseconds: 1),
           ),
         );
       }
@@ -120,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
           resizeToAvoidBottomInset: true,
           backgroundColor: Color(0xFF0F0A1F),
           body: SingleChildScrollView(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             reverse: true,
             child: SizedBox(
               width: we,
@@ -148,12 +151,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: SizedBox(
                         width: double.infinity,
                         child: Text(
-                          "Agriculture Tech",
+                          "AGROJABAR TECH",
                           style: GoogleFonts.heebo(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              letterSpacing: 2),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            letterSpacing: 2,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -161,7 +165,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: he * 0.06,
                     ),
-
                     FadeAnimation(
                       delay: 1,
                       child: Container(
@@ -348,7 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         style: TextButton.styleFrom(
-                          backgroundColor: constant.bgColor,
+                          backgroundColor: Colors.blue,
                           padding: const EdgeInsets.symmetric(
                               vertical: 15.0, horizontal: 80),
                           shape: RoundedRectangleBorder(
@@ -358,21 +361,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         icon: _isLoading
                             ? CircularProgressIndicator(color: Colors.black)
-                            : Icon(
+                            : const Icon(
                                 Icons.login,
-                                color: Color.fromARGB(255, 1, 68, 64),
+                                color: constant.backgroundColor,
                               ),
                       ),
                     ),
-
-                    // FadeAnimation(
-                    //   delay: 1,
-                    //   child: Text("Forgot password?",
-                    //       style: GoogleFonts.heebo(
-                    //         color: const Color(0xFF0DF5E4).withOpacity(0.9),
-                    //         letterSpacing: 0.5,
-                    //       )),
-                    // ),
                     SizedBox(height: he * 0.05),
                     FadeAnimation(
                       delay: 1,

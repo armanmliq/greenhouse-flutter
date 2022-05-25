@@ -1,9 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:greenhouse/models/firebaseException.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
+
+import 'initialize_account.dart';
+
+String initialEmail = '';
+String initialPass = '';
+String initialUsername = '';
+bool isRegister = false;
 
 class AuthService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -21,8 +30,8 @@ class AuthService with ChangeNotifier {
     try {
       //
       final authResult = await _auth.signInAnonymously();
-      final user = authResult.user;
-      return user!.uid;
+      constant.uid = authResult.user!.uid;
+      return constant.uid;
     } catch (err) {
       print(err);
       return null;
@@ -30,7 +39,7 @@ class AuthService with ChangeNotifier {
   }
 
   //sign in email pass
-  Future<String?> signIn(String email, String password) async {
+  Future<String> signIn(String email, String password) async {
     try {
       //try call auth
       final authResult = await _auth.signInWithEmailAndPassword(
@@ -41,17 +50,18 @@ class AuthService with ChangeNotifier {
       //if request success
       if (user.uid.isNotEmpty) {
         constant.uid = user.uid;
-        print('Before Initialize userId = ${user.uid}');
+        print('Before Initialize userId = ${constant.uid}');
         try {
-          initializeAccount();
+          await initializeAccount();
         } catch (e) {
           print('error from initializeAccount $e');
         }
         //save auth to memory
         final _prefs = await SharedPreferences.getInstance();
-        print('======= login success auth will save $user.uid =========');
+        print('======= login success auth will save ${constant.uid}=========');
         try {
-          final prefs = await _prefs.setString('uid', user.uid);
+          final uid = await _prefs.setString('userUid', user.uid.toString());
+          print('=========NOW I PRINT $uid');
         } catch (er) {
           print('sharedPrefs Error! $er');
         }
@@ -67,87 +77,22 @@ class AuthService with ChangeNotifier {
     }
   }
 
-  initializeAccount() {
-    DocumentReference sensor = FirebaseFirestore.instance
-        .collection('users')
-        .doc(constant.uid)
-        .collection('sensor_status')
-        .doc(constant.uid);
-    sensor.get().then(
-          (DocumentSnapshot) => {
-            if (!DocumentSnapshot.exists)
-              {
-                print('initialize data not exist, CREATE ONE'),
-                sensor.set({
-                  'humidity': "50",
-                  'ph': "6.0",
-                  'ppm': "1000",
-                  'tankLevel': "50",
-                  'temperature': "20.0",
-                }),
-              }
-            else
-              {
-                print('initialize sensor_status data EXIST'),
-              }
-          },
-        );
-    DocumentReference control_status = FirebaseFirestore.instance
-        .collection('users')
-        .doc(constant.uid)
-        .collection('control_status')
-        .doc(constant.uid);
-    control_status.get().then(
-          (DocumentSnapshot) => {
-            if (!DocumentSnapshot.exists)
-              {
-                print('initialize data not exist, CREATE ONE'),
-                control_status.set({
-                  'pompa_status': 'OFF',
-                  'pompa_nutrisi_status': 'ON',
-                  'sprayer_status': 'ON'
-                }),
-              }
-            else
-              {
-                print('initialize control_status data EXIST'),
-              }
-          },
-        );
-    DocumentReference set_parameter = FirebaseFirestore.instance
-        .collection('users')
-        .doc(constant.uid)
-        .collection('set_parameter')
-        .doc(constant.uid);
-    control_status.get().then(
-          (DocumentSnapshot) => {
-            if (!DocumentSnapshot.exists)
-              {
-                print('initialize data not exist, CREATE ONE'),
-                set_parameter.set({
-                  'set_humidity': '20',
-                  'set_ppm': '1000',
-                }),
-              }
-            else
-              {
-                print('initialize set_parameter data EXIST'),
-              }
-          },
-        );
-  }
-
   //sign up email pass
-  Future<bool?> signUp(String? email, String? password) async {
+  Future<bool?> signUp(String email, String password, String Username) async {
     try {
       //
       final authResult = await _auth.createUserWithEmailAndPassword(
-          email: email!, password: password!);
+          email: email, password: password);
       final user = authResult.user;
 
-      //push new uid in document while first register
+      // //push new uid in document while first register
       if (user!.uid.isNotEmpty) {
-        print('passing uid not null');
+        isRegister = true;
+        print('REGISTER... UID EXIST');
+        initialEmail = email;
+        initialPass = password;
+        initialUsername = Username;
+        initializeAccount();
 
         return true;
       }
@@ -165,23 +110,19 @@ class AuthService with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      if (!prefs.containsKey('uid')) {
+      if (!prefs.containsKey('userUid')) {
         print('not detected');
         return false;
       }
 
-      print('key detected');
+      print('========== key detected ==============');
 
       //-------------------------------------------------------------
-      // final decodedData = prefs.getString('userData');
-      // final extractedData = json.decode(decodedData!);
-      // final extractedAsMap = extractedData as Map<String, dynamic>;
 
-      final uid = prefs.getString('uid');
-
-      userId = uid!;
+      final uid = jsonDecode(prefs.getString('userUid')!);
+      constant.uid = uid;
       //
-      print('detected uid $userId');
+      print('========== detected uid $userId ==========');
       notifyListeners();
     } catch (er) {
       print('ERROR READING SHARED PREFERENCES $er');
@@ -193,14 +134,246 @@ class AuthService with ChangeNotifier {
   void logout() async {
     await _auth.signOut();
     final prefs = await SharedPreferences.getInstance();
-    final decodedData = prefs.remove('uid');
+    final decodedData = prefs.remove('userUid');
     notifyListeners();
-  }
-
-  void set setUid(String s) {
-    print('SET THE UIT $s');
-    userId = s;
   }
   //--------------------------------------------------
 
+  // initializeAccount() async {
+  //   print('================= CALLING INITIALIZE >====================');
+
+  //   //
+
+  //   try {
+  //     final sensor = FirebaseDatabase.instance
+  //         .ref()
+  //         .child('users')
+  //         .child(constant.uid)
+  //         .child("sensor_status");
+  //     await sensor.get().then(
+  //           (DocumentSnapshot) => {
+  //             if (!DocumentSnapshot.exists)
+  //               {
+  //                 // ignore: avoid_print
+  //                 print('initialize sensor_status not exist, CREATE ONE'),
+  //                 sensor.set({
+  //                   'humidity': "50",
+  //                   'ph': "6.0",
+  //                   'ppm': "1000",
+  //                   'tankLevel': "50",
+  //                   'temperature': "20.0",
+  //                   'sprayer_status': "MATI",
+  //                   'pompa_status': "MATI",
+  //                   'pompa_nutrisi_status': "MATI",
+  //                 }),
+  //               }
+  //             else
+  //               {
+  //                 print('initialize sensor_status data EXIST'),
+  //               }
+  //           },
+  //         );
+  //   } catch (er) {
+  //     print('ersensor_status $er');
+  //   }
+
+  //   try {
+  //     final setParameter = FirebaseDatabase.instance
+  //         .ref()
+  //         .child('users')
+  //         .child(constant.uid)
+  //         .child("set_parameter");
+  //     setParameter.get().then(
+  //           // ignore: non_constant_identifier_names
+  //           (DocumentSnapshot) => {
+  //             if (!DocumentSnapshot.exists)
+  //               {
+  //                 print('initialize set_parameter not exist, CREATE ONE'),
+  //                 setParameter.set({
+  //                   'set_humidity': '20',
+  //                   'set_ppm': '1000',
+  //                   'set_ph': '6',
+  //                   'set_moisture_off': '90',
+  //                   'set_moisture_on': '60',
+  //                 }),
+  //               }
+  //             else
+  //               {
+  //                 print('initialize set_parameter data EXIST'),
+  //               }
+  //           },
+  //         );
+  //   } catch (er) {
+  //     print('ersetParameter $er');
+  //   }
+  //   try {
+  //     final PH = FirebaseDatabase.instance
+  //         .ref()
+  //         .child('users')
+  //         .child(constant.uid)
+  //         .child("grafik")
+  //         .child('PH');
+  //     PH.get().then(
+  //           // ignore: non_constant_identifier_names
+  //           (DocumentSnapshot) => {
+  //             if (!DocumentSnapshot.exists)
+  //               {
+  //                 print('initialize PH not exist, CREATE ONE'),
+  //                 PH.set({
+  //                   "1652776630": "237",
+  //                   "1652777530": "274",
+  //                   "1652778430": "389",
+  //                   "1652779330": "348",
+  //                   "1652780230": "262",
+  //                   "1652781130": "350",
+  //                   "1652782030": "273",
+  //                   "1652782930": "255",
+  //                   "1652783830": "253",
+  //                   "1652784730": "395",
+  //                   "1652785630": "453",
+  //                   "1652786530": "325",
+  //                   "1652787430": "377",
+  //                   "1652788330": "243",
+  //                   "1652789230": "335",
+  //                   "1652790130": "380",
+  //                   "1652791030": "495",
+  //                   "1652791930": "324",
+  //                 }),
+  //               }
+  //             else
+  //               {
+  //                 print('initialize PH data EXIST'),
+  //               }
+  //           },
+  //         );
+  //   } catch (er) {
+  //     print('erPH $er');
+  //   }
+  //   try {
+  //     final PPM = FirebaseDatabase.instance
+  //         .ref()
+  //         .child('users')
+  //         .child(constant.uid)
+  //         .child("grafik")
+  //         .child('PPM');
+  //     PPM.get().then(
+  //           // ignore: non_constant_identifier_names
+  //           (DocumentSnapshot) => {
+  //             if (!DocumentSnapshot.exists)
+  //               {
+  //                 print('initialize PPM not exist, CREATE ONE'),
+  //                 PPM.set({
+  //                   "1652776630": "237",
+  //                   "1652777530": "274",
+  //                   "1652778430": "389",
+  //                   "1652779330": "348",
+  //                   "1652780230": "262",
+  //                   "1652781130": "350",
+  //                   "1652782030": "273",
+  //                   "1652782930": "255",
+  //                   "1652783830": "253",
+  //                   "1652784730": "395",
+  //                   "1652785630": "453",
+  //                   "1652786530": "325",
+  //                   "1652787430": "377",
+  //                   "1652788330": "243",
+  //                   "1652789230": "335",
+  //                   "1652790130": "380",
+  //                   "1652791030": "495",
+  //                   "1652791930": "324",
+  //                   "1652792830": "338",
+  //                   "1652793730": "390",
+  //                   "1652794630": "397",
+  //                   "1652795530": "463",
+  //                   "1652796430": "222",
+  //                 }),
+  //               }
+  //             else
+  //               {
+  //                 print('initialize PH data EXIST'),
+  //               }
+  //           },
+  //         );
+  //   } catch (er) {
+  //     print('erPPM $er');
+  //   }
+  //   try {
+  //     final TEMPERATURE = FirebaseDatabase.instance
+  //         .ref()
+  //         .child('users')
+  //         .child(constant.uid)
+  //         .child("grafik")
+  //         .child('TEMPERATURE');
+  //     TEMPERATURE.get().then(
+  //           // ignore: non_constant_identifier_names
+  //           (DocumentSnapshot) => {
+  //             if (!DocumentSnapshot.exists)
+  //               {
+  //                 print('initialize TEMPERATURE not exist, CREATE ONE'),
+  //                 TEMPERATURE.set({
+  //                   "1652790028": "5.1",
+  //                   "1652790088": "4.8",
+  //                   "1652790148": "4.7",
+  //                   "1652790208": "5.3",
+  //                   "1652790268": "4.5",
+  //                   "1652790328": "5.7",
+  //                   "1652790388": "5.3",
+  //                   "1652790448": "4.2",
+  //                   "1652790508": "5.4",
+  //                   "1652790568": "5.1",
+  //                   "1652790628": "20"
+  //                 }),
+  //               }
+  //             else
+  //               {
+  //                 print('initialize TEMPERATURE data EXIST'),
+  //               }
+  //           },
+  //         );
+  //   } catch (er) {
+  //     print('erTEMPERATURE $er');
+  //   }
+  //   try {
+  //     final HUMIDITY = FirebaseDatabase.instance
+  //         .ref()
+  //         .child('users')
+  //         .child(constant.uid)
+  //         .child("grafik")
+  //         .child('HUMIDITY');
+  //     HUMIDITY.get().then(
+  //           (DocumentSnapshot) => {
+  //             if (!DocumentSnapshot.exists)
+  //               {
+  //                 print('initialize HUMIDITY not exist, CREATE ONE'),
+  //                 HUMIDITY.set({
+  //                   "1652776630": "237",
+  //                   "1652777530": "274",
+  //                   "1652778430": "389",
+  //                   "1652779330": "348",
+  //                   "1652780230": "262",
+  //                   "1652781130": "350",
+  //                   "1652782030": "273",
+  //                   "1652782930": "255",
+  //                   "1652783830": "253",
+  //                   "1652784730": "395",
+  //                   "1652785630": "453",
+  //                   "1652786530": "325",
+  //                   "1652787430": "377",
+  //                   "1652788330": "243",
+  //                   "1652789230": "335",
+  //                   "1652790130": "380",
+  //                   "1652791030": "495",
+  //                 }),
+  //               }
+  //             else
+  //               {
+  //                 print('initialize HUMIDITY data EXIST'),
+  //               }
+  //           },
+  //         );
+  //   } catch (er) {
+  //     print('erHUMIDITY $er');
+  //   }
+  //   print('================= END OF CALLING INITIALIZE ====================');
+  // }
 }

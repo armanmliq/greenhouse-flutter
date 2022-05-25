@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:greenhouse/constant/constant.dart' as constant;
+import '../../constant/constant.dart' as constant;
 
-class TitleSet extends StatelessWidget {
-  const TitleSet({Key? key}) : super(key: key);
+class TitleRealtimeSensor extends StatelessWidget {
+  const TitleRealtimeSensor({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    //  Card(
-    //   color: Colors.blue,
-    //   elevation: 5,
-    //   child: Padding(
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -18,7 +14,7 @@ class TitleSet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Text(
-                'SET VALUE',
+                'SENSOR REALTIME',
                 style: TextStyle(
                   color: constant.titleTextColor,
                   fontWeight: FontWeight.bold,
@@ -27,9 +23,9 @@ class TitleSet extends StatelessWidget {
                 ),
               ),
               Text(
-                'ganti value target yang diinginkan',
+                'Menampilkan status sensor secara realtime',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 15,
                   color: constant.secondTitleText,
                 ),
               ),

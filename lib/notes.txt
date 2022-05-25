@@ -1,0 +1,16 @@
+Bug List = 
+
+- textfield copy paste huruf appear
+- textfield error ngangkat
+
+
+todo: 
+add kotasal
+add graph
+learn firebase
+
+var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+//flutter prokit
+//flutter flukit
+//flutter mighty
+
