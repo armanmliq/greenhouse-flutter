@@ -197,7 +197,7 @@ class _GraphWidgetState extends State<GraphWidget> {
                 var dateGraph =
                     DateTime.fromMillisecondsSinceEpoch(int.parse(k) * 1000);
                 final now = DateTime.now();
-                if (dateGraph.compareTo(now) == 0 || true) {
+                if (dateGraph.compareTo(now) == 0) {
                   double value = 0;
                   //print(localDate);
                   try {
@@ -244,7 +244,7 @@ class _GraphWidgetState extends State<GraphWidget> {
           padding: const EdgeInsets.all(18.0),
           child: Container(
             height: constant.height! * 0.6,
-            color: constant.backgroundColor,
+            color: Colors.white,
             child: SfCartesianChart(
               zoomPanBehavior: ZoomPanBehavior(
                 enablePinching: true,
@@ -253,25 +253,31 @@ class _GraphWidgetState extends State<GraphWidget> {
               ),
               enableAxisAnimation: false,
               primaryXAxis: DateTimeAxis(
-                enableAutoIntervalOnZooming: true,
-                dateFormat: DateFormat.jms(),
-                borderColor: Colors.red,
-              ),
+                  enableAutoIntervalOnZooming: true,
+                  dateFormat: DateFormat.jms(),
+                  borderColor: Colors.red,
+                  labelStyle: TextStyle(
+                    color: Colors.white,
+                  )),
               primaryYAxis: NumericAxis(
-                minimum: findLowNull,
-                maximum: findMaxNull == 0 ? 100 : findMaxNull,
-                majorTickLines: const MajorTickLines(size: 0),
-                labelAlignment: LabelAlignment.end,
-              ),
+                  minimum: findLowNull,
+                  maximum: findMaxNull == 0 ? 100 : findMaxNull,
+                  majorTickLines: const MajorTickLines(size: 0),
+                  labelAlignment: LabelAlignment.end,
+                  labelStyle: TextStyle(
+                    color: Colors.white,
+                  )),
               tooltipBehavior: TooltipBehavior(
                 enable: true,
               ),
               plotAreaBackgroundColor: constant.cardButtonColor,
               borderColor: Colors.black,
               title: ChartTitle(
-                textStyle: const TextStyle(fontSize: 12),
+                textStyle: const TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.normal,
+                ),
                 text: 'Hari Ini',
-                backgroundColor: constant.cardColor,
               ),
               backgroundColor: constant.backgroundColor,
               series: <ChartSeries>[

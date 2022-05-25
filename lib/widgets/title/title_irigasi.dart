@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/models/sensor.dart';
+import 'package:greenhouse/services/ServiceFirebase.dart';
 import 'package:greenhouse/widgets/items/show_modal_bottom.dart';
 
 final databaseRef = FirebaseDatabase.instance
@@ -79,15 +80,16 @@ class SetSoil extends StatelessWidget {
         children: [
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: const [
+                SizedBox(
+                  height: 50,
+                ),
                 SetInput(
                   type: 'set_moisture_off',
                 ),
                 SetInput(
                   type: 'set_moisture_on',
-                ),
-                SizedBox(
-                  height: 8,
                 ),
               ],
             ),
@@ -95,50 +97,82 @@ class SetSoil extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                SetInput(
-                  type: 'set_mode_irigasi',
-                ),
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                        border: Border.all(
-                      width: 2,
-                      color: Colors.white,
-                    )),
+                      border: Border.all(
+                        width: 1,
+                        color: Colors.white,
+                      ),
+                    ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text('MANUAL MODE'),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                  color: constant.cardButtonColor,
-                                  child: TextButton(
-                                      onPressed: () {},
-                                      child: Text(
-                                        'ON',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ))),
-                              Container(
-                                  color: constant.cardButtonColor,
-                                  child: TextButton(
-                                      onPressed: () {},
-                                      child: Text(
-                                        'OFF',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ))),
-                            ],
+                      children: const [
+                        Text(
+                          'PILIH MODE',
+                          style: TextStyle(
+                            color: Colors.white,
                           ),
+                        ),
+                        Text(
+                          'Pilih Mode Untuk Kontrol Pompa Irigasi',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        SetInput(
+                          type: 'set_mode_irigasi',
                         ),
                       ],
                     ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'MANUAL MODE',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              color: constant.cardButtonColor,
+                              child: TextButton(
+                                onPressed: () {
+                                  FirebaseService.OnOffIrigasi('on');
+                                },
+                                child: const Text(
+                                  'ON',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              color: constant.cardButtonColor,
+                              child: TextButton(
+                                onPressed: () {
+                                  FirebaseService.OnOffIrigasi('off');
+                                },
+                                child: const Text(
+                                  'OFF',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 )
               ],
@@ -162,65 +196,78 @@ class SetInput extends StatelessWidget {
   Widget build(BuildContext context) {
     String infoText = '';
     String value = 'null';
-
+    String? title;
     if (type == 'set_moisture_off') {
-      infoText = 'batas atas moisture (irigasi nonaktif)';
+      infoText =
+          'MODE SOIL MOISTURE \n\nbatas atas moisture (irigasi nonaktif)';
     } else if (type == 'set_moisture_on') {
-      infoText = 'batas bawah moisture (irigasi aktif)';
+      infoText = 'MODE SOIL MOISTURE \n\nbatas bawah moisture (irigasi aktif)';
     } else if (type == 'set_mode_irigasi') {
-      infoText = 'mode control';
+      infoText = '';
+      title = '';
     }
     return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            infoText,
-            style: TextStyle(
-              color: Colors.grey[50],
-            ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1,
+            color: Colors.white,
           ),
-          StreamBuilder(
-              stream: databaseRef.onValue,
-              builder: (context, snapshotStream) {
-                print('firing from SetInput $type');
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              infoText,
+              style: TextStyle(
+                color: Colors.grey[50],
+              ),
+            ),
+            StreamBuilder(
+                stream: databaseRef.onValue,
+                builder: (context, snapshotStream) {
+                  print('firing from SetInput $type');
 
-                Sensor sensor =
-                    Sensor.fromSnapshotSetParameterStatus(snapshotStream);
-                late bool isDataNotError;
-                BuildIrigasiWidget(type: type, value: value);
-                value == 'null'
-                    ? isDataNotError = false
-                    : isDataNotError = true;
-                if (snapshotStream.hasData) {
-                  if (isDataNotError) {
-                    sensor.CheckAndSave(type, value);
-                  }
-                  if (type == 'set_moisture_off') {
-                    value = sensor.set_moisture_off.toString();
-                  } else if (type == 'set_moisture_on') {
-                    value = sensor.set_moisture_on.toString();
-                  } else if (type == 'set_mode_irigasi') {
-                    value = sensor.set_mode_irigasi.toString();
-                    print('firing');
-                  }
-                }
-                return FutureBuilder(
-                  future: sensor.ReadInternalDataOf(type),
-                  builder: ((context, snapshotFromInternal) {
-                    if (value != 'null') {
+                  Sensor sensor =
+                      Sensor.fromSnapshotSetParameterStatus(snapshotStream);
+                  late bool isDataNotError;
+                  BuildIrigasiWidget(type: type, value: value);
+                  value == 'null'
+                      ? isDataNotError = false
+                      : isDataNotError = true;
+                  if (snapshotStream.hasData) {
+                    if (isDataNotError) {
                       sensor.CheckAndSave(type, value);
-                      return BuildIrigasiWidget(type: type, value: value);
-                    } else {
-                      return BuildIrigasiWidget(
-                        type: type,
-                        value: snapshotFromInternal.data.toString(),
-                      );
                     }
-                  }),
-                );
-              }),
-        ],
+                    if (type == 'set_moisture_off') {
+                      value = sensor.set_moisture_off.toString();
+                    } else if (type == 'set_moisture_on') {
+                      value = sensor.set_moisture_on.toString();
+                    } else if (type == 'set_mode_irigasi') {
+                      value = sensor.set_mode_irigasi.toString();
+                    }
+                  }
+                  return FutureBuilder(
+                    future: sensor.ReadInternalDataOf(type),
+                    builder: ((context, snapshotFromInternal) {
+                      if (value != 'null') {
+                        sensor.CheckAndSave(type, value);
+                        return BuildIrigasiWidget(type: type, value: value);
+                      } else {
+                        return BuildIrigasiWidget(
+                          type: type,
+                          value: snapshotFromInternal.data.toString(),
+                        );
+                      }
+                    }),
+                  );
+                }),
+          ],
+        ),
       ),
     );
   }
@@ -239,6 +286,7 @@ class BuildIrigasiWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
           width: 60,

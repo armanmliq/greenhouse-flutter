@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:greenhouse/services/ServiceFirebase.dart';
 import 'package:greenhouse/widgets/title/title_ph.dart';
 import 'package:bot_toast/bot_toast.dart';
 
@@ -93,100 +94,31 @@ class InputDialog {
     if (value.isEmpty) return;
     try {
       if (type == 'set_ppm') {
-        double val = double.parse(value);
-        bool ppmInRange = (val <= maxPpm && val > 0) ? true : false;
-        if (!ppmInRange) {
-          BotToast.showText(text: 'setting ppm harus dibawah $maxPpm');
-          return;
-        }
-        isValidate = true;
-
-        try {
-          databaseRef.update({type: val.ceil().toString()}).then((_) {
-            BotToast.showText(text: 'setting ppm to $value');
-          });
-        } catch (e) {
-          print('update ppm $e');
-        }
+        FirebaseService.SetPpm(value);
       }
     } catch (e) {
       print(e);
     }
     try {
       if (type == 'set_ph') {
-        double val = double.parse(value);
-        bool phInRange = (val <= maxPh && val > 0) ? true : false;
-        if (!phInRange) {
-          BotToast.showText(text: 'setting ph harus dibawah $maxPh');
-          return;
-        }
-        isValidate = true;
-
-        try {
-          databaseRef.update({type: val.toString()}).then((_) {
-            BotToast.showText(text: 'setting ph to $value');
-          });
-        } catch (e) {
-          print('update ph $e');
-        }
+        FirebaseService.ModePh(value);
       }
     } catch (e) {
       print(e);
     }
-    try {
-      if (type == 'set_humidity') {
-        double val = double.parse(value);
-        bool humidityInRange = (val <= maxHumidity && val > 0) ? true : false;
 
-        if (!humidityInRange) {
-          print("nilai HUMIDITY harus dibawah $maxHumidity");
-          BotToast.showText(
-              text: 'setting HUMIDITY harus dibawah $maxHumidity');
-          return;
-        }
-        isValidate = true;
-        Navigator.of(context).pop();
-        databaseRef.update({
-          'set_humidity': val.ceil().toString(),
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
     try {
       if (value.isEmpty) return;
-      double val = double.parse(value);
-      bool moistureOffInRange = (val <= 100 && val > 0) ? true : false;
       if (type == 'set_moisture_off') {
-        if (!moistureOffInRange) {
-          BotToast.showText(
-              text: 'setting moisture harus dibawah $maxMoisture');
-          return;
-        }
-        BotToast.showText(text: 'setting moisture to $value');
-        isValidate = true;
-        databaseRef.update({
-          'set_moisture_off': val.ceil().toString(),
-        });
+        FirebaseService.SetMoistureOff(value);
       }
     } catch (e) {
       print(e);
     }
     try {
       if (value.isEmpty) return;
-      double val = double.parse(value);
-      bool moistureOnInRange = (val <= 100 && val > 0) ? true : false;
       if (type == 'set_moisture_on') {
-        if (!moistureOnInRange) {
-          BotToast.showText(
-              text: 'setting moisture harus dibawah $maxMoisture');
-          return;
-        }
-        BotToast.showText(text: 'setting moisture to $value');
-        isValidate = true;
-        databaseRef.update({
-          'set_moisture_on': val.ceil().toString(),
-        });
+        FirebaseService.SetMoistureOn(value);
       }
     } catch (e) {
       print(e);
@@ -194,12 +126,7 @@ class InputDialog {
     try {
       if (value.isEmpty) return;
       if (type == 'set_mode_ph') {
-        value = value == 'manual' ? 'otomatis' : 'manual';
-        databaseRef.update({
-          'set_mode_ph': value.toString(),
-        });
-        BotToast.showText(text: 'setting mode ph to $value');
-        isValidate = true;
+        FirebaseService.ModePh(value);
       }
     } catch (e) {
       print(e);
@@ -207,12 +134,7 @@ class InputDialog {
     try {
       if (value.isEmpty) return;
       if (type == 'set_mode_ppm') {
-        value = value == 'manual' ? 'otomatis' : 'manual';
-        databaseRef.update({
-          'set_mode_ppm': value.toString(),
-        });
-        BotToast.showText(text: 'setting mode ppm to $value');
-        isValidate = true;
+        FirebaseService.ModePPm(value);
       }
     } catch (e) {
       print(e);
@@ -220,24 +142,7 @@ class InputDialog {
     try {
       if (value.isEmpty) return;
       if (type == 'set_mode_irigasi') {
-        if (value == 'manual') {
-          value = 'otomatis';
-        } else if (value == 'otomatis') {
-          value = 'jadwal';
-        } else if (value == 'jadwal') {
-          value = 'manual';
-        }
-
-        try {
-          databaseRef.update({
-            'set_mode_irigasi': value,
-          });
-        } catch (e) {
-          print('er set mode irigasi $e');
-        }
-        BotToast.showText(
-            text: 'setting mode irigasi to ${value.toUpperCase()}');
-        isValidate = true;
+        FirebaseService.ModeIrigasi(value);
       }
     } catch (e) {
       print(e);

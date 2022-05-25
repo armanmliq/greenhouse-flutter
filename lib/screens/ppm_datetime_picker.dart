@@ -53,14 +53,63 @@ class ScheduleListTools {
     return days;
   }
 
+  static void clearListSchedule() {
+    ListOfSchedule.clear();
+  }
+
   static void removeById(String id) {
     CheckInternet().then((state) {
       if (!state) {
         BotToast.showText(text: 'Check Internet');
       } else {
         ListOfSchedule.removeWhere((element) => element.id == id);
-        updateSchedule();
         updateFirebase();
+      }
+    });
+  }
+
+  static Future<void> setScheduleByString() async {
+    await ScheduleListTools.databaseRef
+        .child('scheduler_ppm_str')
+        .get()
+        .then((value) {
+      final data = value.value.toString();
+      print(data);
+      if (value.value == null) return;
+      try {
+        Map<String, dynamic> mapData = {};
+        try {
+          mapData = json.decode(data);
+        } catch (e) {
+          print(e);
+        }
+        List<DateTime> getBlackedList = [];
+        final sch = scheduleItemToFirebase.fromJson(mapData);
+        final schData = sch.data!;
+        ListOfSchedule.clear();
+        blackedList.clear();
+        for (var i in schData) {
+          final DateTime startDate = DateTime.parse(i.dateFrom!);
+          final DateTime toDate = DateTime.parse(i.dateTo!);
+          getBlackedList =
+              ScheduleListTools.getDaysInBeteween(startDate, toDate);
+          if (toDate.isAfter(DateTime.now())) {
+            blackedList.addAll(getBlackedList);
+            ScheduleListTools.getDaysInBeteween(startDate, toDate);
+            ListOfSchedule.add(
+              ScheduleItem(
+                fromDate: startDate,
+                toDate: toDate,
+                id: i.id!,
+                ppm: i.ppm!,
+                blackedListItem: blackedList,
+              ),
+            );
+          }
+          print('BLACKED LISt $blackedList');
+        }
+      } catch (e) {
+        print(e);
       }
     });
   }
@@ -74,40 +123,38 @@ class ScheduleListTools {
     List<DateTime> getBlackedList;
     getBlackedList = [];
     getBlackedList = getDaysInBeteween(fromDate, toDate);
-    CheckInternet().then((state) {
-      if (state) {
-        BotToast.showText(text: 'Berhasil Menambahkan');
-        ListOfSchedule.add(
-          ScheduleItem(
-            fromDate: fromDate,
-            id: id,
-            toDate: toDate,
-            ppm: ppm,
-            blackedListItem: getBlackedList,
-          ),
-        );
-        updateSchedule();
-        updateFirebase();
-      } else {
-        BotToast.showText(text: 'Check Internet');
-      }
-    });
-  }
-
-  static void updateSchedule() async {
-    blackedList = [];
-    for (final i in ListOfSchedule) {
-      print(i.blackedListItem);
-      blackedList.addAll(i.blackedListItem);
-    }
-    print(blackedList.length);
+    CheckInternet().then(
+      (state) {
+        if (state) {
+          BotToast.showText(text: 'Berhasil Menambahkan');
+          ListOfSchedule.add(
+            ScheduleItem(
+              fromDate: fromDate,
+              id: id,
+              toDate: toDate,
+              ppm: ppm,
+              blackedListItem: getBlackedList,
+            ),
+          );
+          updateFirebase();
+        } else {
+          BotToast.showText(text: 'Check Internet');
+        }
+      },
+    );
   }
 }
 
 Future<void> updateFirebase() async {
+  blackedList = [];
+  for (final i in ListOfSchedule) {
+    print(i.blackedListItem);
+    blackedList.addAll(i.blackedListItem);
+  }
+  print(blackedList.length);
+
   List<Data> listData = [];
   final x = DateFormat('yyyy-MM-dd');
-  final databaseRef = ScheduleListTools.databaseRef;
   var index = 0;
   String firebaseDataSend;
   for (final list in ListOfSchedule) {
@@ -123,26 +170,27 @@ Future<void> updateFirebase() async {
   final sch = scheduleItemToFirebase(data: listData);
   firebaseDataSend = json.encode(sch.toJson());
   print('send to firebase: $firebaseDataSend');
-  print('Len : ${ListOfSchedule.length}');
+  final databaseRef = ScheduleListTools.databaseRef;
   await databaseRef.set({
     'scheduler_ppm_str': firebaseDataSend,
   });
 }
 
-class DatePickerTes extends StatefulWidget {
-  const DatePickerTes({Key? key}) : super(key: key);
+class JadwalPpmScreen extends StatefulWidget {
+  const JadwalPpmScreen({Key? key}) : super(key: key);
 
   @override
-  State<DatePickerTes> createState() => _DatePickerTesState();
+  State<JadwalPpmScreen> createState() => JadwalPpmScreenState();
 }
 
 DateTime? fromDate;
 DateTime? toDate;
 
-class _DatePickerTesState extends State<DatePickerTes> {
+class JadwalPpmScreenState extends State<JadwalPpmScreen> {
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    ScheduleListTools.setScheduleByString();
+    print('INITTT');
   }
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
@@ -247,9 +295,10 @@ class _DatePickerTesState extends State<DatePickerTes> {
                   decoration: InputDecoration(
                     label: Text('Masukan ppm (maksimal $maxPpm)'),
                     border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                      width: 1,
-                    )),
+                      borderSide: BorderSide(
+                        width: 1,
+                      ),
+                    ),
                   ),
                   onSubmitted: (value) {
                     if (double.parse(value) > maxPpm) {
@@ -286,7 +335,7 @@ class _DatePickerTesState extends State<DatePickerTes> {
         backgroundColor: backgroundColor,
         appBar: AppBar(
           backgroundColor: backgroundColor,
-          title: const Center(child: Text('Jadwal PPM')),
+          title: const Center(child: Text('Atur jadwal ppm')),
         ),
         body: SafeArea(
           child: StreamBuilder(
@@ -326,7 +375,7 @@ class _DatePickerTesState extends State<DatePickerTes> {
                                   ),
                                 ),
                                 title: Text(
-                                  'PPM ${item.ppm.toString()}',
+                                  'PPM = ${item.ppm.toString()}',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -367,7 +416,7 @@ class _DatePickerTesState extends State<DatePickerTes> {
                           onPressed: () {
                             ShowDateTimePicker();
                           },
-                          child: Icon(Icons.add),
+                          child: const Icon(Icons.add),
                         ),
                       ),
                     ],
@@ -375,52 +424,7 @@ class _DatePickerTesState extends State<DatePickerTes> {
                   FloatingActionButton(
                     heroTag: 'btn2',
                     onPressed: () async {
-                      ScheduleListTools.databaseRef
-                          .child('scheduler_ppm_str')
-                          .get()
-                          .then((value) {
-                        final data = value.value.toString();
-                        if (value.value == null) return;
-                        try {
-                          Map<String, dynamic> mapData = {};
-                          try {
-                            mapData = json.decode(data);
-                          } catch (e) {
-                            print(e);
-                          }
-
-                          List<DateTime> getBlackedList = [];
-                          final sch = scheduleItemToFirebase.fromJson(mapData);
-                          final schData = sch.data!;
-                          ListOfSchedule.clear();
-                          blackedList.clear();
-                          for (var i in schData) {
-                            final DateTime startDate =
-                                DateTime.parse(i.dateFrom!);
-                            final DateTime toDate = DateTime.parse(i.dateTo!);
-                            getBlackedList =
-                                ScheduleListTools.getDaysInBeteween(
-                                    startDate, toDate);
-                            blackedList.addAll(blackedList);
-                            if (toDate.isAfter(DateTime.now())) {
-                              ScheduleListTools.getDaysInBeteween(
-                                  startDate, toDate);
-                              ListOfSchedule.add(
-                                ScheduleItem(
-                                  fromDate: startDate,
-                                  toDate: toDate,
-                                  id: i.id!,
-                                  ppm: i.ppm!,
-                                  blackedListItem: blackedList,
-                                ),
-                              );
-                            }
-                            setState(() {});
-                          }
-                        } catch (e) {
-                          print(e);
-                        }
-                      });
+                      print(blackedList);
                     },
                     child: const Center(child: Icon(Icons.search)),
                   )
@@ -433,24 +437,3 @@ class _DatePickerTesState extends State<DatePickerTes> {
     );
   }
 }
-
-class ShowDateTimePicker extends StatelessWidget {
-  const ShowDateTimePicker({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-/*
- added parentheses around \w+ and \d+ to get separate groups 
-String regexString = r'/api/(\w+)/(\d+)/'; // not r'/api/\w+/\d+/' !!!
-RegExp regExp = new RegExp(regexString);
-var matches = regExp.allMatches("/api/topic/3/");
-print("${matches.length}");       // => 1 - 1 instance of pattern found in string
-var match = matches.elementAt(0); // => extract the first (and only) match
-print("${match.group(0)}");       // => /api/topic/3/ - the whole match
-print("${match.group(1)}");       // => topic  - first matched group
-print("${match.group(2)}");     
-*/

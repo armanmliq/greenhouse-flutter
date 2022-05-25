@@ -319,25 +319,25 @@ class Sensor with ChangeNotifier {
             Map<String, dynamic> mapData = json.decode(scheduler_ppm_str!);
             List<DateTime> getBlackedList = [];
             final sch = scheduleItemToFirebase.fromJson(mapData);
-            //print('xxx>>> $list_scheduler_ppm');
             sch.data?.forEach((element) {
               final DateTime startDate = DateTime.parse(element.dateFrom!);
               final DateTime toDate = DateTime.parse(element.dateTo!);
+              final getBlackedList =
+                  ScheduleListTools.getDaysInBeteween(startDate, toDate);
               if (toDate.isAfter(DateTime.now())) {
-                final blacklist =
-                    ScheduleListTools.getDaysInBeteween(startDate, toDate);
+                blackedList.addAll(getBlackedList);
                 list_scheduler_ppm?.add(ScheduleItem(
-                    fromDate: startDate,
-                    toDate: fromDate!,
-                    id: element.id!,
-                    ppm: element.ppm!,
-                    blackedListItem: getBlackedList));
+                  fromDate: startDate,
+                  toDate: toDate,
+                  id: element.id!,
+                  ppm: element.ppm!,
+                  blackedListItem: getBlackedList,
+                ));
               }
             });
 
             ListOfSchedule = list_scheduler_ppm!;
             CheckAndSave('scheduler_ppm_str', scheduler_ppm_str!);
-            print('list_scheduler_ppm>>> $ListOfSchedule');
           } catch (e) {
             print('ERRROR ${e.toString()}');
           }

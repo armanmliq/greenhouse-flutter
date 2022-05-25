@@ -4,6 +4,7 @@ import 'package:glassmorphism/glassmorphism.dart';
 import 'package:greenhouse/models/sensor.dart';
 import '../../constant/constant.dart' as constant;
 import '../../screens/ppm_datetime_picker.dart';
+import '../../services/ServiceFirebase.dart';
 import '../items/show_modal_bottom.dart';
 
 bool isValidate = false;
@@ -46,27 +47,10 @@ class SetParameterPpm extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         border: 2,
         borderRadius: constant.borderRadius,
-        height: constant.cardWitdh! * 0.5,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                SettingParameter(),
-                Container(
-                  color: constant.cardButtonColor,
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => DatePickerTes(),
-                        ));
-                      },
-                      child: const Text(
-                        'Lihat Jadwal',
-                        style: TextStyle(color: Colors.white),
-                      )),
-                ),
-              ],
-            ),
+        height: 300,
+        child: Row(
+          children: const [
+            SettingParameter(),
           ],
         ),
       ),
@@ -120,12 +104,78 @@ class SettingParameter extends StatelessWidget {
       padding: EdgeInsets.all(constant.padding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          TargetPpmWidget(type: 'set_ppm'),
-          SizedBox(
+        children: [
+          const TargetPpmWidget(type: 'set_ppm'),
+          const SizedBox(
             height: 4,
           ),
-          TargetPpmWidget(type: 'set_mode_ppm'),
+          const TargetPpmWidget(type: 'set_mode_ppm'),
+          const SizedBox(
+            height: 10,
+          ),
+          const Text(
+            'Manual',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          const Text(
+            'PPM UP',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                color: constant.cardButtonColor,
+                child: TextButton(
+                  onPressed: () {
+                    FirebaseService.OnOffPpm('on');
+                  },
+                  child: const Text(
+                    'ON',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                color: constant.cardButtonColor,
+                child: TextButton(
+                  onPressed: () {
+                    FirebaseService.OnOffPpm('off');
+                  },
+                  child: const Text(
+                    'OFF',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.6,
+            color: constant.cardButtonColor,
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: ((context) {
+                  return JadwalPpmScreen();
+                })));
+              },
+              child: const Text(
+                'Atur Jadwal',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -154,20 +204,21 @@ class TargetPpmWidget extends StatelessWidget {
           print('Get >>> $value');
         }
         return FutureBuilder(
-            future: sensor.ReadInternalDataOf(type),
-            builder: ((context, snapshotFromInternal) {
-              if (value != 'null') {
-                sensor.CheckAndSave(type, value);
-                return BuildTargetPpmWidget(
-                    label: label, type: type, value: value);
-              } else {
-                return BuildTargetPpmWidget(
-                  label: label,
-                  type: type,
-                  value: snapshotFromInternal.data.toString(),
-                );
-              }
-            }));
+          future: sensor.ReadInternalDataOf(type),
+          builder: ((context, snapshotFromInternal) {
+            if (value != 'null') {
+              sensor.CheckAndSave(type, value);
+              return BuildTargetPpmWidget(
+                  label: label, type: type, value: value);
+            } else {
+              return BuildTargetPpmWidget(
+                label: label,
+                type: type,
+                value: snapshotFromInternal.data.toString(),
+              );
+            }
+          }),
+        );
       },
     );
   }

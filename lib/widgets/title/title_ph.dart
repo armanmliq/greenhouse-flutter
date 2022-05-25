@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:greenhouse/models/sensor.dart';
 import '../../constant/constant.dart' as constant;
+import '../../services/ServiceFirebase.dart';
 import '../items/show_modal_bottom.dart';
 
 bool isValidate = false;
@@ -81,18 +82,10 @@ class SetParameterPh extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         border: 2,
         borderRadius: constant.borderRadius,
-        height: constant.cardWitdh! * 0.5,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                SettingParameter(),
-                SizedBox(width: 12),
-                TextInfoPpm(),
-              ],
-            ),
+        height: 300,
+        child: Row(
+          children: const [
+            SettingParameter(),
           ],
         ),
       ),
@@ -122,6 +115,7 @@ class SettingParameter extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(constant.padding),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
           TargetPhWidget(type: 'set_ph'),
@@ -129,6 +123,125 @@ class SettingParameter extends StatelessWidget {
             height: 4,
           ),
           TargetPhWidget(type: 'set_mode_ph'),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            'MANUAL MODE',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            'PUMP PH UP',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          ph_up(),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            'PUMP PH DOWN',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          ph_down(),
+        ],
+      ),
+    );
+  }
+}
+
+class ph_up extends StatelessWidget {
+  const ph_up({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: Row(
+        children: [
+          Container(
+            color: constant.cardButtonColor,
+            child: TextButton(
+              onPressed: () {
+                FirebaseService.OnOffPhUp('on');
+              },
+              child: const Text(
+                'ON',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            color: constant.cardButtonColor,
+            child: TextButton(
+              onPressed: () {
+                FirebaseService.OnOffPhUp('off');
+              },
+              child: const Text(
+                'OFF',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ph_down extends StatelessWidget {
+  const ph_down({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: Row(
+        children: [
+          Container(
+            color: constant.cardButtonColor,
+            child: TextButton(
+              onPressed: () {
+                FirebaseService.OnOffPhDown('on');
+              },
+              child: const Text(
+                'ON',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            color: constant.cardButtonColor,
+            child: TextButton(
+              onPressed: () {
+                FirebaseService.OnOffPhDown('off');
+              },
+              child: const Text(
+                'OFF',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
