@@ -332,7 +332,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: backgroundColor,
           title: const Center(child: Text('Atur jadwal ppm')),
@@ -346,7 +346,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                 .child('scheduler')
                 .onValue,
             builder: (context, snapshot) {
-              Sensor sensor = Sensor.fromSnapshotScheduler(snapshot);
+              Sensor sensor = Sensor.fromSnapshotSchedulerPpm(snapshot);
               if (snapshot.hasData) {}
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

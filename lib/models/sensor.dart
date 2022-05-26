@@ -1,10 +1,11 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
+import 'package:greenhouse/models/jadwal_penyiraman.dart';
 import 'package:greenhouse/services/connectivity.dart';
 import 'dart:core';
 import 'package:greenhouse/services/shared_pref.dart';
-import 'package:greenhouse/screens/ppm_datetime_picker.dart';
+import 'package:greenhouse/screens/jadwal_ppm.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:greenhouse/models/model_schedule_json.dart';
 
@@ -41,7 +42,10 @@ class Sensor with ChangeNotifier {
   String? set_mode_ph;
   String? set_mode_irigasi;
   String? scheduler_ppm_str;
+  String? scheduler_jadwal_penyiraman;
+
   List<ScheduleItem>? list_scheduler_ppm;
+  List<JadwalPenyiraman>? list_scheduler_Jadwal_penyiraman;
 
   Map<dynamic, dynamic> GrafikPh = {timestamp1.toString(): '0.0'};
   Map<dynamic, dynamic> GrafikTemp = {timestamp1.toString(): '0.0'};
@@ -133,6 +137,9 @@ class Sensor with ChangeNotifier {
       value = await ReadSensor(type);
     }
     if (type == 'scheduler_ppm_str') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'scheduler_jadwal_penyiraman') {
       value = await ReadSensor(type);
     }
     return value.toString();
@@ -293,6 +300,13 @@ class Sensor with ChangeNotifier {
             set_mode_irigasi = value;
           });
         }
+        if (data['scheduler_jadwal_penyiraman'] != null) {
+          scheduler_jadwal_penyiraman = data['scheduler_jadwal_penyiraman'].toString();
+        } else {
+          ReadInternalDataOf('scheduler_jadwal_penyiraman').then((value) {
+            scheduler_jadwal_penyiraman = value;
+          });
+        }
       }
     } catch (err) {
       print('ERROR FROM fromSnapshotSetParameterStatus = $err');
@@ -308,7 +322,7 @@ class Sensor with ChangeNotifier {
       print('ERROR FROM fromSnapshotGrafik = $err');
     }
   }
-  Sensor.fromSnapshotScheduler(snap) {
+  Sensor.fromSnapshotSchedulerPpm(snap) {
     try {
       if (snap.hasData) {
         list_scheduler_ppm = [];
@@ -346,7 +360,39 @@ class Sensor with ChangeNotifier {
         }
       }
     } catch (err) {
-      print('ERROR FROM fromSnapshotScheduler $err');
+      print('ERROR FROM fromSnapshotSchedulerPpm $err');
+    }
+  }
+  Sensor.fromSnapshotSchedulerPenyiraman(snap) {
+    try {
+      if (snap.hasData) {
+        list_scheduler_ppm = [];
+        final data = snap.data.snapshot.value;
+        if (data['scheduler_jadwal_penyiraman'] != null) {
+          try {
+            scheduler_jadwal_penyiraman =
+                data['scheduler_jadwal_penyiraman'].toString();
+            Map<String, dynamic> mapData =
+                json.decode(scheduler_jadwal_penyiraman!);
+            final sch = ListJadwalPenyiramanFromToJson.fromJson(mapData);
+            sch.data?.forEach((element) {
+              list_scheduler_Jadwal_penyiraman?.add(JadwalPenyiraman(
+                  id: element.id!,
+                  TimeOfDay: element.TimeOfDay!,
+                  LamaPenyiraman: element.LamaPenyiraman!));
+              ListJadwalPenyiraman = list_scheduler_Jadwal_penyiraman!;
+              CheckAndSave(
+                  'scheduler_jadwal_penyiraman', scheduler_jadwal_penyiraman!);
+            });
+          } catch (e) {
+            print('ERRROR ${e.toString()}');
+          }
+        } else {
+          ReadInternalDataOf('scheduler_ppm_str').then((value) {});
+        }
+      }
+    } catch (err) {
+      print('ERROR FROM fromSnapshotSchedulerPpm $err');
     }
   }
 

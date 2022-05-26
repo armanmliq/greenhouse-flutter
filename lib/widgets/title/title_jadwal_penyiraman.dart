@@ -1,16 +1,28 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
-import 'package:greenhouse/screens/graph_screen.dart';
+import 'package:greenhouse/screens/jadwal_penyiraman.dart';
 
-class TitleChart extends StatelessWidget {
-  const TitleChart({Key? key}) : super(key: key);
+bool _stateButton = false;
+final databaseRef = FirebaseDatabase.instance
+    .ref()
+    .child('users')
+    .child(constant.uid)
+    .child("sensor_status");
 
+class TitleJadwal extends StatefulWidget {
+  const TitleJadwal({Key? key}) : super(key: key);
+
+  @override
+  State<TitleJadwal> createState() => _TitleJadwalState();
+}
+
+class _TitleJadwalState extends State<TitleJadwal> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 5,
       color: constant.cardColor,
+      elevation: 5,
       child: Padding(
         padding: EdgeInsets.all(constant.padding),
         child: Row(
@@ -19,7 +31,7 @@ class TitleChart extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  'GRAFIK',
+                  'Jadwal \npenyiraman',
                   style: TextStyle(
                     color: constant.titleTextColor,
                     fontWeight: FontWeight.bold,
@@ -28,9 +40,9 @@ class TitleChart extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Laporan grafik informasi\ndari sensor ',
+                  'Atur jadwal \npenyiraman harian',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: constant.secondTitleText,
                   ),
                 ),
@@ -43,20 +55,21 @@ class TitleChart extends StatelessWidget {
                     BorderRadius.all(Radius.circular(constant.borderRadius)),
                 color: constant.ColorMati,
               ),
-              child: TextButton.icon(
-                icon: const Icon(
-                  Icons.leaderboard,
-                  color: Colors.white,
-                ),
+              child: TextButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: ((context) => Graph1())));
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return JadwalPenyiramanScreen();
+                      },
+                    ),
+                  );
                 },
-                label: Align(
+                child: const Align(
                   alignment: Alignment.bottomCenter,
                   child: Text(
-                    'lihat',
-                    style: GoogleFonts.heebo(
+                    'Atur jadwal',
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                     ),
