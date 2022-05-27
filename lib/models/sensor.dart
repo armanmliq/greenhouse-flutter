@@ -301,7 +301,8 @@ class Sensor with ChangeNotifier {
           });
         }
         if (data['scheduler_jadwal_penyiraman'] != null) {
-          scheduler_jadwal_penyiraman = data['scheduler_jadwal_penyiraman'].toString();
+          scheduler_jadwal_penyiraman =
+              data['scheduler_jadwal_penyiraman'].toString();
         } else {
           ReadInternalDataOf('scheduler_jadwal_penyiraman').then((value) {
             scheduler_jadwal_penyiraman = value;
@@ -388,11 +389,11 @@ class Sensor with ChangeNotifier {
             print('ERRROR ${e.toString()}');
           }
         } else {
-          ReadInternalDataOf('scheduler_ppm_str').then((value) {});
+          ReadInternalDataOf('scheduler_jadwal_penyiraman').then((value) {});
         }
       }
     } catch (err) {
-      print('ERROR FROM fromSnapshotSchedulerPpm $err');
+      print('ERROR FROM Snapscheduler_jadwal_penyiraman $err');
     }
   }
 
@@ -418,19 +419,21 @@ class Sensor with ChangeNotifier {
   }
 
   Future<bool> isDataDifferent(String typeSensor, String valueSensor) async {
-    return ReadInternalDataOf(typeSensor).then((valueFromInternal) {
-      CheckInternet().then((value) {
-        if (valueFromInternal != valueSensor && valueSensor != 'null') {
-          print('valueSensor $valueSensor is difference $valueFromInternal ');
+    return ReadInternalDataOf(typeSensor).then(
+      (valueFromInternal) {
+        CheckInternet().then((value) {
+          if (valueFromInternal != valueSensor && valueSensor != 'null') {
+            print('valueSensor $valueSensor is difference $valueFromInternal ');
 
-          return true;
-        } else {
-          print(
-              'valueSensor $valueSensor same with intrnal $valueFromInternal ... return false');
-        }
-      });
-      return false;
-    });
+            return true;
+          } else {
+            print(
+                'valueSensor $valueSensor same with intrnal $valueFromInternal ... return false');
+          }
+        });
+        return false;
+      },
+    );
   }
 
   void clearToUpdate(String SensorType) {

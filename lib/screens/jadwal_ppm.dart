@@ -106,7 +106,9 @@ class ScheduleListTools {
               ),
             );
           }
-          print('BLACKED LISt $blackedList');
+          for (var i in ListOfSchedule) {
+            print(i.ppm);
+          }
         }
       } catch (e) {
         print(e);
@@ -169,9 +171,9 @@ Future<void> updateFirebase() async {
   }
   final sch = scheduleItemToFirebase(data: listData);
   firebaseDataSend = json.encode(sch.toJson());
-  print('send to firebase: $firebaseDataSend');
+  print('send to firebase scheduler_ppm_str: $firebaseDataSend');
   final databaseRef = ScheduleListTools.databaseRef;
-  await databaseRef.set({
+  await databaseRef.update({
     'scheduler_ppm_str': firebaseDataSend,
   });
 }
@@ -251,7 +253,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                             Navigator.pop(context);
                             ShowInputPpm();
                           } else {
-                            BotToast.showText(text: 'gagal menambahkan waktu');
+                            BotToast.showText(text: 'Gagal menambah waktu');
                             Navigator.pop(context);
                           }
                         },
@@ -304,9 +306,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                     if (double.parse(value) > maxPpm) {
                       BotToast.showText(
                           text: 'gagal menambahkan, ppm harus dibawah $maxPpm');
-                      print('ListOfSchedule.length ${ListOfSchedule.length}');
                     } else {
-                      print('ListOfSchedule.length ${ListOfSchedule.length}');
                       setState(() {
                         ScheduleListTools.addScheduleItem(
                           DateTime.now().toString(),
@@ -358,10 +358,9 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                         color: Colors.deepPurple,
                         tiles: ListOfSchedule.map(
                           (item) => Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(1.0),
                             child: Card(
                               color: Colors.black12,
-                              elevation: 5,
                               child: ListTile(
                                 leading: Container(
                                   color: Colors.amber,

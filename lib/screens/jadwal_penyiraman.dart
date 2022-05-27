@@ -104,11 +104,14 @@ Future<void> updateFirebase() async {
   }
   final sch = ListJadwalPenyiramanFromToJson(data: listData);
   firebaseDataSend = json.encode(sch.toJson());
+
   print('send to firebase: $firebaseDataSend');
   final databaseRef = JadwalPenyiramanTools.databaseRef;
-  await databaseRef.set({
-    'scheduler_jadwal_penyiraman': firebaseDataSend,
-  });
+  await databaseRef.update(
+    {
+      'scheduler_jadwal_penyiraman': firebaseDataSend,
+    },
+  );
 }
 
 class JadwalPenyiramanScreen extends StatefulWidget {
@@ -124,7 +127,6 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
   final int _currentIntValue = 0;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     JadwalPenyiramanTools.setListJadwal();
   }
@@ -257,55 +259,57 @@ class _ItemListState extends State<ItemList> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: ListTile.divideTiles(
                     color: Colors.deepPurple,
-                    tiles: ListJadwalPenyiraman.map((item) {
-                      final String waktu =
-                          'Time \n${item.TimeOfDay.toString().substring(10, 15)}';
-                      final String LamaPenyiraman =
-                          'Interval \n${item.LamaPenyiraman} Menit';
-                      return Padding(
-                        padding: const EdgeInsets.all(1.0),
-                        child: Card(
-                          color: Colors.black12,
-                          child: ListTile(
-                            leading: Container(
-                              color: backgroundColor,
-                              child: Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: Text(
-                                  waktu,
-                                  style: const TextStyle(
-                                    color: Colors.black,
+                    tiles: ListJadwalPenyiraman.map(
+                      (item) {
+                        final String waktu =
+                            'Time \n${item.TimeOfDay.toString().substring(10, 15)}';
+                        final String LamaPenyiraman =
+                            'Lama On \n${item.LamaPenyiraman} Menit';
+                        return Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Card(
+                            color: Colors.black12,
+                            child: ListTile(
+                              leading: Container(
+                                color: backgroundColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Text(
+                                    waktu,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            title: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                LamaPenyiraman,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                              title: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  LamaPenyiraman,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
-                            ),
-                            trailing: IconButton(
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.white,
+                              trailing: IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setState(
+                                    () {
+                                      ListJadwalPenyiraman.removeWhere(
+                                          (element) => element.id == item.id);
+                                    },
+                                  );
+                                },
                               ),
-                              onPressed: () {
-                                setState(
-                                  () {
-                                    ListJadwalPenyiraman.removeWhere(
-                                        (element) => element.id == item.id);
-                                  },
-                                );
-                              },
                             ),
                           ),
-                        ),
-                      );
-                    }),
+                        );
+                      },
+                    ),
                   ).toList(),
                 ),
               ),
