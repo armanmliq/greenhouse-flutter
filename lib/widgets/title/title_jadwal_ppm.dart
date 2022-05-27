@@ -1,7 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
-import 'package:greenhouse/screens/jadwal_penyiraman.dart';
+
+import '../../screens/jadwal_ppm.dart';
 
 bool _stateButton = false;
 final databaseRef = FirebaseDatabase.instance
@@ -10,14 +11,14 @@ final databaseRef = FirebaseDatabase.instance
     .child(constant.uid)
     .child("sensor_status");
 
-class TitleJadwalPenyiraman extends StatefulWidget {
-  const TitleJadwalPenyiraman({Key? key}) : super(key: key);
+class TitleJadwalPpm extends StatefulWidget {
+  const TitleJadwalPpm({Key? key}) : super(key: key);
 
   @override
-  State<TitleJadwalPenyiraman> createState() => _TitleJadwalState();
+  State<TitleJadwalPpm> createState() => TitleJadwalPpmState();
 }
 
-class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
+class TitleJadwalPpmState extends State<TitleJadwalPpm> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -31,7 +32,7 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  'Jadwal \npenyiraman',
+                  'Jadwal \ppm',
                   style: TextStyle(
                     color: constant.titleTextColor,
                     fontWeight: FontWeight.bold,
@@ -40,7 +41,7 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
                   ),
                 ),
                 Text(
-                  'Atur jadwal \npenyiraman harian',
+                  'Atur jadwal \ppm',
                   style: TextStyle(
                     fontSize: 13,
                     color: constant.secondTitleText,
@@ -60,7 +61,7 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return JadwalPenyiramanScreen();
+                        return JadwalPpmScreen();
                       },
                     ),
                   );

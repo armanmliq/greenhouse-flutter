@@ -38,15 +38,16 @@ class MyApp extends StatelessWidget {
               const AppBarTheme(color: Color.fromARGB(255, 22, 97, 92)),
         ),
         home: FutureBuilder<String?>(
-            future: checkSavedUid(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                print('>>> ${snapshot.data} <<<');
-                return HomeScreen();
-              } else {
-                return const LoginScreen();
-              }
-            }),
+          future: checkSavedUid(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              print('>>> ${snapshot.data} <<<');
+              return HomeScreen();
+            } else {
+              return const LoginScreen();
+            }
+          },
+        ),
         routes: {
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           HomeScreen.routeName: (ctx) => HomeScreen(),

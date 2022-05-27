@@ -207,7 +207,7 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
         },
         child: const Icon(Icons.add),
       ),
-      backgroundColor: Color.fromARGB(255, 65, 57, 57),
+      backgroundColor: const Color.fromARGB(255, 65, 57, 57),
       appBar: AppBar(
         title: const Text('Schedule Penyiraman'),
         actions: [],
@@ -266,7 +266,6 @@ class _ItemListState extends State<ItemList> {
                         padding: const EdgeInsets.all(1.0),
                         child: Card(
                           color: Colors.black12,
-                          elevation: 5,
                           child: ListTile(
                             leading: Container(
                               color: backgroundColor,
@@ -280,15 +279,12 @@ class _ItemListState extends State<ItemList> {
                                 ),
                               ),
                             ),
-                            title: Container(
-                              color: Colors.blue,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  LamaPenyiraman,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
+                            title: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                LamaPenyiraman,
+                                style: const TextStyle(
+                                  color: Colors.white,
                                 ),
                               ),
                             ),

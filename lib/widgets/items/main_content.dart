@@ -7,7 +7,7 @@ import 'package:greenhouse/widgets/title/title_ppm.dart';
 import '../title/title_grafik.dart';
 import '../title/title_irigasi.dart';
 import '../title/title_jadwal_penyiraman.dart';
-import '../title/title_setting.dart';
+import '../title/title_jadwal_ppm.dart';
 import '../title/title_spray.dart';
 import '../title/title_status_sensor.dart';
 
@@ -87,7 +87,16 @@ class MainContent extends StatelessWidget {
                   EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
               child: Column(
                 children: const [
-                  TitleJadwal(),
+                  TitleJadwalPenyiraman(),
+                ],
+              ),
+            ),
+            Padding(
+              padding:
+                  EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
+              child: Column(
+                children: const [
+                  TitleJadwalPpm(),
                 ],
               ),
             ),

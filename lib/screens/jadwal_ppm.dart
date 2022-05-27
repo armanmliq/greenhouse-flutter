@@ -332,7 +332,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 65, 57, 57),
         appBar: AppBar(
           backgroundColor: backgroundColor,
           title: const Center(child: Text('Atur jadwal ppm')),
@@ -360,6 +360,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                           (item) => Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
+                              color: Colors.black12,
                               elevation: 5,
                               child: ListTile(
                                 leading: Container(
@@ -377,13 +378,14 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                                 title: Text(
                                   'PPM = ${item.ppm.toString()}',
                                   style: const TextStyle(
+                                    color: Colors.grey,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 subtitle: Text(
                                   '${f.format(item.fromDate).toString()} to ${f.format(item.toDate).toString()}',
                                   style: const TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   ),
                                 ),
                                 trailing: IconButton(
