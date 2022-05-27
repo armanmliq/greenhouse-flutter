@@ -308,6 +308,67 @@ class Sensor with ChangeNotifier {
             scheduler_jadwal_penyiraman = value;
           });
         }
+        if (data['scheduler_ppm_str'] != null) {
+          try {
+            list_scheduler_ppm = [];
+            scheduler_ppm_str = data['scheduler_ppm_str'].toString();
+            Map<String, dynamic> mapData = json.decode(scheduler_ppm_str!);
+            List<DateTime> getBlackedList = [];
+            final sch = scheduleItemToFirebase.fromJson(mapData);
+            sch.data?.forEach(
+              (element) {
+                final DateTime startDate = DateTime.parse(element.dateFrom!);
+                final DateTime toDate = DateTime.parse(element.dateTo!);
+                final getBlackedList =
+                    ScheduleListTools.getDaysInBeteween(startDate, toDate);
+                if (toDate.isAfter(DateTime.now())) {
+                  blackedList.addAll(getBlackedList);
+                  list_scheduler_ppm?.add(
+                    ScheduleItem(
+                      fromDate: startDate,
+                      toDate: toDate,
+                      id: element.id!,
+                      ppm: element.ppm!,
+                      blackedListItem: getBlackedList,
+                    ),
+                  );
+                }
+              },
+            );
+            ListOfSchedule = list_scheduler_ppm!;
+            CheckAndSave('scheduler_ppm_str', scheduler_ppm_str!);
+          } catch (e) {
+            print('ERRROR ${e.toString()}');
+          }
+        } else {
+          ReadInternalDataOf('scheduler_ppm_str').then((value) {});
+        }
+
+        if (data['scheduler_jadwal_penyiraman'] != null) {
+          try {
+            list_scheduler_ppm = [];
+            scheduler_jadwal_penyiraman =
+                data['scheduler_jadwal_penyiraman'].toString();
+            Map<String, dynamic> mapData =
+                json.decode(scheduler_jadwal_penyiraman!);
+            final sch = ListJadwalPenyiramanFromToJson.fromJson(mapData);
+            sch.data?.forEach(
+              (element) {
+                list_scheduler_Jadwal_penyiraman?.add(JadwalPenyiraman(
+                    id: element.id!,
+                    TimeOfDay: element.TimeOfDay!,
+                    LamaPenyiraman: element.LamaPenyiraman!));
+                ListJadwalPenyiraman = list_scheduler_Jadwal_penyiraman!;
+                CheckAndSave('scheduler_jadwal_penyiraman',
+                    scheduler_jadwal_penyiraman!);
+              },
+            );
+          } catch (e) {
+            print('ERRROR ${e.toString()}');
+          }
+        } else {
+          ReadInternalDataOf('scheduler_jadwal_penyiraman').then((value) {});
+        }
       }
     } catch (err) {
       print('ERROR FROM fromSnapshotSetParameterStatus = $err');
@@ -326,39 +387,7 @@ class Sensor with ChangeNotifier {
   Sensor.fromSnapshotSchedulerPpm(snap) {
     try {
       if (snap.hasData) {
-        list_scheduler_ppm = [];
         final data = snap.data.snapshot.value;
-        if (data['scheduler_ppm_str'] != null) {
-          try {
-            scheduler_ppm_str = data['scheduler_ppm_str'].toString();
-            Map<String, dynamic> mapData = json.decode(scheduler_ppm_str!);
-            List<DateTime> getBlackedList = [];
-            final sch = scheduleItemToFirebase.fromJson(mapData);
-            sch.data?.forEach((element) {
-              final DateTime startDate = DateTime.parse(element.dateFrom!);
-              final DateTime toDate = DateTime.parse(element.dateTo!);
-              final getBlackedList =
-                  ScheduleListTools.getDaysInBeteween(startDate, toDate);
-              if (toDate.isAfter(DateTime.now())) {
-                blackedList.addAll(getBlackedList);
-                list_scheduler_ppm?.add(ScheduleItem(
-                  fromDate: startDate,
-                  toDate: toDate,
-                  id: element.id!,
-                  ppm: element.ppm!,
-                  blackedListItem: getBlackedList,
-                ));
-              }
-            });
-
-            ListOfSchedule = list_scheduler_ppm!;
-            CheckAndSave('scheduler_ppm_str', scheduler_ppm_str!);
-          } catch (e) {
-            print('ERRROR ${e.toString()}');
-          }
-        } else {
-          ReadInternalDataOf('scheduler_ppm_str').then((value) {});
-        }
       }
     } catch (err) {
       print('ERROR FROM fromSnapshotSchedulerPpm $err');
@@ -366,71 +395,53 @@ class Sensor with ChangeNotifier {
   }
   Sensor.fromSnapshotSchedulerPenyiraman(snap) {
     try {
-      if (snap.hasData) {
-        list_scheduler_ppm = [];
-        final data = snap.data.snapshot.value;
-        if (data['scheduler_jadwal_penyiraman'] != null) {
-          try {
-            scheduler_jadwal_penyiraman =
-                data['scheduler_jadwal_penyiraman'].toString();
-            Map<String, dynamic> mapData =
-                json.decode(scheduler_jadwal_penyiraman!);
-            final sch = ListJadwalPenyiramanFromToJson.fromJson(mapData);
-            sch.data?.forEach((element) {
-              list_scheduler_Jadwal_penyiraman?.add(JadwalPenyiraman(
-                  id: element.id!,
-                  TimeOfDay: element.TimeOfDay!,
-                  LamaPenyiraman: element.LamaPenyiraman!));
-              ListJadwalPenyiraman = list_scheduler_Jadwal_penyiraman!;
-              CheckAndSave(
-                  'scheduler_jadwal_penyiraman', scheduler_jadwal_penyiraman!);
-            });
-          } catch (e) {
-            print('ERRROR ${e.toString()}');
-          }
-        } else {
-          ReadInternalDataOf('scheduler_jadwal_penyiraman').then((value) {});
-        }
-      }
+      if (snap.hasData) {}
     } catch (err) {
       print('ERROR FROM Snapscheduler_jadwal_penyiraman $err');
     }
   }
 
   Future<void> CheckAndSave(String typeSensor, String valueSensor) async {
-    return ReadInternalDataOf(typeSensor).then((valueFromInternal) {
-      CheckInternet().then((value) {
-        print('saving $typeSensor proccess... ');
-        if (valueFromInternal != valueSensor && valueSensor != 'null') {
-          InternalPreferences().SaveSensor(typeSensor, valueSensor);
-          print('success saving $typeSensor..');
-          if (!typeSensor.contains('mode') &&
-              !typeSensor.contains('set_') &&
-              !typeSensor.contains('scheduler')) {
-            InternalPreferences().SaveSensor(
-                '${typeSensor}UpdateTime', DateTime.now().toIso8601String());
-            print('success saving $typeSensor.. and update time');
-          }
-        } else {
-          print('$typeSensor avoid saving...');
-        }
-      });
-    });
+    return ReadInternalDataOf(typeSensor).then(
+      (valueFromInternal) {
+        CheckInternet().then(
+          (value) {
+            print('saving $typeSensor proccess... ');
+            if (valueFromInternal != valueSensor && valueSensor != 'null') {
+              InternalPreferences().SaveSensor(typeSensor, valueSensor);
+              print('success saving $typeSensor..');
+              if (!typeSensor.contains('mode') &&
+                  !typeSensor.contains('set_') &&
+                  !typeSensor.contains('scheduler')) {
+                InternalPreferences().SaveSensor('${typeSensor}UpdateTime',
+                    DateTime.now().toIso8601String());
+                print('success saving $typeSensor.. and update time');
+              }
+            } else {
+              print('$typeSensor avoid saving...');
+            }
+          },
+        );
+      },
+    );
   }
 
   Future<bool> isDataDifferent(String typeSensor, String valueSensor) async {
     return ReadInternalDataOf(typeSensor).then(
       (valueFromInternal) {
-        CheckInternet().then((value) {
-          if (valueFromInternal != valueSensor && valueSensor != 'null') {
-            print('valueSensor $valueSensor is difference $valueFromInternal ');
+        CheckInternet().then(
+          (value) {
+            if (valueFromInternal != valueSensor && valueSensor != 'null') {
+              print(
+                  'valueSensor $valueSensor is difference $valueFromInternal ');
 
-            return true;
-          } else {
-            print(
-                'valueSensor $valueSensor same with intrnal $valueFromInternal ... return false');
-          }
-        });
+              return true;
+            } else {
+              print(
+                  'valueSensor $valueSensor same with intrnal $valueFromInternal ... return false');
+            }
+          },
+        );
         return false;
       },
     );

@@ -13,10 +13,11 @@ String uid = '';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(home: MyApp()));
+  runApp(
+    MaterialApp(home: MyApp()),
+  );
 }
 
-//
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

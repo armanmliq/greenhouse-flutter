@@ -40,7 +40,7 @@ class ScheduleListTools {
       .ref()
       .child('users')
       .child(constant.uid)
-      .child("scheduler");
+      .child("set_parameter");
 
   static List<DateTime> getDaysInBeteween(
       DateTime startDate, DateTime endDate) {
@@ -302,6 +302,9 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                     ),
                   ),
                   onSubmitted: (value) {
+                    if (value.contains(',') || value.contains('.')) {
+                      return;
+                    }
                     if (double.parse(value) > maxPpm) {
                       BotToast.showText(
                           text: 'gagal menambahkan, ppm harus dibawah $maxPpm');
@@ -350,7 +353,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
               .ref()
               .child('users')
               .child(constant.uid)
-              .child('scheduler')
+              .child('set_parameter')
               .onValue,
           builder: (context, snapshot) {
             Sensor sensor = Sensor.fromSnapshotSchedulerPpm(snapshot);

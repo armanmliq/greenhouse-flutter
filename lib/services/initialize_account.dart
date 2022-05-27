@@ -16,11 +16,6 @@ initializeAccount() async {
         print('ersensor_status $er');
       }
       try {
-        InitScheduler();
-      } catch (er) {
-        print('InitScheduler $er');
-      }
-      try {
         InitSetParameter();
       } catch (er) {
         print('ersetParameter $er');
@@ -105,31 +100,8 @@ Future InitSetParameter() async {
                 'set_mode_ph': 'manual',
                 'set_mode_ppm': 'manual',
                 'set_mode_irigasi': 'manual',
-              }),
-            }
-          else
-            {
-              print('initialize set_parameter data EXIST'),
-            }
-        },
-      );
-}
-
-Future InitScheduler() async {
-  final scheduler = FirebaseDatabase.instance
-      .ref()
-      .child('users')
-      .child(constant.uid)
-      .child("scheduler");
-  return await scheduler.get().then(
-        // ignore: non_constant_identifier_names
-        (DocumentSnapshot) => {
-          if (!DocumentSnapshot.exists)
-            {
-              print('initialize set_parameter not exist, CREATE ONE'),
-              scheduler.set({
-                'scheduler_ppm': '20',
-                'scheduler_irigasi': '1000',
+                'scheduler_ppm': '[]',
+                'scheduler_irigasi': '[]',
               }),
             }
           else

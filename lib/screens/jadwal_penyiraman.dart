@@ -16,7 +16,7 @@ class JadwalPenyiramanTools {
       .ref()
       .child('users')
       .child(constant.uid)
-      .child("scheduler");
+      .child("set_parameter");
 
   static void clearListJadwal() {
     ListJadwalPenyiraman.clear();
@@ -39,8 +39,12 @@ class JadwalPenyiramanTools {
         .get()
         .then((value) {
       final data = value.value.toString();
+      if (data.contains('.') || data.contains(',')) {
+        return;
+      }
+
       print(data);
-      if (value.value == null) return;
+      if (data == 'null') return;
       try {
         Map<String, dynamic> mapData = {};
         try {
@@ -249,10 +253,10 @@ class _ItemListState extends State<ItemList> {
           .ref()
           .child('users')
           .child(constant.uid)
-          .child('scheduler')
+          .child('set_parameter')
           .onValue,
       builder: (context, snapshot) {
-        Sensor sensor = Sensor.fromSnapshotSchedulerPenyiraman(snapshot);
+        Sensor sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
         if (snapshot.hasData) {}
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,

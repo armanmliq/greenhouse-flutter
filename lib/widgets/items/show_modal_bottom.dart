@@ -100,7 +100,7 @@ class InputDialog {
     }
     try {
       if (type == 'set_ph') {
-        FirebaseService.ModePh(value);
+        FirebaseService.SetPh(value);
       }
     } catch (e) {
       print(e);
