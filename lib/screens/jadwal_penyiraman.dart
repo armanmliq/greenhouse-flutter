@@ -39,9 +39,6 @@ class JadwalPenyiramanTools {
         .get()
         .then((value) {
       final data = value.value.toString();
-      if (data.contains('.') || data.contains(',')) {
-        return;
-      }
 
       print(data);
       if (data == 'null') return;
@@ -205,6 +202,7 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
 
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(
@@ -258,69 +256,61 @@ class _ItemListState extends State<ItemList> {
       builder: (context, snapshot) {
         Sensor sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
         if (snapshot.hasData) {}
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: ListTile.divideTiles(
-                  color: Colors.deepPurple,
-                  tiles: ListJadwalPenyiraman.map(
-                    (item) {
-                      final String waktu =
-                          'Time \n${item.TimeOfDay.toString().substring(10, 15)}';
-                      final String LamaPenyiraman =
-                          'Durasi \n${item.LamaPenyiraman} Menit';
-                      return Card(
-                        color: Colors.black12,
-                        child: ListTile(
-                          leading: Container(
-                            color: backgroundColor,
-                            child: Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: Text(
-                                waktu,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                ),
-                              ),
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: ListTile.divideTiles(
+              color: Colors.deepPurple,
+              tiles: ListJadwalPenyiraman.map(
+                (item) {
+                  final String waktu =
+                      'Time \n${item.TimeOfDay.toString().substring(10, 15)}';
+                  final String LamaPenyiraman =
+                      'Durasi \n${item.LamaPenyiraman} Menit';
+                  return Card(
+                    color: Colors.black12,
+                    child: ListTile(
+                      leading: Container(
+                        color: backgroundColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: Text(
+                            waktu,
+                            style: const TextStyle(
+                              color: Colors.black,
                             ),
-                          ),
-                          title: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              LamaPenyiraman,
-                              style: const TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              setState(
-                                () {
-                                  ListJadwalPenyiraman.removeWhere(
-                                      (element) => element.id == item.id);
-                                },
-                              );
-                            },
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ).toList(),
+                      ),
+                      title: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          LamaPenyiraman,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          setState(
+                            () {
+                              ListJadwalPenyiraman.removeWhere(
+                                  (element) => element.id == item.id);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
+            ).toList(),
+          ),
         );
       },
     );

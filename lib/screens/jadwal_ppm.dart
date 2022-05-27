@@ -334,6 +334,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: const Color.fromARGB(255, 65, 57, 57),
         appBar: AppBar(
           backgroundColor: backgroundColor,
