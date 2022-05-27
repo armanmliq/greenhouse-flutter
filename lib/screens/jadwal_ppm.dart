@@ -17,7 +17,7 @@ List<DateTime> blackedList = [];
 List<ScheduleItem> ListOfSchedule = [];
 DateTime? fromDateStr;
 DateTime? toDateStr;
-final f = DateFormat('dd-MM-yyyy');
+final f = DateFormat('dd MMMM yyyy');
 
 class ScheduleItem {
   final String id;
@@ -69,51 +69,50 @@ class ScheduleListTools {
   }
 
   static Future<void> setScheduleByString() async {
-    await ScheduleListTools.databaseRef
-        .child('scheduler_ppm_str')
-        .get()
-        .then((value) {
-      final data = value.value.toString();
-      print(data);
-      if (value.value == null) return;
-      try {
-        Map<String, dynamic> mapData = {};
+    await ScheduleListTools.databaseRef.child('scheduler_ppm_str').get().then(
+      (value) {
+        final data = value.value.toString();
+        print(data);
+        if (value.value == null) return;
         try {
-          mapData = json.decode(data);
+          Map<String, dynamic> mapData = {};
+          try {
+            mapData = json.decode(data);
+          } catch (e) {
+            print(e);
+          }
+          List<DateTime> getBlackedList = [];
+          final sch = scheduleItemToFirebase.fromJson(mapData);
+          final schData = sch.data!;
+          ListOfSchedule.clear();
+          blackedList.clear();
+          for (var i in schData) {
+            final DateTime startDate = DateTime.parse(i.dateFrom!);
+            final DateTime toDate = DateTime.parse(i.dateTo!);
+            getBlackedList =
+                ScheduleListTools.getDaysInBeteween(startDate, toDate);
+            if (toDate.isAfter(DateTime.now())) {
+              blackedList.addAll(getBlackedList);
+              ScheduleListTools.getDaysInBeteween(startDate, toDate);
+              ListOfSchedule.add(
+                ScheduleItem(
+                  fromDate: startDate,
+                  toDate: toDate,
+                  id: i.id!,
+                  ppm: i.ppm!,
+                  blackedListItem: blackedList,
+                ),
+              );
+            }
+            for (var i in ListOfSchedule) {
+              print(i.ppm);
+            }
+          }
         } catch (e) {
           print(e);
         }
-        List<DateTime> getBlackedList = [];
-        final sch = scheduleItemToFirebase.fromJson(mapData);
-        final schData = sch.data!;
-        ListOfSchedule.clear();
-        blackedList.clear();
-        for (var i in schData) {
-          final DateTime startDate = DateTime.parse(i.dateFrom!);
-          final DateTime toDate = DateTime.parse(i.dateTo!);
-          getBlackedList =
-              ScheduleListTools.getDaysInBeteween(startDate, toDate);
-          if (toDate.isAfter(DateTime.now())) {
-            blackedList.addAll(getBlackedList);
-            ScheduleListTools.getDaysInBeteween(startDate, toDate);
-            ListOfSchedule.add(
-              ScheduleItem(
-                fromDate: startDate,
-                toDate: toDate,
-                id: i.id!,
-                ppm: i.ppm!,
-                blackedListItem: blackedList,
-              ),
-            );
-          }
-          for (var i in ListOfSchedule) {
-            print(i.ppm);
-          }
-        }
-      } catch (e) {
-        print(e);
-      }
-    });
+      },
+    );
   }
 
   static void addScheduleItem(
@@ -330,111 +329,156 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 65, 57, 57),
         appBar: AppBar(
           backgroundColor: backgroundColor,
-          title: const Center(child: Text('Atur jadwal ppm')),
+          title: const Center(
+            child: Text('ATUR JADWAL PPM'),
+          ),
         ),
-        body: SafeArea(
-          child: StreamBuilder(
-            stream: FirebaseDatabase.instance
-                .ref()
-                .child('users')
-                .child(constant.uid)
-                .child('scheduler')
-                .onValue,
-            builder: (context, snapshot) {
-              Sensor sensor = Sensor.fromSnapshotSchedulerPpm(snapshot);
-              if (snapshot.hasData) {}
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: ListTile.divideTiles(
-                        color: Colors.deepPurple,
-                        tiles: ListOfSchedule.map(
-                          (item) => Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Card(
-                              color: Colors.black12,
-                              child: ListTile(
-                                leading: Container(
-                                  color: Colors.amber,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(3.0),
-                                    child: Text(
-                                      '${item.toDate.difference(item.fromDate).inDays + 1} Hari',
-                                      style: const TextStyle(
-                                        color: Colors.black,
+        floatingActionButton: FloatingActionButton(
+          heroTag: 'btn1',
+          onPressed: () {
+            ShowDateTimePicker();
+          },
+          child: const Icon(Icons.add),
+        ),
+        body: StreamBuilder(
+          stream: FirebaseDatabase.instance
+              .ref()
+              .child('users')
+              .child(constant.uid)
+              .child('scheduler')
+              .onValue,
+          builder: (context, snapshot) {
+            Sensor sensor = Sensor.fromSnapshotSchedulerPpm(snapshot);
+            if (snapshot.hasData) {}
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: ListTile.divideTiles(
+                      color: Colors.deepPurple,
+                      tiles: ListOfSchedule.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Card(
+                            color: Colors.black12,
+                            child: ListTile(
+                              title: Container(
+                                color: Colors.green,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${item.ppm.toString()} PPM',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
+                                      Text(
+                                        '${item.toDate.difference(item.fromDate).inDays + 1} Hari',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                title: Text(
-                                  'PPM = ${item.ppm.toString()}',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                              // title: Text(
+                              //   'PPM = ${item.ppm.toString()}',
+                              //   style: const TextStyle(
+                              //     color: Colors.grey,
+                              //     fontWeight: FontWeight.bold,
+                              //   ),
+                              // ),
+                              leading: const Icon(
+                                Icons.list,
+                                color: Colors.green,
+                              ),
+                              subtitle: Text(
+                                '${f.format(item.fromDate).toString()} To ${f.format(item.toDate).toString()}',
+                                style: const TextStyle(
+                                  color: Colors.white,
                                 ),
-                                subtitle: Text(
-                                  '${f.format(item.fromDate).toString()} to ${f.format(item.toDate).toString()}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.green,
                                 ),
-                                trailing: IconButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                  ),
-                                  onPressed: () {
-                                    setState(
-                                      () {
-                                        ScheduleListTools.removeById(item.id);
-                                      },
-                                    );
-                                  },
-                                ),
+                                onPressed: () {
+                                  setState(
+                                    () {
+                                      ScheduleListTools.removeById(item.id);
+                                    },
+                                  );
+                                },
                               ),
                             ),
                           ),
                         ),
-                      ).toList(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      Center(
-                        child: FloatingActionButton(
-                          heroTag: 'btn1',
-                          onPressed: () {
-                            ShowDateTimePicker();
-                          },
-                          child: const Icon(Icons.add),
-                        ),
                       ),
-                    ],
+                    ).toList(),
                   ),
-                  FloatingActionButton(
-                    heroTag: 'btn2',
-                    onPressed: () async {
-                      print(blackedList);
-                    },
-                    child: const Center(child: Icon(Icons.search)),
-                  )
-                ],
-              );
-            },
-          ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 }
+
+                              // child: ListTile(
+                              //   leading: Container(
+                              //     color: Colors.green,
+                              //     child: Padding(
+                              //       padding: const EdgeInsets.all(3.0),
+                              //       child: Text(
+                              //         'Durasi \n${item.toDate.difference(item.fromDate).inDays + 1} Hari',
+                              //         style: const TextStyle(
+                              //           color: Colors.black,
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ),
+                              //   title: Text(
+                              //     'PPM = ${item.ppm.toString()}',
+                              //     style: const TextStyle(
+                              //       color: Colors.grey,
+                              //       fontWeight: FontWeight.bold,
+                              //     ),
+                              //   ),
+                              //   subtitle: Text(
+                              //     '${f.format(item.fromDate).toString()} to ${f.format(item.toDate).toString()}',
+                              //     style: const TextStyle(
+                              //       color: Colors.white,
+                              //     ),
+                              //   ),
+                              //   trailing: IconButton(
+                              //     icon: const Icon(
+                              //       Icons.delete,
+                              //     ),
+                              //     onPressed: () {
+                              //       setState(
+                              //         () {
+                              //           ScheduleListTools.removeById(item.id);
+                              //         },
+                              //       );
+                              //     },
+                              //   ),
+                              // ),

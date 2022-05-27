@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:greenhouse/models/sensor.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:intl/intl.dart';
-import 'package:glassmorphism/glassmorphism.dart';
 
 class cardItem extends StatelessWidget {
   final String iconVar;
@@ -96,7 +95,7 @@ class CardContentItem extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('terdeteksi perubahan',
+                    const Text('Terdeteksi perubahan',
                         style: TextStyle(
                           fontSize: 9,
                           color: constant.CardLastChangeUpdateTextColor,
@@ -195,7 +194,7 @@ class LastChangeInfoWidget extends StatelessWidget {
     );
   }
 
-  final f = DateFormat('yyyy-MM-dd / hh:mm');
+  final f = DateFormat('yyyy-MM-dd  hh:mm');
 
   Widget dateTimeNowText() {
     final DateTime lastChange = DateTime.now();

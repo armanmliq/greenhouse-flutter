@@ -5,10 +5,8 @@ import 'package:greenhouse/widgets/items/grid_sensor.dart';
 import 'package:greenhouse/widgets/title/title_ppm.dart';
 
 import '../title/title_grafik.dart';
-import '../title/title_irigasi.dart';
 import '../title/title_jadwal_penyiraman.dart';
 import '../title/title_jadwal_ppm.dart';
-import '../title/title_spray.dart';
 import '../title/title_status_sensor.dart';
 
 class MainContent extends StatelessWidget {
@@ -35,16 +33,16 @@ class MainContent extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding:
-                  EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
-              child: Column(
-                children: const [
-                  TitleSetSoil(),
-                  SetSoil(),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding:
+            //       EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
+            //   child: Column(
+            //     children: const [
+            //       TitleSetSoil(),
+            //       SetSoil(),
+            //     ],
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -73,15 +71,15 @@ class MainContent extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding:
-                  EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
-              child: Column(
-                children: const [
-                  TitleSpray(),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding:
+            //       EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
+            //   child: Column(
+            //     children: const [
+            //       TitleSpray(),
+            //     ],
+            //   ),
+            // ),
             Padding(
               padding:
                   EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),

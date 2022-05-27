@@ -47,7 +47,7 @@ class SetParameterPpm extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         border: 2,
         borderRadius: constant.borderRadius,
-        height: 300,
+        height: 250,
         child: Row(
           children: const [
             SettingParameter(),
@@ -160,22 +160,22 @@ class SettingParameter extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.6,
-            color: constant.cardButtonColor,
-            child: TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: ((context) {
-                  return JadwalPpmScreen();
-                })));
-              },
-              child: const Text(
-                'Atur Jadwal',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
+          // Container(
+          //   width: MediaQuery.of(context).size.width * 0.6,
+          //   color: constant.cardButtonColor,
+          //   child: TextButton(
+          //     onPressed: () {
+          //       Navigator.of(context)
+          //           .push(MaterialPageRoute(builder: ((context) {
+          //         return JadwalPpmScreen();
+          //       })));
+          //     },
+          //     child: const Text(
+          //       'Atur Jadwal',
+          //       style: TextStyle(color: Colors.white),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
