@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:greenhouse/models/sensor.dart';
 import '../../constant/constant.dart' as constant;
-import '../../screens/jadwal_ppm.dart';
 import '../../services/ServiceFirebase.dart';
 import '../items/show_modal_bottom.dart';
 
@@ -114,7 +113,7 @@ class SettingParameter extends StatelessWidget {
             height: 10,
           ),
           const Text(
-            'Manual',
+            'MANUAL MODE',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -160,22 +159,6 @@ class SettingParameter extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          // Container(
-          //   width: MediaQuery.of(context).size.width * 0.6,
-          //   color: constant.cardButtonColor,
-          //   child: TextButton(
-          //     onPressed: () {
-          //       Navigator.of(context)
-          //           .push(MaterialPageRoute(builder: ((context) {
-          //         return JadwalPpmScreen();
-          //       })));
-          //     },
-          //     child: const Text(
-          //       'Atur Jadwal',
-          //       style: TextStyle(color: Colors.white),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
@@ -190,7 +173,7 @@ class TargetPpmWidget extends StatelessWidget {
   final String type;
   @override
   Widget build(BuildContext context) {
-    String label = type == 'set_ppm' ? 'target ppm' : 'mode control';
+    String label = type == 'set_ppm' ? 'target' : 'mode';
     String value = 'null';
     return StreamBuilder(
       stream: databaseRef.onValue,

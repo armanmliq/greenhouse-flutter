@@ -138,7 +138,7 @@ class SettingParameter extends StatelessWidget {
             height: 10,
           ),
           Text(
-            'PUMP PH UP',
+            'PH UP',
             style: TextStyle(
               color: Colors.white,
             ),
@@ -148,7 +148,7 @@ class SettingParameter extends StatelessWidget {
             height: 10,
           ),
           Text(
-            'PUMP PH DOWN',
+            'PH DOWN',
             style: TextStyle(
               color: Colors.white,
             ),
@@ -256,7 +256,7 @@ class TargetPhWidget extends StatelessWidget {
   final String type;
   @override
   Widget build(BuildContext context) {
-    String label = type == 'set_ph' ? 'target ph' : 'mode control';
+    String label = type == 'set_ph' ? 'target' : 'mode';
     String value = 'null';
     return StreamBuilder(
       stream: databaseRef.onValue,

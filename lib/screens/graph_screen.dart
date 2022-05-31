@@ -76,16 +76,16 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
             physics: NeverScrollableScrollPhysics(),
             children: [
               ChartBuilder(
-                SensorType: 'PH',
+                SensorType: 'ph',
               ),
               ChartBuilder(
-                SensorType: 'PPM',
+                SensorType: 'ppm',
               ),
               ChartBuilder(
-                SensorType: 'TEMPERATURE',
+                SensorType: 'temp',
               ),
               ChartBuilder(
-                SensorType: 'HUMIDITY',
+                SensorType: 'humidity',
               ),
             ],
           ),
@@ -132,7 +132,7 @@ class _ChartBuilderState extends State<ChartBuilder> {
           .then((DataSnapshot snapshot) {
         setState(() {
           dataFetch = snapshot.value as Map;
-          //print('>>>>>${widget.SensorType} >>>> $dataFetch');
+          // print('>>>>>${widget.SensorType} >>>> $dataFetch');
         });
         constant.grafikData = snapshot.value as Map;
       });
@@ -143,7 +143,6 @@ class _ChartBuilderState extends State<ChartBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    ///print('BEFORE PASS TO CONSTRUCTOR ${dataFetch}');
     return GraphWidget(
       dataFetch: dataFetch,
       SensorType: widget.SensorType,
@@ -168,70 +167,83 @@ double? findMax;
 double? findLow;
 
 class _GraphWidgetState extends State<GraphWidget> {
-  double findMaxNull = findMax ?? 0;
-  double findLowNull = findMax ?? 0;
+  double findMaxNull = 1000;
+  double findLowNull = 0;
   @override
   Widget build(BuildContext context) {
-    if (widget.dataFetch.isNotEmpty || true) {
-      SensorHistoryList = [];
+    SensorHistoryList = [];
+    Map _dataFetch = {};
+    switch (widget.SensorType) {
+      case 'ph':
+        findMaxNull = 13;
+        break;
+      case 'ppm':
+        findMaxNull = 2000;
+        break;
+      case 'humidity':
+        findMaxNull = 100;
+        break;
+      case 'temp':
+        findMaxNull = 80;
+        break;
+      default:
+    }
 
-      //SORT MAP KEYS (Base Timestamp)
-      var sortedKeys = widget.dataFetch.keys.toList()..sort();
-      var reverseKey = sortedKeys.reversed;
-      log('after ${sortedKeys.reversed}');
+    widget.dataFetch.forEach((key, value) {
+      _dataFetch[value['ts']] = value['value'].toString();
+    });
 
-      var sortedMap = {
-        for (var key in reverseKey) key: widget.dataFetch[key]!,
-      };
-      try {
-        //
-        if (sortedMap.isNotEmpty) {
-          sortedMap.forEach(
-            (k, v) {
-              DateTime localDate = DateTime.fromMillisecondsSinceEpoch(
-                int.parse(k) * 1000,
-              ).toLocal();
-              //add to graph list
-              try {
-                //add only current day
-                var dateGraph =
-                    DateTime.fromMillisecondsSinceEpoch(int.parse(k) * 1000);
-                final now = DateTime.now();
-                if (dateGraph.compareTo(now) == 0) {
-                  double value = 0;
-                  //print(localDate);
-                  try {
-                    double value = double.parse(v);
-                    // find max
-                    if (findMaxNull < value) {
-                      print('>>  ${value.runtimeType}');
-                      findMaxNull = value;
-                    }
-                    //Find Low
-                    if (findLowNull > value || findLowNull == 0) {
-                      findLowNull = value;
-                      print(findLowNull);
-                    }
-                  } catch (e) {
-                    // print('error double.parse(v)');
-                    return;
-                  }
-                  SensorHistoryList.add(
-                    SensorHistory(
-                      localDate,
-                      double.parse(v),
-                    ),
-                  );
-                }
-              } catch (er) {
-                //ERROR CATCH
+    //SORT MAP KEYS (Base Timestamp)
+    var sortedKeys = _dataFetch.keys.toList()..sort();
+    var reverseKey = sortedKeys.reversed;
+
+    var sortedMap = {
+      for (var key in reverseKey) key: _dataFetch[key]!,
+    };
+
+    try {
+      //
+      // log(sortedMap.toString());
+      final now = DateTime.now().toLocal();
+      log("print now $now");
+      if (sortedMap.isNotEmpty) {
+        sortedMap.forEach(
+          (k, v) {
+            DateTime localDate = DateTime.fromMillisecondsSinceEpoch(
+              k * 1000,
+            ).toLocal();
+
+            //add to graph list
+            try {
+              //add only current day
+              var dateGraph =
+                  DateTime.fromMillisecondsSinceEpoch(k * 1000).toLocal();
+
+              log("print dateGraph $dateGraph");
+              log("print compare ");
+              bool parsingOnlyLastDays = dateGraph.isAfter(
+                now.subtract(
+                  Duration(days: 1),
+                ),
+              );
+              if (parsingOnlyLastDays) {
+                double value = 0;
+                print(localDate);
+                SensorHistoryList.add(
+                  SensorHistory(
+                    localDate,
+                    double.parse(v),
+                  ),
+                );
               }
-            },
-          );
-        }
-      } catch (e) {
-        print(e);
+            } catch (er) {
+              //ERROR CATCH
+            }
+          },
+        );
       }
+    } catch (e) {
+      print(e);
     }
 
     if (SensorHistoryList.isEmpty) {
@@ -253,10 +265,12 @@ class _GraphWidgetState extends State<GraphWidget> {
               ),
               enableAxisAnimation: false,
               primaryXAxis: DateTimeAxis(
+                  intervalType: DateTimeIntervalType.auto,
+                  // maximumLabels: 20,
                   enableAutoIntervalOnZooming: true,
                   dateFormat: DateFormat.jms(),
                   borderColor: Colors.red,
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     color: Colors.white,
                   )),
               primaryYAxis: NumericAxis(
@@ -264,13 +278,13 @@ class _GraphWidgetState extends State<GraphWidget> {
                   maximum: findMaxNull == 0 ? 100 : findMaxNull,
                   majorTickLines: const MajorTickLines(size: 0),
                   labelAlignment: LabelAlignment.end,
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     color: Colors.white,
                   )),
               tooltipBehavior: TooltipBehavior(
                 enable: true,
               ),
-              plotAreaBackgroundColor: constant.cardButtonColor,
+              plotAreaBackgroundColor: Colors.white,
               borderColor: Colors.black,
               title: ChartTitle(
                 textStyle: const TextStyle(
@@ -286,14 +300,14 @@ class _GraphWidgetState extends State<GraphWidget> {
                   enableTooltip: true,
                   xAxisName: 'time',
                   yAxisName: '${widget.SensorType} ',
-                  color: Colors.white,
+                  color: Colors.black,
                   width: 2,
                   markerSettings: const MarkerSettings(
                     isVisible: true,
-                    color: Colors.black,
+                    color: Colors.blue,
                     shape: DataMarkerType.circle,
-                    height: 6,
-                    width: 6,
+                    height: 3,
+                    width: 3,
                   ),
                   dataSource: SensorHistoryList,
                   xValueMapper: (SensorHistory history, _) => history.unix,

@@ -119,7 +119,7 @@ class InitGrafik {
         .child('users')
         .child(constant.uid)
         .child("grafik")
-        .child('PPM');
+        .child('ph');
     return await PPM.get().then(
           // ignore: non_constant_identifier_names
           (DocumentSnapshot) => {
@@ -128,15 +128,6 @@ class InitGrafik {
                 print('initialize PPM not exist, CREATE ONE'),
                 PPM.set({
                   "1652776630": "237",
-                  "1652777530": "274",
-                  "1652778430": "389",
-                  "1652779330": "348",
-                  "1652780230": "262",
-                  "1652781130": "350",
-                  "1652782030": "273",
-                  "1652782930": "255",
-                  "1652783830": "253",
-                  "1652784730": "395",
                 }),
               }
             else
@@ -153,7 +144,7 @@ class InitGrafik {
         .child('users')
         .child(constant.uid)
         .child("grafik")
-        .child('PH');
+        .child('ph');
     return await PH.get().then(
           // ignore: non_constant_identifier_names
           (DocumentSnapshot) => {
@@ -162,14 +153,6 @@ class InitGrafik {
                 print('initialize PH not exist, CREATE ONE'),
                 PH.set({
                   "1652776630": "237",
-                  "1652777530": "274",
-                  "1652778430": "389",
-                  "1652779330": "348",
-                  "1652780230": "262",
-                  "1652781130": "350",
-                  "1652782030": "273",
-                  "1652782930": "255",
-                  "1652783830": "253",
                 }),
               }
             else
@@ -186,23 +169,15 @@ class InitGrafik {
         .child('users')
         .child(constant.uid)
         .child("grafik")
-        .child('TEMPERATURE');
+        .child('humidity');
     return await TEMPERATURE.get().then(
           // ignore: non_constant_identifier_names
           (DocumentSnapshot) => {
             if (!DocumentSnapshot.exists)
               {
-                print('initialize TEMPERATURE not exist, CREATE ONE'),
+                print('initialize humidity not exist, CREATE ONE'),
                 TEMPERATURE.set({
                   "1652790028": "5.1",
-                  "1652790088": "4.8",
-                  "1652790148": "4.7",
-                  "1652790208": "5.3",
-                  "1652790268": "4.5",
-                  "1652790328": "5.7",
-                  "1652790388": "5.3",
-                  "1652790448": "4.2",
-                  "1652790508": "5.4",
                 }),
               }
             else
@@ -219,7 +194,7 @@ class InitGrafik {
         .child('users')
         .child(constant.uid)
         .child("grafik")
-        .child('TEMPERATURE');
+        .child('temp');
     return await TEMPERATURE.get().then(
           // ignore: non_constant_identifier_names
           (DocumentSnapshot) => {
@@ -228,16 +203,6 @@ class InitGrafik {
                 print('initialize TEMPERATURE not exist, CREATE ONE'),
                 TEMPERATURE.set({
                   "1652790028": "5.1",
-                  "1652790088": "4.8",
-                  "1652790148": "4.7",
-                  "1652790208": "5.3",
-                  "1652790268": "4.5",
-                  "1652790328": "5.7",
-                  "1652790388": "5.3",
-                  "1652790448": "4.2",
-                  "1652790508": "5.4",
-                  "1652790568": "5.1",
-                  "1652790628": "20"
                 }),
               }
             else
