@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:greenhouse/screens/user_uid_info.dart';
 import 'package:greenhouse/widgets/items/open_drawer.dart';
 import '../widgets/items/clip_shadow_path.dart';
 import '../widgets/items/main_content.dart';
@@ -54,7 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               color: Colors.white,
               onPressed: () {
-                /////////////////////////
+                // uid info
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: ((context) => UidInfoScreen())));
               },
               icon: const Icon(Icons.person),
             )

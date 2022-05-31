@@ -167,24 +167,26 @@ double? findMax;
 double? findLow;
 
 class _GraphWidgetState extends State<GraphWidget> {
-  double findMaxNull = 1000;
-  double findLowNull = 0;
+  double maxXAxis = 1000;
+  double minXAxis = 0;
+  double maxVal = 0;
+  double minVal = 0;
   @override
   Widget build(BuildContext context) {
     SensorHistoryList = [];
     Map _dataFetch = {};
     switch (widget.SensorType) {
       case 'ph':
-        findMaxNull = 13;
+        maxXAxis = 13;
         break;
       case 'ppm':
-        findMaxNull = 2000;
+        maxXAxis = 2000;
         break;
       case 'humidity':
-        findMaxNull = 100;
+        maxXAxis = 100;
         break;
       case 'temp':
-        findMaxNull = 80;
+        maxXAxis = 80;
         break;
       default:
     }
@@ -228,13 +230,27 @@ class _GraphWidgetState extends State<GraphWidget> {
               );
               if (parsingOnlyLastDays) {
                 double value = 0;
-                print(localDate);
-                SensorHistoryList.add(
-                  SensorHistory(
-                    localDate,
-                    double.parse(v),
-                  ),
-                );
+                try {
+                  value = double.parse(v);
+                  print(localDate);
+                  if (maxVal < value) {
+                    print('>>  ${value.runtimeType}');
+                    maxVal = value;
+                  }
+                  //Find Low
+                  if (minVal > value || minVal == 0) {
+                    minVal = value;
+                  }
+                  SensorHistoryList.add(
+                    SensorHistory(
+                      localDate,
+                      value,
+                    ),
+                  );
+                } catch (e) {
+                  print(e);
+                }
+                ;
               }
             } catch (er) {
               //ERROR CATCH
@@ -274,8 +290,8 @@ class _GraphWidgetState extends State<GraphWidget> {
                     color: Colors.white,
                   )),
               primaryYAxis: NumericAxis(
-                  minimum: findLowNull,
-                  maximum: findMaxNull == 0 ? 100 : findMaxNull,
+                  minimum: minXAxis,
+                  maximum: maxXAxis,
                   majorTickLines: const MajorTickLines(size: 0),
                   labelAlignment: LabelAlignment.end,
                   labelStyle: const TextStyle(
@@ -288,9 +304,9 @@ class _GraphWidgetState extends State<GraphWidget> {
               borderColor: Colors.black,
               title: ChartTitle(
                 textStyle: const TextStyle(
-                  fontSize: 12,
-                  fontStyle: FontStyle.normal,
-                ),
+                    fontSize: 12,
+                    fontStyle: FontStyle.normal,
+                    color: Colors.white),
                 text: 'Hari Ini',
               ),
               backgroundColor: constant.backgroundColor,
@@ -300,11 +316,11 @@ class _GraphWidgetState extends State<GraphWidget> {
                   enableTooltip: true,
                   xAxisName: 'time',
                   yAxisName: '${widget.SensorType} ',
-                  color: Colors.black,
+                  color: Colors.blue,
                   width: 2,
                   markerSettings: const MarkerSettings(
                     isVisible: true,
-                    color: Colors.blue,
+                    color: Colors.white,
                     shape: DataMarkerType.circle,
                     height: 3,
                     width: 3,
@@ -318,8 +334,7 @@ class _GraphWidgetState extends State<GraphWidget> {
             ),
           ),
         ),
-        TextHighLow(
-            maxVal: findMaxNull.toString(), minVal: findLowNull.toString())
+        TextHighLow(maxVal: maxVal.toString(), minVal: minVal.toString())
       ],
     );
   }
