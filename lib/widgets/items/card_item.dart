@@ -95,7 +95,7 @@ class CardContentItem extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Terdeteksi perubahan',
+                    const Text('Terdeteksi',
                         style: TextStyle(
                           fontSize: 9,
                           color: constant.CardLastChangeUpdateTextColor,
@@ -133,6 +133,7 @@ class ValueInfoWidget extends StatelessWidget {
     valuVar == 'null' ? isDataNotError = false : isDataNotError = true;
     if (isDataNotError) {
       Sensor().CheckAndSave(type, valuVar);
+      print('[ValueInfoWidget] $valuVar $type');
       return Text(
         valuVar,
         style: const TextStyle(
@@ -145,8 +146,8 @@ class ValueInfoWidget extends StatelessWidget {
       return FutureBuilder(
         future: sensor.ReadInternalDataOf(type),
         builder: (context, AsyncSnapshot<String> snapshot) {
+          print('[ValueInfoWidget > FutureBuilder] $type ::: ${snapshot.data}');
           if (snapshot.hasData) {
-            print('data value of $type ::: ${snapshot.data}');
             return Text(
               snapshot.data!,
               style: const TextStyle(
@@ -183,6 +184,7 @@ class LastChangeInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('[LastChangeInfoWidget] $type $valuVar');
     return FutureBuilder(
       future: Sensor().isDataDifferent(type, valuVar),
       builder: (context, AsyncSnapshot<bool> isDifferent) {
@@ -210,8 +212,8 @@ class LastChangeInfoWidget extends StatelessWidget {
     return FutureBuilder(
       future: Sensor().ReadInternalDataOf('${type}UpdateTime'),
       builder: (context, AsyncSnapshot<String> snapshot) {
+        print('[ReadInternalDataOf] ${snapshot.data} $type');
         if (snapshot.hasData && snapshot.data != 'null') {
-          print('>>>>>>>>>> snapDate ${snapshot.data}');
           final date = DateTime.parse(snapshot.data!);
           final text = f.format(date).toString();
           return Text(

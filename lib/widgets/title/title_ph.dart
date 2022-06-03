@@ -256,7 +256,7 @@ class TargetPhWidget extends StatelessWidget {
   final String type;
   @override
   Widget build(BuildContext context) {
-    String label = type == 'set_ph' ? 'target' : 'mode';
+    String label = type == 'set_ph' ? 'TARGET' : 'MODE';
     String value = 'null';
     return StreamBuilder(
       stream: databaseRef.onValue,
@@ -311,7 +311,8 @@ class BuildTargetPhWidget extends StatelessWidget {
           label,
           style: const TextStyle(
             color: constant.titleTextColor,
-            fontSize: 12,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
         Row(

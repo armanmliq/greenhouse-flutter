@@ -47,7 +47,7 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
         animationDuration: const Duration(milliseconds: 100),
         length: 4,
         child: Scaffold(
-          backgroundColor: constant.AppBarColor,
+          backgroundColor: constant.backgroundColor,
           appBar: AppBar(
             backgroundColor: constant.backgroundColor,
             bottom: const TabBar(
@@ -192,7 +192,11 @@ class _GraphWidgetState extends State<GraphWidget> {
     }
 
     widget.dataFetch.forEach((key, value) {
-      _dataFetch[value['ts']] = value['value'].toString();
+      try {
+        _dataFetch[value['ts']] = value['value'].toString();
+      } catch (e) {
+        print(e);
+      }
     });
 
     //SORT MAP KEYS (Base Timestamp)
@@ -204,7 +208,6 @@ class _GraphWidgetState extends State<GraphWidget> {
     };
 
     try {
-      //
       // log(sortedMap.toString());
       final now = DateTime.now().toLocal();
       log("print now $now");
@@ -300,7 +303,7 @@ class _GraphWidgetState extends State<GraphWidget> {
               tooltipBehavior: TooltipBehavior(
                 enable: true,
               ),
-              plotAreaBackgroundColor: Colors.white,
+              plotAreaBackgroundColor: Colors.white10,
               borderColor: Colors.black,
               title: ChartTitle(
                 textStyle: const TextStyle(
@@ -316,7 +319,7 @@ class _GraphWidgetState extends State<GraphWidget> {
                   enableTooltip: true,
                   xAxisName: 'time',
                   yAxisName: '${widget.SensorType} ',
-                  color: Colors.blue,
+                  color: Colors.white,
                   width: 2,
                   markerSettings: const MarkerSettings(
                     isVisible: true,

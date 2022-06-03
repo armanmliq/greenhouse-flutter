@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 double borderRadius = 5.0;
 
 const bgColor = Colors.blue;
-const backgroundColor = Color.fromARGB(255, 43, 144, 78);
-const palleteColor = Color.fromARGB(255, 11, 68, 11);
+const backgroundColor = Color.fromARGB(255, 7, 36, 18);
+const palleteColor = Color.fromARGB(255, 11, 43, 15);
 const titleTextColor = Colors.white;
 const secondTitleText = Colors.white70;
 const ColorHidup = Colors.blue;
 const ColorMati = Colors.blue;
 const AppBarColor = Color.fromARGB(255, 28, 49, 28);
-const cardColor = Color(0xFF243D25);
+const cardColor = Color.fromARGB(255, 15, 33, 15);
 const cardTitleColor = Colors.white70;
 const cardTextUnitColor = Colors.white;
 const GridValueTextColor = Colors.white;

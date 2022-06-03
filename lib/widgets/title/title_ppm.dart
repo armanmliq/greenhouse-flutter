@@ -46,7 +46,7 @@ class SetParameterPpm extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         border: 2,
         borderRadius: constant.borderRadius,
-        height: 250,
+        height: 300,
         child: Row(
           children: const [
             SettingParameter(),
@@ -110,7 +110,7 @@ class SettingParameter extends StatelessWidget {
           ),
           const TargetPpmWidget(type: 'set_mode_ppm'),
           const SizedBox(
-            height: 10,
+            height: 20,
           ),
           const Text(
             'MANUAL MODE',
@@ -119,6 +119,9 @@ class SettingParameter extends StatelessWidget {
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
+          ),
+          const SizedBox(
+            height: 10,
           ),
           const Text(
             'PPM UP',
@@ -173,7 +176,7 @@ class TargetPpmWidget extends StatelessWidget {
   final String type;
   @override
   Widget build(BuildContext context) {
-    String label = type == 'set_ppm' ? 'target' : 'mode';
+    String label = type == 'set_ppm' ? 'TARGET' : 'MODE';
     String value = 'null';
     return StreamBuilder(
       stream: databaseRef.onValue,
@@ -228,7 +231,8 @@ class BuildTargetPpmWidget extends StatelessWidget {
           label,
           style: const TextStyle(
             color: constant.titleTextColor,
-            fontSize: 12,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
         Row(

@@ -66,9 +66,13 @@ Future InitSensorStatus() async {
                 'ppm': "1000",
                 'tankLevel': "50",
                 'temperature': "20.0",
+                'temperatureWater': "20.0",
                 'sprayer_status': "MATI",
                 'pompa_status': "MATI",
                 'pompa_nutrisi_status': "MATI",
+                'pompaPhUpStatus': "MATI",
+                'pompaPhDownStatus': "MATI",
+                'pompaPenyiraman': "MATI",
               }),
             }
           else

@@ -58,6 +58,12 @@ class CardSensor extends StatelessWidget {
           isOnOff = MatiApaHidup(sensor.pompa_nutrisi_status.toString());
         } else if (type.contains("SPRAYER")) {
           isOnOff = MatiApaHidup(sensor.sprayer_status.toString());
+        } else if (type.contains("pompaPhUpStatus")) {
+          isOnOff = MatiApaHidup(sensor.pompaPhUpStatus.toString());
+        } else if (type.contains("pompaPhDownStatus")) {
+          isOnOff = MatiApaHidup(sensor.pompaPhDownStatus.toString());
+        } else if (type.contains("pompaPenyiraman")) {
+          isOnOff = MatiApaHidup(sensor.pompaPenyiraman.toString());
         } else {
           isControl = false;
         }
@@ -145,6 +151,14 @@ class CardContent extends StatelessWidget {
       valuVar = sensor.pompa_status.toString();
     } else if (type == 'temperature') {
       valuVar = sensor.temperature.toString();
+    } else if (type == 'pompaPhUpStatus') {
+      valuVar = sensor.pompaPhUpStatus.toString();
+    } else if (type == 'pompaPhDownStatus') {
+      valuVar = sensor.pompaPhDownStatus.toString();
+    } else if (type == 'pompaPenyiraman') {
+      valuVar = sensor.pompaPenyiraman.toString();
+    } else if (type == 'temperatureWater') {
+      valuVar = sensor.temperatureWater.toString();
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

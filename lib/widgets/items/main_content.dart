@@ -33,16 +33,6 @@ class MainContent extends StatelessWidget {
                 ],
               ),
             ),
-            // Padding(
-            //   padding:
-            //       EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
-            //   child: Column(
-            //     children: const [
-            //       TitleSetSoil(),
-            //       SetSoil(),
-            //     ],
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -71,15 +61,6 @@ class MainContent extends StatelessWidget {
                 ],
               ),
             ),
-            // Padding(
-            //   padding:
-            //       EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
-            //   child: Column(
-            //     children: const [
-            //       TitleSpray(),
-            //     ],
-            //   ),
-            // ),
             Padding(
               padding:
                   EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),

@@ -55,7 +55,8 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
                     BorderRadius.all(Radius.circular(constant.borderRadius)),
                 color: constant.ColorMati,
               ),
-              child: TextButton(
+              child: TextButton.icon(
+                icon: Icon(Icons.timer, color: Colors.white),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -65,10 +66,10 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
                     ),
                   );
                 },
-                child: const Align(
+                label: const Align(
                   alignment: Alignment.bottomCenter,
                   child: Text(
-                    'Atur jadwal',
+                    'setting',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

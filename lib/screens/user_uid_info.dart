@@ -13,14 +13,24 @@ class UidInfoScreen extends StatelessWidget {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Your ID:',
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(
+                fontSize: 30,
+                color: Colors.white,
+              ),
             ),
             SizedBox(
               height: 12,
             ),
-            Center(child: SelectableText(constant.uid)),
+            Center(
+              child: SelectableText(
+                constant.uid,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ],
         ),
       ),

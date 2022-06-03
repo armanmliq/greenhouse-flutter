@@ -335,11 +335,11 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: const Color.fromARGB(255, 65, 57, 57),
+        backgroundColor: backgroundColor,
         appBar: AppBar(
           backgroundColor: backgroundColor,
           title: const Center(
-            child: Text('ATUR JADWAL PPM'),
+            child: Text('JADWAL PPM NUTRISI'),
           ),
         ),
         floatingActionButton: FloatingActionButton(
@@ -359,86 +359,63 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
           builder: (context, snapshot) {
             Sensor sensor = Sensor.fromSnapshotSchedulerPpm(snapshot);
             if (snapshot.hasData) {}
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: ListTile.divideTiles(
-                      color: Colors.deepPurple,
-                      tiles: ListOfSchedule.map(
-                        (item) => Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: Card(
-                            color: Colors.black12,
-                            child: ListTile(
-                              title: Container(
-                                color: Colors.green,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${item.ppm.toString()} PPM',
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${item.toDate.difference(item.fromDate).inDays + 1} Hari',
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: ListTile.divideTiles(
+                  color: Colors.deepPurple,
+                  tiles: ListOfSchedule.map(
+                    (item) => Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Card(
+                        color: Colors.black12,
+                        child: ListTile(
+                          title: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${item.ppm.toString()} PPM',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ),
-                              // title: Text(
-                              //   'PPM = ${item.ppm.toString()}',
-                              //   style: const TextStyle(
-                              //     color: Colors.grey,
-                              //     fontWeight: FontWeight.bold,
-                              //   ),
-                              // ),
-                              leading: const Icon(
-                                Icons.list,
-                                color: Colors.green,
-                              ),
-                              subtitle: Text(
-                                '${f.format(item.fromDate).toString()} To ${f.format(item.toDate).toString()}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.green,
-                                ),
-                                onPressed: () {
-                                  setState(
-                                    () {
-                                      ScheduleListTools.removeById(item.id);
-                                    },
-                                  );
-                                },
-                              ),
+                              ],
                             ),
+                          ),
+                          leading: Text(
+                            '${ListOfSchedule.indexOf(item) + 1}',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '${f.format(item.fromDate).toString()} To ${f.format(item.toDate).toString()}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              setState(
+                                () {
+                                  ScheduleListTools.removeById(item.id);
+                                },
+                              );
+                            },
                           ),
                         ),
                       ),
-                    ).toList(),
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
+                ).toList(),
+              ),
             );
           },
         ),
@@ -446,43 +423,3 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
     );
   }
 }
-
-                              // child: ListTile(
-                              //   leading: Container(
-                              //     color: Colors.green,
-                              //     child: Padding(
-                              //       padding: const EdgeInsets.all(3.0),
-                              //       child: Text(
-                              //         'Durasi \n${item.toDate.difference(item.fromDate).inDays + 1} Hari',
-                              //         style: const TextStyle(
-                              //           color: Colors.black,
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              //   title: Text(
-                              //     'PPM = ${item.ppm.toString()}',
-                              //     style: const TextStyle(
-                              //       color: Colors.grey,
-                              //       fontWeight: FontWeight.bold,
-                              //     ),
-                              //   ),
-                              //   subtitle: Text(
-                              //     '${f.format(item.fromDate).toString()} to ${f.format(item.toDate).toString()}',
-                              //     style: const TextStyle(
-                              //       color: Colors.white,
-                              //     ),
-                              //   ),
-                              //   trailing: IconButton(
-                              //     icon: const Icon(
-                              //       Icons.delete,
-                              //     ),
-                              //     onPressed: () {
-                              //       setState(
-                              //         () {
-                              //           ScheduleListTools.removeById(item.id);
-                              //         },
-                              //       );
-                              //     },
-                              //   ),
-                              // ),

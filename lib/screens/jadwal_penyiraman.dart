@@ -214,8 +214,9 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
           },
           child: const Icon(Icons.add),
         ),
-        backgroundColor: const Color.fromARGB(255, 65, 57, 57),
+        backgroundColor: backgroundColor,
         appBar: AppBar(
+          backgroundColor: backgroundColor,
           title: const Text('Schedule Penyiraman'),
           actions: [],
         ),
@@ -267,17 +268,19 @@ class _ItemListState extends State<ItemList> {
                       'Time \n${item.TimeOfDay.toString().substring(10, 15)}';
                   final String LamaPenyiraman =
                       'Durasi \n${item.LamaPenyiraman} Menit';
+                  final _index = ListJadwalPenyiraman.indexOf(item);
+                  print('[indexMapJadwalPenyiraman] ${_index + 1}');
                   return Card(
                     color: Colors.black12,
                     child: ListTile(
                       leading: Container(
                         color: backgroundColor,
                         child: Padding(
-                          padding: const EdgeInsets.all(3.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
                             waktu,
                             style: const TextStyle(
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -299,8 +302,7 @@ class _ItemListState extends State<ItemList> {
                         onPressed: () {
                           setState(
                             () {
-                              ListJadwalPenyiraman.removeWhere(
-                                  (element) => element.id == item.id);
+                              JadwalPenyiramanTools.removeById(item.id);
                             },
                           );
                         },

@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:greenhouse/models/jadwal_penyiraman.dart';
 import 'package:greenhouse/services/connectivity.dart';
@@ -43,6 +44,14 @@ class Sensor with ChangeNotifier {
   String? set_mode_irigasi;
   String? scheduler_ppm_str;
   String? scheduler_jadwal_penyiraman;
+  String? pompaPhUpStatus;
+  String? pompaPhUpStatusUpdateTime;
+  String? pompaPhDownStatus;
+  String? pompaPhDownStatusUpdateTime;
+  String? pompaPenyiraman;
+  String? pompaPenyiramanUpdateTime;
+  String? temperatureWater;
+  String? temperatureWaterUpdateTime;
 
   List<ScheduleItem>? list_scheduler_ppm;
   List<JadwalPenyiraman>? list_scheduler_Jadwal_penyiraman;
@@ -142,6 +151,30 @@ class Sensor with ChangeNotifier {
     if (type == 'scheduler_jadwal_penyiraman') {
       value = await ReadSensor(type);
     }
+    if (type == 'pompaPhUpStatus') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'pompaPhDownStatus') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'pompaPhUpStatusUpdateTime') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'pompaPhDownStatusUpdateTime') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'pompaPenyiramanUpdateTime') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'pompaPenyiraman') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'temperatureWater') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'temperatureWaterUpdateTime') {
+      value = await ReadSensor(type);
+    }
     return value.toString();
   }
 
@@ -221,6 +254,37 @@ class Sensor with ChangeNotifier {
           } else {
             ReadInternalDataOf('pompa_status').then((value) {
               pompa_status = value;
+            });
+          }
+          if (data['pompaPhUpStatus'] != null) {
+            pompaPhUpStatus = data['pompaPhUpStatus'].toString();
+          } else {
+            ReadInternalDataOf('pompaPhUpStatus').then((value) {
+              pompaPhUpStatus = value;
+            });
+          }
+          if (data['pompaPhDownStatus'] != null) {
+            log(data['pompaPhDownStatus']);
+            pompaPhDownStatus = data['pompaPhDownStatus'].toString();
+          } else {
+            ReadInternalDataOf('pompaPhDownStatus').then((value) {
+              pompaPhDownStatus = value;
+            });
+          }
+          if (data['pompaPenyiraman'] != null) {
+            log(data['pompaPenyiraman']);
+            pompaPenyiraman = data['pompaPenyiraman'].toString();
+          } else {
+            ReadInternalDataOf('pompaPenyiraman').then((value) {
+              pompaPenyiraman = value;
+            });
+          }
+          if (data['temperatureWater'] != null) {
+            log(data['temperatureWater']);
+            temperatureWater = data['temperatureWater'].toString();
+          } else {
+            ReadInternalDataOf('temperatureWater').then((value) {
+              temperatureWater = value;
             });
           }
         } catch (e) {
@@ -406,19 +470,21 @@ class Sensor with ChangeNotifier {
       (valueFromInternal) {
         CheckInternet().then(
           (value) {
-            print('saving $typeSensor proccess... ');
+            print('[CheckAndSave] saving $typeSensor proccess... ');
             if (valueFromInternal != valueSensor && valueSensor != 'null') {
               InternalPreferences().SaveSensor(typeSensor, valueSensor);
-              print('success saving $typeSensor..');
+              print('[CheckAndSave] success saving $typeSensor..');
               if (!typeSensor.contains('mode') &&
                   !typeSensor.contains('set_') &&
                   !typeSensor.contains('scheduler')) {
                 InternalPreferences().SaveSensor('${typeSensor}UpdateTime',
                     DateTime.now().toIso8601String());
-                print('success saving $typeSensor.. and update time');
+                print('[saving time] update time $typeSensor.. ');
+              } else {
+                print('[CheckAndSave] !contain');
               }
             } else {
-              print('$typeSensor avoid saving...');
+              print('[CheckAndSave] $typeSensor avoid saving...');
             }
           },
         );
@@ -448,13 +514,13 @@ class Sensor with ChangeNotifier {
   }
 
   void clearToUpdate(String SensorType) {
-    if (SensorType == 'PH') {
+    if (SensorType == 'ph') {
       GrafikPh = {};
-    } else if (SensorType == 'TEMPERATURE') {
+    } else if (SensorType == 'temp') {
       GrafikTemp = {};
-    } else if (SensorType == 'KELEMBAPAN') {
+    } else if (SensorType == 'humidity') {
       GrafikHumidity = {};
-    } else if (SensorType == 'PPM') {
+    } else if (SensorType == 'ppm') {
       GrafikPpm = {};
     }
   }
@@ -470,13 +536,13 @@ class Sensor with ChangeNotifier {
       print('error $SensorType reading HashMap');
     }
     //print(map);
-    if (SensorType == 'PH') {
+    if (SensorType == 'ph') {
       GrafikPh.addAll(map);
-    } else if (SensorType == 'TEMPERATURE') {
+    } else if (SensorType == 'temp') {
       GrafikTemp.addAll(map);
-    } else if (SensorType == 'KELEMBAPAN') {
+    } else if (SensorType == 'humidity') {
       GrafikHumidity.addAll(map);
-    } else if (SensorType == 'PPM') {
+    } else if (SensorType == 'ppm') {
       GrafikPpm.addAll(map);
     }
   }
