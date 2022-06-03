@@ -221,6 +221,119 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
     }
   }
 
+  void showDialogInput() {
+    String _targetPpm = '';
+    var alert = AlertDialog(
+      backgroundColor: backgroundColor,
+      title: const Text(
+        "Berapa target ppm? \nmaximum ${maxPpm}",
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+      content: Container(
+        color: backgroundColor,
+        height: 130,
+        child: Column(
+          children: [
+            TextField(
+              style: TextStyle(
+                color: Colors.white,
+              ),
+              keyboardType: TextInputType.number,
+              maxLines: 1,
+              autofocus: false,
+              enabled: true,
+              onChanged: (value) {
+                _targetPpm = value;
+              },
+              decoration: InputDecoration(
+                errorStyle: const TextStyle(color: Colors.redAccent),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: const Icon(
+                  Icons.confirmation_num,
+                  color: Colors.white,
+                  size: 18.0,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (_targetPpm.contains(',') || _targetPpm.contains('.')) {
+                      BotToast.showText(text: 'ppm tidak boleh decimal');
+                      return;
+                    }
+                    if (double.parse(_targetPpm) > maxPpm) {
+                      BotToast.showText(text: 'ppm harus dibawah $maxPpm');
+                    } else {
+                      setState(() {
+                        ScheduleListTools.addScheduleItem(
+                          DateTime.now().toString(),
+                          fromDate!,
+                          toDate!,
+                          _targetPpm,
+                        );
+                      });
+                    }
+                    print('Get $_targetPpm');
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return alert;
+      },
+    );
+  }
+
   void ShowDateTimePicker() {
     showDialog(
       context: context,
@@ -250,7 +363,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                             BotToast.showText(
                                 text: 'waktu ditambahkan, masukan ppm');
                             Navigator.pop(context);
-                            ShowInputPpm();
+                            showDialogInput();
                           } else {
                             BotToast.showText(text: 'Gagal menambah waktu');
                             Navigator.pop(context);
@@ -272,57 +385,6 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void ShowInputPpm() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        int maxPpm = 1300;
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Dialog(
-            child: SizedBox(
-              width: 150,
-              height: 100,
-              child: Center(
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    label: Text('Masukan ppm (maksimal $maxPpm)'),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  onSubmitted: (value) {
-                    if (value.contains(',') || value.contains('.')) {
-                      return;
-                    }
-                    if (double.parse(value) > maxPpm) {
-                      BotToast.showText(
-                          text: 'gagal menambahkan, ppm harus dibawah $maxPpm');
-                    } else {
-                      setState(() {
-                        ScheduleListTools.addScheduleItem(
-                          DateTime.now().toString(),
-                          fromDate!,
-                          toDate!,
-                          value,
-                        );
-                      });
-                    }
-                    print('Get $value');
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
             ),
           ),
         );

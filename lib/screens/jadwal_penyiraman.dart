@@ -136,58 +136,108 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
   Widget build(BuildContext context) {
     void _onChange(ToD) {
       print(ToD);
-
+      String number_input = '';
       var alert = AlertDialog(
-        title: const Text("Berapa menit lama penyiraman? maks 60 min"),
-        content: TextField(
-          keyboardType: TextInputType.number,
-          maxLines: 1,
-          autofocus: false,
-          enabled: true,
-          onSubmitted: (String value) {
-            int? number_input;
-            try {
-              number_input = int.parse(value);
-            } catch (e) {
-              BotToast.showText(text: 'Gagal');
-              return;
-            }
-            if (number_input > 60) {
-              BotToast.showText(text: 'Gagal, maksimal 60 min');
-            } else {
-              JadwalPenyiramanTools.addJadwalPenyiraman(
-                DateTime.now().toString(),
-                number_input.toString(),
-                ToD.toString(),
-              );
-            }
-            Navigator.of(context, rootNavigator: true).pop();
-          },
-          controller: textControl,
-          decoration: InputDecoration(
-            errorStyle: const TextStyle(color: Colors.redAccent),
-            border: UnderlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromRGBO(40, 40, 40, 1.0),
+        backgroundColor: backgroundColor,
+        title: const Text(
+          "Berapa lama penyiraman aktif?\nmaksimum 60 min",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: Container(
+          color: backgroundColor,
+          height: 130,
+          child: Column(
+            children: [
+              TextField(
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+                keyboardType: TextInputType.number,
+                maxLines: 1,
+                autofocus: false,
+                enabled: true,
+                onChanged: (String value) {
+                  number_input = value;
+                },
+                onSubmitted: (String value) {
+                  number_input = value;
+                },
+                controller: textControl,
+                decoration: InputDecoration(
+                  errorStyle: const TextStyle(color: Colors.redAccent),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.confirmation_num,
+                    color: Colors.white,
+                    size: 18.0,
+                  ),
+                ),
               ),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromRGBO(40, 40, 40, 1.0),
-              ),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            disabledBorder: UnderlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromRGBO(40, 40, 40, 1.0),
-              ),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            prefixIcon: const Icon(
-              Icons.timelapse,
-              size: 18.0,
-            ),
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'CANCEL',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      int? number;
+                      String numberStr = textControl.text;
+                      try {
+                        number = int.parse(numberStr);
+                      } catch (e) {
+                        BotToast.showText(text: 'Gagal');
+                        return;
+                      }
+                      if (number > 60) {
+                        BotToast.showText(text: 'maximum 60 min');
+                      } else {
+                        JadwalPenyiramanTools.addJadwalPenyiraman(
+                          DateTime.now().toString(),
+                          number.toString(),
+                          ToD.toString(),
+                        );
+                        BotToast.showText(text: 'menambahkan..');
+                      }
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              )
+            ],
           ),
         ),
       );

@@ -236,7 +236,7 @@ class BuildTargetPpmWidget extends StatelessWidget {
         ),
         content: Container(
           color: constant.backgroundColor,
-          height: 100,
+          height: 130,
           child: Column(
             children: [
               TextField(
@@ -256,28 +256,31 @@ class BuildTargetPpmWidget extends StatelessWidget {
                 ),
                 decoration: InputDecoration(
                   errorStyle: const TextStyle(color: Colors.redAccent),
-                  border: UnderlineInputBorder(
+                  border: OutlineInputBorder(
                     borderSide: const BorderSide(
                       color: Colors.white,
+                      width: 3,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  focusedBorder: UnderlineInputBorder(
+                  enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
                       color: Colors.white,
+                      width: 3,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  disabledBorder: UnderlineInputBorder(
+                  focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
                       color: Colors.white,
+                      width: 3,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   prefixIcon: const Icon(
-                    Icons.confirmation_number_sharp,
-                    size: 18.0,
+                    Icons.confirmation_num,
                     color: Colors.white,
+                    size: 18.0,
                   ),
                 ),
               ),
