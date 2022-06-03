@@ -19,6 +19,8 @@ const cardButtonColor = Color(0xff243D25);
 const BackgroundCardButtonColor = Color.fromARGB(255, 50, 92, 51);
 const graphPlotAreadColor = Color.fromARGB(255, 50, 92, 51);
 const borderRadiusGlass = 5.0;
+const maxPh = 12;
+const maxPpm = 1200;
 
 Color shadowColor = Colors.black;
 double? height;

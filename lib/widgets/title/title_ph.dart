@@ -310,7 +310,7 @@ class BuildTargetPhWidget extends StatelessWidget {
       var alert = AlertDialog(
         backgroundColor: constant.backgroundColor,
         title: const Text(
-          "Berapa target ph?",
+          "Berapa target ph? \n maximum ${constant.maxPh}",
           style: TextStyle(
             color: Colors.white,
           ),
