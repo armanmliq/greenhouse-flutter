@@ -29,10 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: constant.backgroundColor,
         key: _key,
         appBar: AppBar(
-          shadowColor: constant.shadowColor,
           elevation: 2,
           automaticallyImplyLeading: false,
-          backgroundColor: constant.AppBarColor,
+          backgroundColor: constant.backgroundColor,
           title: Row(
             children: [
               IconButton(

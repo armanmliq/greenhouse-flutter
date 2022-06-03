@@ -95,9 +95,9 @@ class CardContentItem extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Terdeteksi',
+                    const Text('update',
                         style: TextStyle(
-                          fontSize: 9,
+                          fontSize: 11,
                           color: constant.CardLastChangeUpdateTextColor,
                         )),
                     //build lastchange info widget
@@ -204,7 +204,7 @@ class LastChangeInfoWidget extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-          fontSize: 9, color: constant.CardLastChangeUpdateTextColor),
+          fontSize: 10, color: constant.CardLastChangeUpdateTextColor),
     );
   }
 
@@ -219,7 +219,7 @@ class LastChangeInfoWidget extends StatelessWidget {
           return Text(
             text,
             style: const TextStyle(
-              fontSize: 9,
+              fontSize: 11,
               color: constant.CardLastChangeUpdateTextColor,
             ),
           );

@@ -58,7 +58,6 @@ Future InitSensorStatus() async {
         (DocumentSnapshot) => {
           if (!DocumentSnapshot.exists)
             {
-              // ignore: avoid_print
               print('initialize sensor_status not exist, CREATE ONE'),
               sensor.set({
                 'humidity': "50",

@@ -135,6 +135,8 @@ class AuthService with ChangeNotifier {
     await _auth.signOut();
     final prefs = await SharedPreferences.getInstance();
     final decodedData = prefs.remove('userUid');
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.clear();
     notifyListeners();
   }
   //--------------------------------------------------

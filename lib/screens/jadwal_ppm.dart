@@ -401,7 +401,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
         appBar: AppBar(
           backgroundColor: backgroundColor,
           title: const Center(
-            child: Text('JADWAL PPM NUTRISI'),
+            child: Text('Jadwal Nutrisi'),
           ),
         ),
         floatingActionButton: FloatingActionButton(

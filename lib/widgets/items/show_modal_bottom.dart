@@ -85,10 +85,7 @@ class InputDialog {
 
   static void validateVal(String type, String value, BuildContext context) {
     isValidate = false;
-    const maxPpm = 1300;
-    const maxHumidity = 100;
-    const maxPh = 14;
-    const maxMoisture = 100;
+
     print('validate $type');
     if (value.isEmpty) return;
     try {
