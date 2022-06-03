@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
@@ -291,7 +292,7 @@ class TargetPhWidget extends StatelessWidget {
 }
 
 class BuildTargetPhWidget extends StatelessWidget {
-  const BuildTargetPhWidget({
+  BuildTargetPhWidget({
     Key? key,
     required this.label,
     required this.type,
@@ -301,9 +302,109 @@ class BuildTargetPhWidget extends StatelessWidget {
   final String label;
   final String type;
   final String value;
-
+  final textControl = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    void showDialogInput() {
+      String _targetPh = '';
+      var alert = AlertDialog(
+        backgroundColor: constant.backgroundColor,
+        title: const Text(
+          "Berapa target ph?",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: Container(
+          color: constant.backgroundColor,
+          height: 100,
+          child: Column(
+            children: [
+              TextField(
+                keyboardType: TextInputType.number,
+                maxLines: 1,
+                autofocus: false,
+                enabled: true,
+                onChanged: (String value) {
+                  _targetPh = value;
+                },
+                onSubmitted: (String value) {
+                  print('submitted');
+                  _targetPh = value;
+                },
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+                controller: textControl,
+                decoration: InputDecoration(
+                  errorStyle: const TextStyle(color: Colors.redAccent),
+                  border: UnderlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  disabledBorder: UnderlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.confirmation_number_sharp,
+                    size: 18.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: Text(
+                      'CANCEL',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      print(' _targetPh  $_targetPh');
+                      InputDialog.validateVal(type, _targetPh, context);
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return alert;
+        },
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -324,7 +425,7 @@ class BuildTargetPhWidget extends StatelessWidget {
               child: TextButton(
                 onPressed: () {
                   if (type == 'set_ph') {
-                    InputDialog.showModalInput(context, type);
+                    showDialogInput();
                   } else {
                     InputDialog.validateVal(type, value, context);
                   }
