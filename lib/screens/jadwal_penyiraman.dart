@@ -49,14 +49,13 @@ class JadwalPenyiramanTools {
         } catch (e) {
           print(e);
         }
-        List<DateTime> getBlackedList = [];
         final sch = ListJadwalPenyiramanFromToJson.fromJson(mapData);
         final schData = sch.data!;
         ListJadwalPenyiraman.clear();
         for (var i in schData) {
           ListJadwalPenyiraman.add(
             JadwalPenyiraman(
-              id: DateTime.now().toString(),
+              id: i.id.toString(),
               LamaPenyiraman: i.LamaPenyiraman.toString(),
               TimeOfDay: i.TimeOfDay.toString(),
             ),
@@ -151,7 +150,7 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
           child: Column(
             children: [
               TextField(
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                 ),
                 keyboardType: TextInputType.number,
@@ -222,7 +221,7 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
                         BotToast.showText(text: 'maximum 60 min');
                       } else {
                         JadwalPenyiramanTools.addJadwalPenyiraman(
-                          DateTime.now().toString(),
+                          (ListJadwalPenyiraman.length + 1).toString(),
                           number.toString(),
                           ToD.toString(),
                         );
@@ -314,12 +313,21 @@ class _ItemListState extends State<ItemList> {
               color: Colors.deepPurple,
               tiles: ListJadwalPenyiraman.map(
                 (item) {
-                  final String waktu =
-                      'Time \n${item.TimeOfDay.toString().substring(10, 15)}';
-                  final String LamaPenyiraman =
-                      'Durasi \n${item.LamaPenyiraman} Menit';
-                  final _index = ListJadwalPenyiraman.indexOf(item);
-                  print('[indexMapJadwalPenyiraman] ${_index + 1}');
+                  String waktu = '';
+                  String LamaPenyiraman = '';
+                  int _index = 0;
+                  try {
+                    waktu =
+                        'Time \n${item.TimeOfDay.toString().substring(10, 15)}';
+                  } catch (e) {}
+                  try {
+                    LamaPenyiraman = 'Durasi \n${item.LamaPenyiraman} Menit';
+                  } catch (e) {}
+                  try {
+                    _index = ListJadwalPenyiraman.indexOf(item);
+                    print('[indexMapJadwalPenyiraman] ${_index + 1}');
+                  } catch (e) {}
+
                   return Card(
                     color: Colors.black12,
                     child: ListTile(

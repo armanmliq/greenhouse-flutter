@@ -22,7 +22,7 @@ initializeAccount() async {
       }
 
       try {
-        InitGrafik().InitGrafikPH();
+        InitGrafik().InitGrafikPh();
       } catch (er) {
         print('erPH $er');
       }
@@ -38,6 +38,11 @@ initializeAccount() async {
       }
       try {
         InitGrafik().InitGrafikHumidity();
+      } catch (er) {
+        print('erHUMIDITY $er');
+      }
+      try {
+        InitGrafik().InitGrafikWaterTemp();
       } catch (er) {
         print('erHUMIDITY $er');
       }
@@ -105,6 +110,7 @@ Future InitSetParameter() async {
                 'set_mode_irigasi': 'manual',
                 'scheduler_ppm_str': '[]',
                 'scheduler_irigasi': '[]',
+                'waterTemp': "50",
               }),
             }
           else
@@ -141,26 +147,26 @@ class InitGrafik {
         );
   }
 
-  Future InitGrafikPH() async {
-    final PH = FirebaseDatabase.instance
+  Future InitGrafikPh() async {
+    final _ph = FirebaseDatabase.instance
         .ref()
         .child('users')
         .child(constant.uid)
         .child("grafik")
         .child('ph');
-    return await PH.get().then(
+    return await _ph.get().then(
           // ignore: non_constant_identifier_names
           (DocumentSnapshot) => {
             if (!DocumentSnapshot.exists)
               {
-                print('initialize PH not exist, CREATE ONE'),
-                PH.set({
-                  "1652776630": "237",
+                print('initialize humidity not exist, CREATE ONE'),
+                _ph.set({
+                  "1652790028": "5.1",
                 }),
               }
             else
               {
-                print('initialize PH data EXIST'),
+                print('initialize TEMPERATURE data EXIST'),
               }
           },
         );
@@ -211,6 +217,31 @@ class InitGrafik {
             else
               {
                 print('initialize TEMPERATURE data EXIST'),
+              }
+          },
+        );
+  }
+
+  Future InitGrafikWaterTemp() async {
+    final waterTemp = FirebaseDatabase.instance
+        .ref()
+        .child('users')
+        .child(constant.uid)
+        .child("grafik")
+        .child('waterTemp');
+    return await waterTemp.get().then(
+          // ignore: non_constant_identifier_names
+          (DocumentSnapshot) => {
+            if (!DocumentSnapshot.exists)
+              {
+                print('initialize waterTemp not exist, CREATE ONE'),
+                waterTemp.set({
+                  "1652790028": "5.1",
+                }),
+              }
+            else
+              {
+                print('initialize v data EXIST'),
               }
           },
         );

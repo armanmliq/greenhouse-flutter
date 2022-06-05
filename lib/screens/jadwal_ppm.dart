@@ -116,7 +116,6 @@ class ScheduleListTools {
   }
 
   static void addScheduleItem(
-    String id,
     DateTime fromDate,
     DateTime toDate,
     String ppm,
@@ -131,7 +130,7 @@ class ScheduleListTools {
           ListOfSchedule.add(
             ScheduleItem(
               fromDate: fromDate,
-              id: id,
+              id: (ListOfSchedule.length + 1).toString(),
               toDate: toDate,
               ppm: ppm,
               blackedListItem: getBlackedList,
@@ -237,7 +236,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
         child: Column(
           children: [
             TextField(
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
               ),
               keyboardType: TextInputType.number,
@@ -302,7 +301,6 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                     } else {
                       setState(() {
                         ScheduleListTools.addScheduleItem(
-                          DateTime.now().toString(),
                           fromDate!,
                           toDate!,
                           _targetPpm,
@@ -449,7 +447,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                           ),
                           leading: Text(
                             '${ListOfSchedule.indexOf(item) + 1}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                             ),
                           ),

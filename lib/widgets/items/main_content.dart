@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
+import 'package:greenhouse/services/notification.dart';
 import 'package:greenhouse/widgets/title/title_ph.dart';
 import 'package:greenhouse/widgets/items/grid_sensor.dart';
 import 'package:greenhouse/widgets/title/title_ppm.dart';
@@ -79,6 +80,12 @@ class MainContent extends StatelessWidget {
                 ],
               ),
             ),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamed(notificaationScreen.routeName);
+                },
+                child: Text('notif screen'))
           ],
         ),
       ),

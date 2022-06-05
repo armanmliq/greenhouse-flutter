@@ -57,16 +57,19 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
               automaticIndicatorColorAdjustment: true,
               tabs: [
                 Tab(
-                  text: 'PH',
+                  text: 'pH',
                 ),
                 Tab(
                   text: 'PPM',
                 ),
                 Tab(
-                  text: 'SUHU',
+                  text: 'temp room',
                 ),
                 Tab(
-                  text: 'HUMID',
+                  text: 'humid room',
+                ),
+                Tab(
+                  text: 'temp air',
                 ),
               ],
             ),
@@ -87,11 +90,13 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
               ChartBuilder(
                 SensorType: 'humidity',
               ),
+              ChartBuilder(
+                SensorType: 'waterTemp',
+              ),
             ],
           ),
         ),
       ),
-      //  body: GraphWidget(chartData: chartData),
     );
   }
 }
@@ -109,7 +114,6 @@ class ChartBuilder extends StatefulWidget {
 }
 
 class _ChartBuilderState extends State<ChartBuilder> {
-  int timestamp1 = DateTime.now().millisecondsSinceEpoch;
   Map dataFetch = {};
   @override
   void initState() {
@@ -211,6 +215,7 @@ class _GraphWidgetState extends State<GraphWidget> {
       // log(sortedMap.toString());
       final now = DateTime.now().toLocal();
       log("print now $now");
+      log('sortedMap ${sortedMap.toString()}');
       if (sortedMap.isNotEmpty) {
         sortedMap.forEach(
           (k, v) {
@@ -282,6 +287,10 @@ class _GraphWidgetState extends State<GraphWidget> {
                 enablePanning: true,
                 zoomMode: ZoomMode.x,
               ),
+              legend: Legend(
+                isVisible: true,
+                // Legend will be placed at the left
+              ),
               enableAxisAnimation: false,
               primaryXAxis: DateTimeAxis(
                   intervalType: DateTimeIntervalType.auto,
@@ -315,19 +324,21 @@ class _GraphWidgetState extends State<GraphWidget> {
               backgroundColor: constant.backgroundColor,
               series: <ChartSeries>[
                 // Renders line chart
-                LineSeries<SensorHistory, DateTime>(
+
+                AreaSeries<SensorHistory, DateTime>(
                   enableTooltip: true,
                   xAxisName: 'time',
                   yAxisName: '${widget.SensorType} ',
-                  color: Colors.white,
-                  width: 2,
-                  markerSettings: const MarkerSettings(
-                    isVisible: true,
-                    color: Colors.white,
-                    shape: DataMarkerType.circle,
-                    height: 3,
-                    width: 3,
-                  ),
+                  borderColor: Colors.white,
+                  borderWidth: 1,
+                  color: constant.backgroundColor,
+                  // markerSettings: const MarkerSettings(
+                  //   isVisible: true,
+                  //   color: Colors.white,
+                  //   shape: DataMarkerType.circle,
+                  //   height: 3,
+                  //   width: 3,
+                  // ),
                   dataSource: SensorHistoryList,
                   xValueMapper: (SensorHistory history, _) => history.unix,
                   yValueMapper: (SensorHistory history, _) =>
