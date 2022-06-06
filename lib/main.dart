@@ -9,32 +9,11 @@ import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'models/sensor.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 
 String uid = '';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    if (!isAllowed) {
-      // This is just a basic example. For real apps, you must show some
-      // friendly dialog box before call the request method.
-      // This is very important to not harm the user experience
-      AwesomeNotifications().requestPermissionToSendNotifications();
-    }
-  });
-  AwesomeNotifications().initialize(null, // icon for your app notification
-      [
-        NotificationChannel(
-            channelKey: 'key1',
-            channelName: 'Proto Coders Point',
-            channelDescription: "Notification example",
-            defaultColor: Color(0XFF9050DD),
-            ledColor: Colors.white,
-            playSound: true,
-            enableLights: true,
-            enableVibration: true)
-      ]);
   runApp(
     MaterialApp(home: MyApp()),
   );

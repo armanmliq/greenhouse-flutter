@@ -1,4 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
@@ -172,7 +171,7 @@ class ph_up extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            color: constant.cardButtonColor,
+            color: constant.BackgroundCardButtonColor,
             child: TextButton(
               onPressed: () {
                 FirebaseService.OnOffPhUp('on');
@@ -186,7 +185,7 @@ class ph_up extends StatelessWidget {
             ),
           ),
           Container(
-            color: constant.cardButtonColor,
+            color: constant.BackgroundCardButtonColor,
             child: TextButton(
               onPressed: () {
                 FirebaseService.OnOffPhUp('off');
@@ -216,7 +215,7 @@ class ph_down extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            color: constant.cardButtonColor,
+            color: constant.BackgroundCardButtonColor,
             child: TextButton(
               onPressed: () {
                 FirebaseService.OnOffPhDown('on');
@@ -230,7 +229,7 @@ class ph_down extends StatelessWidget {
             ),
           ),
           Container(
-            color: constant.cardButtonColor,
+            color: constant.BackgroundCardButtonColor,
             child: TextButton(
               onPressed: () {
                 FirebaseService.OnOffPhDown('off');
@@ -424,7 +423,7 @@ class BuildTargetPhWidget extends StatelessWidget {
             Container(
               width: 60,
               height: 40,
-              color: constant.cardButtonColor,
+              color: constant.BackgroundCardButtonColor,
               child: TextButton(
                 onPressed: () {
                   if (type == 'set_ph') {

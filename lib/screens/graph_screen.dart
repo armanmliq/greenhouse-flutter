@@ -10,14 +10,6 @@ List<SensorHistory> SensorHistoryList = [];
 String? minVal;
 String? maxVal;
 
-Future<DataSnapshot> PhRoot = FirebaseDatabase.instance
-    .ref()
-    .child('users')
-    .child(constant.uid)
-    .child('grafik')
-    .child('PH')
-    .get();
-
 class SensorHistory {
   SensorHistory(this.unix, this.ValueSensor);
   final DateTime unix;
@@ -44,32 +36,35 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return SafeArea(
       child: DefaultTabController(
-        animationDuration: const Duration(milliseconds: 100),
-        length: 4,
+        length: 6,
         child: Scaffold(
           backgroundColor: constant.backgroundColor,
           appBar: AppBar(
             backgroundColor: constant.backgroundColor,
             bottom: const TabBar(
-              indicatorSize: TabBarIndicatorSize.label,
+              indicatorSize: TabBarIndicatorSize.tab,
               indicatorWeight: 1,
               indicatorColor: Colors.black,
               automaticIndicatorColorAdjustment: true,
+              isScrollable: true,
               tabs: [
                 Tab(
-                  text: 'pH',
+                  text: 'Ph\nair',
                 ),
                 Tab(
-                  text: 'PPM',
+                  text: 'Ppm\nair',
                 ),
                 Tab(
-                  text: 'temp room',
+                  text: 'Temp\nroom',
                 ),
                 Tab(
-                  text: 'humid room',
+                  text: 'Humid\nroom',
                 ),
                 Tab(
-                  text: 'temp air',
+                  text: 'Temp\nair',
+                ),
+                Tab(
+                  text: 'peny\niraman',
                 ),
               ],
             ),
@@ -92,6 +87,9 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
               ),
               ChartBuilder(
                 SensorType: 'waterTemp',
+              ),
+              ChartBuilder(
+                SensorType: 'statusPompaPenyiraman',
               ),
             ],
           ),
@@ -136,7 +134,6 @@ class _ChartBuilderState extends State<ChartBuilder> {
           .then((DataSnapshot snapshot) {
         setState(() {
           dataFetch = snapshot.value as Map;
-          // print('>>>>>${widget.SensorType} >>>> $dataFetch');
         });
         constant.grafikData = snapshot.value as Map;
       });
@@ -175,6 +172,17 @@ class _GraphWidgetState extends State<GraphWidget> {
   double minXAxis = 0;
   double maxVal = 0;
   double minVal = 0;
+  late ZoomPanBehavior zoomPanBehavior;
+  @override
+  void initState() {
+    zoomPanBehavior = ZoomPanBehavior(
+      enablePinching: true,
+      enablePanning: true,
+      zoomMode: ZoomMode.x,
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     SensorHistoryList = [];
@@ -191,6 +199,12 @@ class _GraphWidgetState extends State<GraphWidget> {
         break;
       case 'temp':
         maxXAxis = 80;
+        break;
+      case 'waterTemp':
+        maxXAxis = 80;
+        break;
+      case 'statusPompaPenyiraman':
+        maxXAxis = 1;
         break;
       default:
     }
@@ -214,8 +228,8 @@ class _GraphWidgetState extends State<GraphWidget> {
     try {
       // log(sortedMap.toString());
       final now = DateTime.now().toLocal();
-      log("print now $now");
-      log('sortedMap ${sortedMap.toString()}');
+      log("[_GraphWidgetState]print now $now");
+      log('[_GraphWidgetState]sortedMap ${sortedMap.toString()}');
       if (sortedMap.isNotEmpty) {
         sortedMap.forEach(
           (k, v) {
@@ -229,8 +243,8 @@ class _GraphWidgetState extends State<GraphWidget> {
               var dateGraph =
                   DateTime.fromMillisecondsSinceEpoch(k * 1000).toLocal();
 
-              log("print dateGraph $dateGraph");
-              log("print compare ");
+              log("[_GraphWidgetState]print dateGraph $dateGraph");
+              log("[_GraphWidgetState]print compare ");
               bool parsingOnlyLastDays = dateGraph.isAfter(
                 now.subtract(
                   Duration(days: 1),
@@ -282,38 +296,36 @@ class _GraphWidgetState extends State<GraphWidget> {
             height: constant.height! * 0.6,
             color: Colors.white,
             child: SfCartesianChart(
-              zoomPanBehavior: ZoomPanBehavior(
-                enablePinching: true,
-                enablePanning: true,
-                zoomMode: ZoomMode.x,
-              ),
+              zoomPanBehavior: zoomPanBehavior,
               legend: Legend(
                 isVisible: true,
                 // Legend will be placed at the left
               ),
               enableAxisAnimation: false,
               primaryXAxis: DateTimeAxis(
-                  intervalType: DateTimeIntervalType.auto,
-                  // maximumLabels: 20,
-                  enableAutoIntervalOnZooming: true,
-                  dateFormat: DateFormat.jms(),
-                  borderColor: Colors.red,
-                  labelStyle: const TextStyle(
-                    color: Colors.white,
-                  )),
+                intervalType: DateTimeIntervalType.auto,
+                desiredIntervals: 10,
+                enableAutoIntervalOnZooming: true,
+                dateFormat: DateFormat.jms(),
+                borderColor: Colors.red,
+                labelStyle: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
               primaryYAxis: NumericAxis(
-                  minimum: minXAxis,
-                  maximum: maxXAxis,
-                  majorTickLines: const MajorTickLines(size: 0),
-                  labelAlignment: LabelAlignment.end,
-                  labelStyle: const TextStyle(
-                    color: Colors.white,
-                  )),
+                minimum: minXAxis,
+                maximum: maxXAxis,
+                majorTickLines: const MajorTickLines(size: 0),
+                labelAlignment: LabelAlignment.end,
+                labelStyle: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
               tooltipBehavior: TooltipBehavior(
                 enable: true,
               ),
               plotAreaBackgroundColor: Colors.white10,
-              borderColor: Colors.black,
+              borderColor: Colors.white,
               title: ChartTitle(
                 textStyle: const TextStyle(
                     fontSize: 12,
@@ -326,19 +338,20 @@ class _GraphWidgetState extends State<GraphWidget> {
                 // Renders line chart
 
                 AreaSeries<SensorHistory, DateTime>(
+                  markerSettings: const MarkerSettings(
+                    borderColor: Colors.white,
+                    isVisible: true,
+                    color: Colors.white,
+                    width: 1,
+                    height: 1,
+                  ),
+                  name: widget.SensorType,
                   enableTooltip: true,
                   xAxisName: 'time',
                   yAxisName: '${widget.SensorType} ',
                   borderColor: Colors.white,
                   borderWidth: 1,
                   color: constant.backgroundColor,
-                  // markerSettings: const MarkerSettings(
-                  //   isVisible: true,
-                  //   color: Colors.white,
-                  //   shape: DataMarkerType.circle,
-                  //   height: 3,
-                  //   width: 3,
-                  // ),
                   dataSource: SensorHistoryList,
                   xValueMapper: (SensorHistory history, _) => history.unix,
                   yValueMapper: (SensorHistory history, _) =>
@@ -386,7 +399,7 @@ class TextHighLowItem extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Container(
-        color: constant.cardColor,
+        color: Colors.blue,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(

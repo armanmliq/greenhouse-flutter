@@ -31,7 +31,7 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  'Jadwal \npenyiraman',
+                  'Jadwal\npenyiraman',
                   style: TextStyle(
                     color: constant.titleTextColor,
                     fontWeight: FontWeight.bold,
@@ -40,7 +40,7 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
                   ),
                 ),
                 Text(
-                  'Atur jadwal \npenyiraman harian',
+                  'Atur jadwal\npenyiraman harian',
                   style: TextStyle(
                     fontSize: 13,
                     color: constant.secondTitleText,
@@ -53,10 +53,13 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
               decoration: BoxDecoration(
                 borderRadius:
                     BorderRadius.all(Radius.circular(constant.borderRadius)),
-                color: constant.ColorMati,
+                color: constant.BackgroundCardButtonColor,
               ),
               child: TextButton.icon(
-                icon: Icon(Icons.timer, color: Colors.white),
+                icon: const Icon(
+                  Icons.timer,
+                  color: Colors.white,
+                ),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(

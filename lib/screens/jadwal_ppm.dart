@@ -126,6 +126,10 @@ class ScheduleListTools {
     CheckInternet().then(
       (state) {
         if (state) {
+          if (ListOfSchedule.length >= maxSchedulePpm) {
+            BotToast.showText(text: 'max $maxSchedulePpm jadwal');
+            return;
+          }
           BotToast.showText(text: 'Berhasil Menambahkan');
           ListOfSchedule.add(
             ScheduleItem(

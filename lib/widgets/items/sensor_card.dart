@@ -5,7 +5,6 @@ import 'package:greenhouse/models/sensor.dart';
 import 'package:greenhouse/screens/graph_screen.dart';
 import 'package:greenhouse/widgets/items/card_item.dart';
 import '../../constant/constant.dart' as constant;
-import '';
 
 final databaseRef = FirebaseDatabase.instance
     .ref()

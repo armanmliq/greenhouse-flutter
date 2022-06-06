@@ -1,24 +1,28 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
+import 'package:greenhouse/services/ServiceFirebase.dart';
 
-import '../../screens/jadwal_ppm.dart';
-
-bool _stateButton = false;
 final databaseRef = FirebaseDatabase.instance
     .ref()
     .child('users')
     .child(constant.uid)
     .child("sensor_status");
 
-class TitleJadwalPpm extends StatefulWidget {
-  const TitleJadwalPpm({Key? key}) : super(key: key);
+class TitleControlPenyiraman extends StatefulWidget {
+  const TitleControlPenyiraman({Key? key}) : super(key: key);
 
   @override
-  State<TitleJadwalPpm> createState() => TitleJadwalPpmState();
+  State<TitleControlPenyiraman> createState() => _TitleControlPenyiramanState();
 }
 
-class TitleJadwalPpmState extends State<TitleJadwalPpm> {
+class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
+  @override
+  void initState() {
+    FirebaseService.getStatusPompaPenyiraman();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -32,7 +36,7 @@ class TitleJadwalPpmState extends State<TitleJadwalPpm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  'Jadwal \ppm',
+                  'Penyiraman',
                   style: TextStyle(
                     color: constant.titleTextColor,
                     fontWeight: FontWeight.bold,
@@ -41,7 +45,8 @@ class TitleJadwalPpmState extends State<TitleJadwalPpm> {
                   ),
                 ),
                 Text(
-                  'Atur jadwal \ppm',
+                  'control \npompa penyiraman',
+                  //              constant.stateButtonPenyiramaan == true ? 'STATUS:HIDUP' : 'STATUS:MATI',
                   style: TextStyle(
                     fontSize: 13,
                     color: constant.secondTitleText,
@@ -57,21 +62,29 @@ class TitleJadwalPpmState extends State<TitleJadwalPpm> {
                 color: constant.BackgroundCardButtonColor,
               ),
               child: TextButton.icon(
-                icon: const Icon(Icons.timer, color: Colors.white),
+                icon: const Icon(
+                  Icons.water,
+                  color: Colors.white,
+                ),
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return JadwalPpmScreen();
-                      },
-                    ),
+                  setState(
+                    () {
+                      constant.stateButtonPenyiramaan =
+                          !constant.stateButtonPenyiramaan;
+                      FirebaseService.SetPompaPenyiraman(
+                          constant.stateButtonPenyiramaan);
+                      print(
+                          'stateButtonPenyiramaan ${constant.stateButtonPenyiramaan}');
+                    },
                   );
                 },
-                label: const Align(
+                label: Align(
                   alignment: Alignment.bottomCenter,
                   child: Text(
-                    'setting',
-                    style: TextStyle(
+                    constant.stateButtonPenyiramaan == true
+                        ? 'matikan'
+                        : 'dihupkan',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                     ),

@@ -108,6 +108,7 @@ Future InitSetParameter() async {
                 'set_mode_ph': 'manual',
                 'set_mode_ppm': 'manual',
                 'set_mode_irigasi': 'manual',
+                'set_pompa_penyiraman': 'manual',
                 'scheduler_ppm_str': '[]',
                 'scheduler_irigasi': '[]',
                 'waterTemp': "50",

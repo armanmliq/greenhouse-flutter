@@ -132,7 +132,7 @@ class SettingParameter extends StatelessWidget {
           Row(
             children: [
               Container(
-                color: constant.cardButtonColor,
+                color: constant.BackgroundCardButtonColor,
                 child: TextButton(
                   onPressed: () {
                     FirebaseService.OnOffPpm('on');
@@ -146,7 +146,7 @@ class SettingParameter extends StatelessWidget {
                 ),
               ),
               Container(
-                color: constant.cardButtonColor,
+                color: constant.BackgroundCardButtonColor,
                 child: TextButton(
                   onPressed: () {
                     FirebaseService.OnOffPpm('off');
@@ -342,7 +342,7 @@ class BuildTargetPpmWidget extends StatelessWidget {
             Container(
               width: 60,
               height: 40,
-              color: constant.cardButtonColor,
+              color: constant.BackgroundCardButtonColor,
               child: TextButton(
                 onPressed: () {
                   if (type.contains('mode')) {

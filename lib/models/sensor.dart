@@ -60,6 +60,10 @@ class Sensor with ChangeNotifier {
   Map<dynamic, dynamic> GrafikTemp = {timestamp1.toString(): '0.0'};
   Map<dynamic, dynamic> GrafikPpm = {timestamp1.toString(): '0.0'};
   Map<dynamic, dynamic> GrafikHumidity = {timestamp1.toString(): '0.0'};
+  Map<dynamic, dynamic> GrafikWaterTemp = {timestamp1.toString(): '0.0'};
+  Map<dynamic, dynamic> GrafikstatusPompaPenyiraman = {
+    timestamp1.toString(): '0.0'
+  };
 
   Future<String> ReadInternalDataOf(String type) async {
     String? value;
@@ -423,8 +427,10 @@ class Sensor with ChangeNotifier {
                     TimeOfDay: element.TimeOfDay!,
                     LamaPenyiraman: element.LamaPenyiraman!));
                 ListJadwalPenyiraman = list_scheduler_Jadwal_penyiraman!;
-                CheckAndSave('scheduler_jadwal_penyiraman',
-                    scheduler_jadwal_penyiraman!);
+                CheckAndSave(
+                  'scheduler_jadwal_penyiraman',
+                  scheduler_jadwal_penyiraman!,
+                );
               },
             );
           } catch (e) {
@@ -457,6 +463,7 @@ class Sensor with ChangeNotifier {
       print('ERROR FROM fromSnapshotSchedulerPpm $err');
     }
   }
+
   Sensor.fromSnapshotSchedulerPenyiraman(snap) {
     try {
       if (snap.hasData) {}
@@ -522,6 +529,10 @@ class Sensor with ChangeNotifier {
       GrafikHumidity = {};
     } else if (SensorType == 'ppm') {
       GrafikPpm = {};
+    } else if (SensorType == 'waterTemp') {
+      GrafikWaterTemp = {};
+    } else if (SensorType == 'statusPompaPenyiraman') {
+      GrafikstatusPompaPenyiraman = {};
     }
   }
 
@@ -544,6 +555,10 @@ class Sensor with ChangeNotifier {
       GrafikHumidity.addAll(map);
     } else if (SensorType == 'ppm') {
       GrafikPpm.addAll(map);
+    } else if (SensorType == 'waterTemp') {
+      GrafikWaterTemp.addAll(map);
+    } else if (SensorType == 'statusPompaPenyiraman') {
+      GrafikstatusPompaPenyiraman.addAll(map);
     }
   }
 }

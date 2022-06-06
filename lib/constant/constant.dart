@@ -19,10 +19,16 @@ const cardButtonColor = Color(0xff243D25);
 const BackgroundCardButtonColor = Color.fromARGB(255, 24, 47, 25);
 const graphPlotAreadColor = Color.fromARGB(255, 50, 92, 51);
 const borderRadiusGlass = 5.0;
+bool stateButtonPenyiramaan = false;
+
+//
 const maxPh = 12;
 const maxPpm = 1200;
 const maxHumidity = 100;
 const maxMoisture = 100;
+const maxSchedulePpm = 7;
+const maxSchedulePenyiraman = 9;
+
 Color shadowColor = Colors.black;
 double? height;
 double? width;

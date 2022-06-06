@@ -142,7 +142,7 @@ class SetSoil extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              color: constant.cardButtonColor,
+                              color: constant.BackgroundCardButtonColor,
                               child: TextButton(
                                 onPressed: () {
                                   FirebaseService.OnOffIrigasi('on');
@@ -156,7 +156,7 @@ class SetSoil extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              color: constant.cardButtonColor,
+                              color: constant.BackgroundCardButtonColor,
                               child: TextButton(
                                 onPressed: () {
                                   FirebaseService.OnOffIrigasi('off');
@@ -291,7 +291,7 @@ class BuildIrigasiWidget extends StatelessWidget {
         Container(
           width: 60,
           height: 30,
-          color: constant.cardButtonColor,
+          color: constant.BackgroundCardButtonColor,
           child: TextButton(
             child: const Text(
               'UBAH',
@@ -345,7 +345,7 @@ class _IrigasiButtonManualModeState extends State<IrigasiButtonManualMode> {
         child: Row(
           children: [
             Container(
-              color: constant.cardButtonColor,
+              color: constant.BackgroundCardButtonColor,
               child: TextButton(
                 onPressed: () {},
                 child: const Text(

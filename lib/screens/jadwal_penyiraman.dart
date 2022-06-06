@@ -72,6 +72,10 @@ class JadwalPenyiramanTools {
     CheckInternet().then(
       (state) {
         if (state) {
+          if (ListJadwalPenyiraman.length >= maxSchedulePenyiraman) {
+            BotToast.showText(text: 'max $maxSchedulePenyiraman jadwal');
+            return;
+          }
           BotToast.showText(text: 'Berhasil Menambahkan');
           ListJadwalPenyiraman.add(
             JadwalPenyiraman(
@@ -195,6 +199,7 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
                 ),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
                     onPressed: () {
@@ -251,17 +256,22 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
 
     return SafeArea(
       child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         resizeToAvoidBottomInset: false,
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blue,
           onPressed: () {
             Navigator.of(context).push(
               showPicker(
-                  context: context,
-                  onChange: _onChange,
-                  value: TimeOfDay.now()),
+                context: context,
+                onChange: _onChange,
+                value: TimeOfDay.now(),
+              ),
             );
           },
-          child: const Icon(Icons.add),
+          child: const Icon(
+            Icons.add,
+          ),
         ),
         backgroundColor: backgroundColor,
         appBar: AppBar(

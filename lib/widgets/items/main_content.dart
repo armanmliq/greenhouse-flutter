@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
+import 'package:greenhouse/services/ServiceFirebase.dart';
 import 'package:greenhouse/services/notification.dart';
 import 'package:greenhouse/widgets/title/title_ph.dart';
 import 'package:greenhouse/widgets/items/grid_sensor.dart';
 import 'package:greenhouse/widgets/title/title_ppm.dart';
-
+import '../title/title_control_penyiraman.dart';
 import '../title/title_grafik.dart';
 import '../title/title_jadwal_penyiraman.dart';
 import '../title/title_jadwal_ppm.dart';
@@ -58,7 +59,7 @@ class MainContent extends StatelessWidget {
                   EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
               child: Column(
                 children: const [
-                  TitleChart(),
+                  TitleControlPenyiraman(),
                 ],
               ),
             ),
@@ -80,10 +81,20 @@ class MainContent extends StatelessWidget {
                 ],
               ),
             ),
+            Padding(
+              padding:
+                  EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
+              child: Column(
+                children: const [
+                  TitleChart(),
+                ],
+              ),
+            ),
             TextButton(
                 onPressed: () {
-                  Navigator.of(context)
-                      .pushNamed(notificaationScreen.routeName);
+                  // Navigator.of(context)
+                  //     .pushNamed(notificaationScreen.routeName);
+                  FirebaseService.getStatusPompaPenyiraman();
                 },
                 child: Text('notif screen'))
           ],

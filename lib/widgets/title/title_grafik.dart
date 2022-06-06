@@ -41,7 +41,7 @@ class TitleChart extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius:
                     BorderRadius.all(Radius.circular(constant.borderRadius)),
-                color: constant.ColorMati,
+                color: constant.BackgroundCardButtonColor,
               ),
               child: TextButton.icon(
                 icon: const Icon(
