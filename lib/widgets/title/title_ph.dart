@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:greenhouse/models/sensor.dart';
 import '../../constant/constant.dart' as constant;
-import '../../services/ServiceFirebase.dart';
 import '../items/show_modal_bottom.dart';
 
+double fontSize = 14;
 bool isValidate = false;
 final databaseRef = FirebaseDatabase.instance
     .ref()
@@ -24,20 +24,20 @@ class TitleSetPh extends StatelessWidget {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
-                'SETTING PH',
+                'PH',
                 style: TextStyle(
                   color: constant.titleTextColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: fontSize,
                   letterSpacing: 2,
                 ),
               ),
               Text(
-                'atur setting untuk ph target dan mode',
+                'atur ph target dan mode',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: fontSize,
                   color: constant.secondTitleText,
                 ),
               ),
@@ -93,161 +93,6 @@ class SetParameterPh extends StatelessWidget {
   }
 }
 
-class TextInfoPpm extends StatefulWidget {
-  const TextInfoPpm({Key? key}) : super(key: key);
-
-  @override
-  State<TextInfoPpm> createState() => _TextInfoPpmState();
-}
-
-class _TextInfoPpmState extends State<TextInfoPpm> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class SettingParameter extends StatelessWidget {
-  const SettingParameter({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(constant.padding),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          TargetPhWidget(type: 'set_ph'),
-          SizedBox(
-            height: 4,
-          ),
-          TargetPhWidget(type: 'set_mode_ph'),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'MANUAL MODE',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'PH UP',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          ph_up(),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'PH DOWN',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          ph_down(),
-        ],
-      ),
-    );
-  }
-}
-
-class ph_up extends StatelessWidget {
-  const ph_up({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Flexible(
-      child: Row(
-        children: [
-          Container(
-            color: constant.BackgroundCardButtonColor,
-            child: TextButton(
-              onPressed: () {
-                FirebaseService.OnOffPhUp('on');
-              },
-              child: const Text(
-                'ON',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            color: constant.BackgroundCardButtonColor,
-            child: TextButton(
-              onPressed: () {
-                FirebaseService.OnOffPhUp('off');
-              },
-              child: const Text(
-                'OFF',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ph_down extends StatelessWidget {
-  const ph_down({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Flexible(
-      child: Row(
-        children: [
-          Container(
-            color: constant.BackgroundCardButtonColor,
-            child: TextButton(
-              onPressed: () {
-                FirebaseService.OnOffPhDown('on');
-              },
-              child: const Text(
-                'ON',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            color: constant.BackgroundCardButtonColor,
-            child: TextButton(
-              onPressed: () {
-                FirebaseService.OnOffPhDown('off');
-              },
-              child: const Text(
-                'OFF',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class TargetPhWidget extends StatelessWidget {
   const TargetPhWidget({
     Key? key,
@@ -290,6 +135,29 @@ class TargetPhWidget extends StatelessWidget {
   }
 }
 
+class SettingParameter extends StatelessWidget {
+  const SettingParameter({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(constant.padding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const TargetPhWidget(type: 'set_ph'),
+          const SizedBox(height: 20),
+          const TargetPhWidget(type: 'set_mode_ph'),
+          const SizedBox(height: 20),
+          WidgetSetIntervalOnPh(),
+          WidgetSetIntervalOffPh(),
+        ],
+      ),
+    );
+  }
+}
+
 class BuildTargetPhWidget extends StatelessWidget {
   BuildTargetPhWidget({
     Key? key,
@@ -309,7 +177,7 @@ class BuildTargetPhWidget extends StatelessWidget {
       var alert = AlertDialog(
         backgroundColor: constant.backgroundColor,
         title: const Text(
-          "Berapa target ph? \n maximum ${constant.maxPh}",
+          "masukan target ph? \n maximum ${constant.maxPh}",
           style: TextStyle(
             color: Colors.white,
           ),
@@ -412,9 +280,9 @@ class BuildTargetPhWidget extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: constant.titleTextColor,
-            fontSize: 18,
+            fontSize: fontSize,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -445,14 +313,344 @@ class BuildTargetPhWidget extends StatelessWidget {
             ),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 color: constant.titleTextColor,
-                fontSize: 23,
+                fontSize: fontSize,
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class WidgetSetIntervalOnPh extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    void showDialogInput() {
+      String _intervalOnPh = '';
+      String maxIntervalOnPhStr =
+          (constant.maxIntervalOnPh / 1000).toStringAsFixed(0);
+      var alert = AlertDialog(
+        backgroundColor: constant.backgroundColor,
+        title: Text(
+          "masukan interval \nuntuk pompa on ph\nmaks $maxIntervalOnPhStr Detik",
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: Container(
+          color: constant.backgroundColor,
+          height: 130,
+          child: Column(
+            children: [
+              TextField(
+                keyboardType: TextInputType.number,
+                maxLines: 1,
+                autofocus: false,
+                enabled: true,
+                onChanged: (String value) {
+                  _intervalOnPh = value;
+                },
+                onSubmitted: (String value) {
+                  _intervalOnPh = value;
+                },
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: InputDecoration(
+                  errorStyle: const TextStyle(color: Colors.redAccent),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.confirmation_num,
+                    color: Colors.white,
+                    size: 18.0,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'CANCEL',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      print(' _intervalOnPh  $_intervalOnPh');
+                      InputDialog.validateVal(
+                        'set_interval_on_ph',
+                        _intervalOnPh,
+                        context,
+                      );
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return alert;
+        },
+      );
+    }
+
+    String intervalOnStr = "";
+    return StreamBuilder(
+      stream: databaseRef.onValue,
+      builder: ((context, snapshot) {
+        final sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
+        print('${sensor.intervalOnPh}');
+        if (snapshot.hasData) {
+          final _intervalOn = int.parse(sensor.intervalOnPh!);
+          intervalOnStr =
+              '${(_intervalOn / 1000).toStringAsFixed(0).toString()} detik';
+        }
+        String label = "INTERVAL ON";
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: constant.titleTextColor,
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  color: constant.BackgroundCardButtonColor,
+                  child: TextButton(
+                    onPressed: () {
+                      showDialogInput();
+                    },
+                    child: const Text(
+                      'UBAH',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 9),
+                Text(
+                  intervalOnStr,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      }),
+    );
+  }
+}
+
+class WidgetSetIntervalOffPh extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    void showDialogInput() {
+      String _intervalOffPh = '';
+      String maxIntervalOffPhStr =
+          (constant.maxIntervalOffPh / 1000).toStringAsFixed(0);
+      var alert = AlertDialog(
+        backgroundColor: constant.backgroundColor,
+        title: Text(
+          "masukan interval \nuntuk pompa off ph\nmaks $maxIntervalOffPhStr Detik",
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: Container(
+          color: constant.backgroundColor,
+          height: 130,
+          child: Column(
+            children: [
+              TextField(
+                keyboardType: TextInputType.number,
+                maxLines: 1,
+                autofocus: false,
+                enabled: true,
+                onChanged: (String value) {
+                  _intervalOffPh = value;
+                },
+                onSubmitted: (String value) {
+                  _intervalOffPh = value;
+                },
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: InputDecoration(
+                  errorStyle: const TextStyle(color: Colors.redAccent),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.confirmation_num,
+                    color: Colors.white,
+                    size: 18.0,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'CANCEL',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      print(' _intervalOffPh  $_intervalOffPh');
+                      InputDialog.validateVal(
+                        'set_interval_off_ph',
+                        _intervalOffPh,
+                        context,
+                      );
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return alert;
+        },
+      );
+    }
+
+    String intervalOffStr = "";
+    return StreamBuilder(
+      stream: databaseRef.onValue,
+      builder: ((context, snapshot) {
+        final sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
+        print('${sensor.intervalOffPh}');
+        if (snapshot.hasData) {
+          final _intervalOn = int.parse(sensor.intervalOffPh!);
+          intervalOffStr =
+              '${(_intervalOn / 1000).toStringAsFixed(0).toString()} detik';
+        }
+        String label = "INTERVAL OFF";
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: constant.titleTextColor,
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  color: constant.BackgroundCardButtonColor,
+                  child: TextButton(
+                    onPressed: () {
+                      showDialogInput();
+                    },
+                    child: const Text(
+                      'UBAH',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 9),
+                Text(
+                  intervalOffStr,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      }),
     );
   }
 }

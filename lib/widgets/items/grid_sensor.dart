@@ -24,14 +24,6 @@ class GridGenerator extends StatelessWidget {
           const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
       childAspectRatio: 2.2 / 2,
       crossAxisCount: 2,
-      // humidity
-      // tankLevel
-      // ppm
-      // ph
-      // sprayer_status
-      // pompa_nutrisi_status
-      // pompa_status
-      // temperature
       children: const [
         CardSensor(
           type: 'ph',
@@ -56,7 +48,7 @@ class GridGenerator extends StatelessWidget {
         ),
         CardSensor(
           type: 'temperatureWater',
-          iconVar: "assets/icon/icon_temperature.png",
+          iconVar: "assets/icon/icon_water_temp.png",
           textVar: "suhu\nair",
           unitVar: "°C",
           bgColor: constant.cardColor,

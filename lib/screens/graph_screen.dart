@@ -204,7 +204,7 @@ class _GraphWidgetState extends State<GraphWidget> {
         maxXAxis = 80;
         break;
       case 'statusPompaPenyiraman':
-        maxXAxis = 1;
+        maxXAxis = 10;
         break;
       default:
     }
@@ -337,7 +337,7 @@ class _GraphWidgetState extends State<GraphWidget> {
               series: <ChartSeries>[
                 // Renders line chart
 
-                AreaSeries<SensorHistory, DateTime>(
+                LineSeries<SensorHistory, DateTime>(
                   markerSettings: const MarkerSettings(
                     borderColor: Colors.white,
                     isVisible: true,
@@ -349,9 +349,7 @@ class _GraphWidgetState extends State<GraphWidget> {
                   enableTooltip: true,
                   xAxisName: 'time',
                   yAxisName: '${widget.SensorType} ',
-                  borderColor: Colors.white,
-                  borderWidth: 1,
-                  color: constant.backgroundColor,
+                  color: Colors.white,
                   dataSource: SensorHistoryList,
                   xValueMapper: (SensorHistory history, _) => history.unix,
                   yValueMapper: (SensorHistory history, _) =>
@@ -403,7 +401,7 @@ class TextHighLowItem extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Column(
                 children: [
@@ -411,14 +409,14 @@ class TextHighLowItem extends StatelessWidget {
                     TitleText,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 25,
+                      fontSize: 15,
                     ),
                   ),
                   Text(
                     Value,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 30,
+                      fontSize: 15,
                     ),
                   ),
                 ],

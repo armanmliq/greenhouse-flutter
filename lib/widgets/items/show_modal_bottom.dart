@@ -85,9 +85,36 @@ class InputDialog {
 
   static void validateVal(String type, String value, BuildContext context) {
     isValidate = false;
-
     print('validate $type');
     if (value.isEmpty) return;
+    try {
+      if (type == 'set_interval_on_ph') {
+        FirebaseService.SetIntervalOnPh(value);
+      }
+    } catch (e) {
+      print(e);
+    }
+    try {
+      if (type == 'set_interval_off_ph') {
+        FirebaseService.SetIntervalOffPh(value);
+      }
+    } catch (e) {
+      print(e);
+    }
+    try {
+      if (type == 'set_interval_off_ppm') {
+        FirebaseService.SetIntervalOffPpm(value);
+      }
+    } catch (e) {
+      print(e);
+    }
+    try {
+      if (type == 'set_interval_on_ppm') {
+        FirebaseService.SetIntervalOnPpm(value);
+      }
+    } catch (e) {
+      print(e);
+    }
     try {
       if (type == 'set_ppm') {
         FirebaseService.SetPpm(value);

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:greenhouse/models/sensor.dart';
 import '../../constant/constant.dart' as constant;
-import '../../services/ServiceFirebase.dart';
 import '../items/show_modal_bottom.dart';
 
+double fontSize = 14;
 bool isValidate = false;
 final databaseRef = FirebaseDatabase.instance
     .ref()
@@ -46,7 +46,7 @@ class SetParameterPpm extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         border: 2,
         borderRadius: constant.borderRadius,
-        height: 280,
+        height: 350,
         child: Row(
           children: const [
             SettingParameter(),
@@ -69,20 +69,20 @@ class TitleSetPpm extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Text(
-                'SETTING PPM',
+                'NUTRISI',
                 style: TextStyle(
                   color: constant.titleTextColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: fontSize,
                   letterSpacing: 2,
                 ),
               ),
               Text(
-                'atur setting untuk ppm target dan mode',
+                'atur target nutrisi dan mode',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: fontSize,
                   color: constant.secondTitleText,
                 ),
               ),
@@ -104,133 +104,31 @@ class SettingParameter extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const TargetPpmWidget(type: 'set_ppm'),
-          const SizedBox(
-            height: 4,
-          ),
-          const TargetPpmWidget(type: 'set_mode_ppm'),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            'MANUAL MODE',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Text(
-            'PPM UP',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          Row(
-            children: [
-              Container(
-                color: constant.BackgroundCardButtonColor,
-                child: TextButton(
-                  onPressed: () {
-                    FirebaseService.OnOffPpm('on');
-                  },
-                  child: const Text(
-                    'ON',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                color: constant.BackgroundCardButtonColor,
-                child: TextButton(
-                  onPressed: () {
-                    FirebaseService.OnOffPpm('off');
-                  },
-                  child: const Text(
-                    'OFF',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
+          const WidgetSetTargetPpm(type: 'set_ppm'),
+          const SizedBox(height: 20),
+          const WidgetSetTargetPpm(type: 'set_mode_ppm'),
+          const SizedBox(height: 20),
+          WidgetSetIntervalOnPpm(),
+          const SizedBox(height: 20),
+          WidgetSetIntervalOffPpm(),
         ],
       ),
     );
   }
 }
 
-class TargetPpmWidget extends StatelessWidget {
-  const TargetPpmWidget({
-    Key? key,
-    required this.type,
-  }) : super(key: key);
-  final String type;
-  @override
-  Widget build(BuildContext context) {
-    String label = type == 'set_ppm' ? 'TARGET' : 'MODE';
-    String value = 'null';
-    return StreamBuilder(
-      stream: databaseRef.onValue,
-      builder: (context, snapshot) {
-        Sensor sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
-        print('firing from TargetPpmWidget');
-        if (snapshot.hasData) {
-          value = type == 'set_ppm'
-              ? sensor.set_ppm.toString()
-              : sensor.set_mode_ppm.toString();
-          print('Get >>> $value');
-        }
-        return FutureBuilder(
-          future: sensor.ReadInternalDataOf(type),
-          builder: ((context, snapshotFromInternal) {
-            if (value != 'null') {
-              sensor.CheckAndSave(type, value);
-              return BuildTargetPpmWidget(
-                  label: label, type: type, value: value);
-            } else {
-              return BuildTargetPpmWidget(
-                label: label,
-                type: type,
-                value: snapshotFromInternal.data.toString(),
-              );
-            }
-          }),
-        );
-      },
-    );
-  }
-}
-
-class BuildTargetPpmWidget extends StatelessWidget {
-  const BuildTargetPpmWidget({
-    Key? key,
-    required this.label,
-    required this.type,
-    required this.value,
-  }) : super(key: key);
-
-  final String label;
-  final String type;
-  final String value;
-
+class WidgetSetIntervalOffPpm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void showDialogInput() {
-      String _targetPh = '';
+      String _intervalOffPpm = '';
+      String maxIntervalOffPpmStr =
+          (constant.maxIntervalOffPpm / 1000).toStringAsFixed(0);
       var alert = AlertDialog(
         backgroundColor: constant.backgroundColor,
-        title: const Text(
-          "Berapa target ppm? \n maximum ${constant.maxPpm}",
-          style: TextStyle(
+        title: Text(
+          "masukan interval \nuntuk pompa ppm\nmaks $maxIntervalOffPpmStr Detik",
+          style: const TextStyle(
             color: Colors.white,
           ),
         ),
@@ -245,13 +143,12 @@ class BuildTargetPpmWidget extends StatelessWidget {
                 autofocus: false,
                 enabled: true,
                 onChanged: (String value) {
-                  _targetPh = value;
+                  _intervalOffPpm = value;
                 },
                 onSubmitted: (String value) {
-                  print('submitted');
-                  _targetPh = value;
+                  _intervalOffPpm = value;
                 },
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                 ),
                 decoration: InputDecoration(
@@ -291,7 +188,7 @@ class BuildTargetPpmWidget extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context, rootNavigator: true).pop();
                     },
-                    child: Text(
+                    child: const Text(
                       'CANCEL',
                       style: TextStyle(
                         color: Colors.white,
@@ -300,11 +197,382 @@ class BuildTargetPpmWidget extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      print(' _targetPh  $_targetPh');
-                      InputDialog.validateVal(type, _targetPh, context);
+                      print(' _intervalOffPpm  $_intervalOffPpm');
+                      InputDialog.validateVal(
+                          'set_interval_off_ppm', _intervalOffPpm, context);
                       Navigator.of(context, rootNavigator: true).pop();
                     },
-                    child: Text(
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return alert;
+        },
+      );
+    }
+
+    String intervalOffStr = "";
+    return StreamBuilder(
+      stream: databaseRef.onValue,
+      builder: ((context, snapshot) {
+        final sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
+        if (snapshot.hasData) {
+          final _intervalOff = int.parse(sensor.intervalOffPpm!);
+          intervalOffStr =
+              '${(_intervalOff / 1000).toStringAsFixed(0).toString()} detik';
+        }
+        String label = "INTERVAL OFF";
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: constant.titleTextColor,
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  color: constant.BackgroundCardButtonColor,
+                  child: TextButton(
+                    onPressed: () {
+                      showDialogInput();
+                    },
+                    child: const Text(
+                      'UBAH',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 9),
+                Text(
+                  intervalOffStr,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      }),
+    );
+  }
+}
+
+class WidgetSetIntervalOnPpm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    void showDialogInput() {
+      String _intervalOnPpm = '';
+      String maxIntervalOnPpmStr =
+          (constant.maxIntervalOnPpm / 1000).toStringAsFixed(0);
+      var alert = AlertDialog(
+        backgroundColor: constant.backgroundColor,
+        title: Text(
+          "masukan interval \nuntuk pompa ppm\nmaks $maxIntervalOnPpmStr Detik",
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: Container(
+          color: constant.backgroundColor,
+          height: 130,
+          child: Column(
+            children: [
+              TextField(
+                keyboardType: TextInputType.number,
+                maxLines: 1,
+                autofocus: false,
+                enabled: true,
+                onChanged: (String value) {
+                  _intervalOnPpm = value;
+                },
+                onSubmitted: (String value) {
+                  _intervalOnPpm = value;
+                },
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: InputDecoration(
+                  errorStyle: const TextStyle(color: Colors.redAccent),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.confirmation_num,
+                    color: Colors.white,
+                    size: 18.0,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'CANCEL',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      print(' _intervalOnPpm  $_intervalOnPpm');
+                      InputDialog.validateVal(
+                          'set_interval_on_ppm', _intervalOnPpm, context);
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return alert;
+        },
+      );
+    }
+
+    String intervalOnStr = "";
+    return StreamBuilder(
+      stream: databaseRef.onValue,
+      builder: ((context, snapshot) {
+        final sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
+        if (snapshot.hasData) {
+          final _intervalOn = int.parse(sensor.intervalOnPpm!);
+          intervalOnStr =
+              '${(_intervalOn / 1000).toStringAsFixed(0).toString()} detik';
+        }
+        String label = "INTERVAL ON";
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: constant.titleTextColor,
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  color: constant.BackgroundCardButtonColor,
+                  child: TextButton(
+                    onPressed: () {
+                      showDialogInput();
+                    },
+                    child: const Text(
+                      'UBAH',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 9),
+                Text(
+                  intervalOnStr,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      }),
+    );
+  }
+}
+
+class WidgetSetTargetPpm extends StatelessWidget {
+  const WidgetSetTargetPpm({
+    Key? key,
+    required this.type,
+  }) : super(key: key);
+  final String type;
+  @override
+  Widget build(BuildContext context) {
+    String label = type == 'set_ppm' ? 'TARGET' : 'MODE';
+    String value = 'null';
+    return StreamBuilder(
+      stream: databaseRef.onValue,
+      builder: (context, snapshot) {
+        Sensor sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
+        if (snapshot.hasData) {
+          value = type == 'set_ppm'
+              ? sensor.set_ppm.toString()
+              : sensor.set_mode_ppm.toString();
+        }
+        return FutureBuilder(
+          future: sensor.ReadInternalDataOf(type),
+          builder: ((context, snapshotFromInternal) {
+            if (value != 'null') {
+              sensor.CheckAndSave(type, value);
+              return BuildWidgetSetPpm(label: label, type: type, value: value);
+            } else {
+              return BuildWidgetSetPpm(
+                label: label,
+                type: type,
+                value: snapshotFromInternal.data.toString(),
+              );
+            }
+          }),
+        );
+      },
+    );
+  }
+}
+
+class BuildWidgetSetPpm extends StatelessWidget {
+  const BuildWidgetSetPpm({
+    Key? key,
+    required this.label,
+    required this.type,
+    required this.value,
+  }) : super(key: key);
+
+  final String label;
+  final String type;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    void showDialogInput() {
+      String _intervalOnPpm = '';
+      var alert = AlertDialog(
+        backgroundColor: constant.backgroundColor,
+        title: const Text(
+          "masukan target ppm \n maximum ${constant.maxPpm}",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: Container(
+          color: constant.backgroundColor,
+          height: 130,
+          child: Column(
+            children: [
+              TextField(
+                keyboardType: TextInputType.number,
+                maxLines: 1,
+                autofocus: false,
+                enabled: true,
+                onChanged: (String value) {
+                  _intervalOnPpm = value;
+                },
+                onSubmitted: (String value) {
+                  _intervalOnPpm = value;
+                },
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: InputDecoration(
+                  errorStyle: const TextStyle(color: Colors.redAccent),
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.confirmation_num,
+                    color: Colors.white,
+                    size: 18.0,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
+                      'CANCEL',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      print(' _intervalOnPpm  $_intervalOnPpm');
+                      InputDialog.validateVal(type, _intervalOnPpm, context);
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text(
                       'OK',
                       style: TextStyle(
                         color: Colors.white,
@@ -331,9 +599,9 @@ class BuildTargetPpmWidget extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: constant.titleTextColor,
-            fontSize: 18,
+            fontSize: fontSize,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -359,14 +627,12 @@ class BuildTargetPpmWidget extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              width: 9,
-            ),
+            const SizedBox(width: 9),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 color: constant.titleTextColor,
-                fontSize: 23,
+                fontSize: fontSize,
               ),
             ),
           ],

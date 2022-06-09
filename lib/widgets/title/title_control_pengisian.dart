@@ -5,17 +5,17 @@ import 'package:greenhouse/services/ServiceFirebase.dart';
 
 import '../../models/sensor.dart';
 
-class TitleControlPenyiraman extends StatefulWidget {
-  const TitleControlPenyiraman({Key? key}) : super(key: key);
+class TitleControlPengisian extends StatefulWidget {
+  const TitleControlPengisian({Key? key}) : super(key: key);
 
   @override
-  State<TitleControlPenyiraman> createState() => _TitleControlPenyiramanState();
+  State<TitleControlPengisian> createState() => _TitleControlPengisianState();
 }
 
-class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
+class _TitleControlPengisianState extends State<TitleControlPengisian> {
   @override
   void initState() {
-    FirebaseService.getStatusPompaPenyiraman();
+    FirebaseService.getStatusPompaPengisian();
     super.initState();
   }
 
@@ -32,7 +32,7 @@ class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  'penyiraman',
+                  'pengisian',
                   style: TextStyle(
                     color: constant.titleTextColor,
                     fontWeight: FontWeight.bold,
@@ -41,8 +41,8 @@ class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
                   ),
                 ),
                 Text(
-                  'control pompa\n penyiraman (manual)',
-                  //              constant.stateButtonPenyiramaan == true ? 'STATUS:HIDUP' : 'STATUS:MATI',
+                  'control pompa \npengisian tandon (manual)',
+                  //constant.stateButtonPenyiramaan == true ? 'STATUS:HIDUP' : 'STATUS:MATI',
                   style: TextStyle(
                     fontSize: 13,
                     color: constant.secondTitleText,
@@ -65,34 +65,33 @@ class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
                 onPressed: () {
                   setState(
                     () {
-                      FirebaseService.SetPompaPenyiraman();
+                      FirebaseService.SetPompaPengisian();
                       print(
-                          'stateButtonPenyiramaan ${constant.stateButtonPenyiramaan}');
+                          'stateButtonPengisian ${constant.stateButtonPengisian}');
                     },
                   );
                 },
                 label: Align(
                   alignment: Alignment.bottomCenter,
                   child: StreamBuilder<Object>(
-                    stream: FirebaseDatabase.instance
-                        .ref()
-                        .child('users')
-                        .child(constant.uid)
-                        .child('set_parameter')
-                        .child('set_pompa_penyiraman')
-                        .onValue,
-                    builder: (context, snapshot) {
-                      final sensor =
-                          Sensor.fromSnapshotStateButtonPenyiraman(snapshot);
-                      return Text(
-                        constant.stateButtonPenyiramaan == true ? 'ON' : 'OFF',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      );
-                    },
-                  ),
+                      stream: FirebaseDatabase.instance
+                          .ref()
+                          .child('users')
+                          .child(constant.uid)
+                          .child('set_parameter')
+                          .child('set_pompa_pengisian')
+                          .onValue,
+                      builder: (context, snapshot) {
+                        final sensor =
+                            Sensor.fromSnapshotStateButtonPengisian(snapshot);
+                        return Text(
+                          constant.stateButtonPengisian == true ? 'ON' : 'OFF',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        );
+                      }),
                 ),
               ),
             )

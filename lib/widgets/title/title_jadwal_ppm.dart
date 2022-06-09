@@ -32,7 +32,7 @@ class TitleJadwalPpmState extends State<TitleJadwalPpm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  'Jadwal \ppm',
+                  'Jadwal \nnutrisi',
                   style: TextStyle(
                     color: constant.titleTextColor,
                     fontWeight: FontWeight.bold,
@@ -41,7 +41,7 @@ class TitleJadwalPpmState extends State<TitleJadwalPpm> {
                   ),
                 ),
                 Text(
-                  'Atur jadwal \ppm',
+                  'Atur jadwal \nnutrisi',
                   style: TextStyle(
                     fontSize: 13,
                     color: constant.secondTitleText,

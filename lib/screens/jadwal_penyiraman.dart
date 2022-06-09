@@ -143,7 +143,7 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
       var alert = AlertDialog(
         backgroundColor: backgroundColor,
         title: const Text(
-          "Berapa lama penyiraman aktif?\nmaksimum 60 min",
+          "interval penyiraman aktif in minute\nmaks $maxPenyiraman min",
           style: TextStyle(
             color: Colors.white,
           ),
@@ -222,8 +222,8 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
                         BotToast.showText(text: 'Gagal');
                         return;
                       }
-                      if (number > 60) {
-                        BotToast.showText(text: 'maximum 60 min');
+                      if (number > maxPenyiraman) {
+                        BotToast.showText(text: 'maximum $maxPenyiraman min');
                       } else {
                         JadwalPenyiramanTools.addJadwalPenyiraman(
                           (ListJadwalPenyiraman.length + 1).toString(),
@@ -314,7 +314,6 @@ class _ItemListState extends State<ItemList> {
           .child('set_parameter')
           .onValue,
       builder: (context, snapshot) {
-        Sensor sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
         if (snapshot.hasData) {}
         return SingleChildScrollView(
           child: Column(
@@ -341,25 +340,40 @@ class _ItemListState extends State<ItemList> {
                   return Card(
                     color: Colors.black12,
                     child: ListTile(
-                      leading: Container(
-                        color: backgroundColor,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            waktu,
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
+                      leading: Text(
+                        _index.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
                         ),
                       ),
                       title: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          LamaPenyiraman,
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
+                        child: Row(
+                          children: [
+                            Container(
+                              color: Colors.blue,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  waktu,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              LamaPenyiraman,
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       trailing: IconButton(

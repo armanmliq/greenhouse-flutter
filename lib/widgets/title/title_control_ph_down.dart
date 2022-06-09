@@ -5,17 +5,17 @@ import 'package:greenhouse/services/ServiceFirebase.dart';
 
 import '../../models/sensor.dart';
 
-class TitleControlPenyiraman extends StatefulWidget {
-  const TitleControlPenyiraman({Key? key}) : super(key: key);
+class TitleControlPhDown extends StatefulWidget {
+  const TitleControlPhDown({Key? key}) : super(key: key);
 
   @override
-  State<TitleControlPenyiraman> createState() => _TitleControlPenyiramanState();
+  State<TitleControlPhDown> createState() => _TitleControlPhDownState();
 }
 
-class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
+class _TitleControlPhDownState extends State<TitleControlPhDown> {
   @override
   void initState() {
-    FirebaseService.getStatusPompaPenyiraman();
+    FirebaseService.getStatusPompaPhDown();
     super.initState();
   }
 
@@ -32,7 +32,7 @@ class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  'penyiraman',
+                  'ph down',
                   style: TextStyle(
                     color: constant.titleTextColor,
                     fontWeight: FontWeight.bold,
@@ -41,8 +41,8 @@ class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
                   ),
                 ),
                 Text(
-                  'control pompa\n penyiraman (manual)',
-                  //              constant.stateButtonPenyiramaan == true ? 'STATUS:HIDUP' : 'STATUS:MATI',
+                  'control pompa \nph down (manual)',
+                  //constant.stateButtonPenyiramaan == true ? 'STATUS:HIDUP' : 'STATUS:MATI',
                   style: TextStyle(
                     fontSize: 13,
                     color: constant.secondTitleText,
@@ -65,9 +65,8 @@ class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
                 onPressed: () {
                   setState(
                     () {
-                      FirebaseService.SetPompaPenyiraman();
-                      print(
-                          'stateButtonPenyiramaan ${constant.stateButtonPenyiramaan}');
+                      FirebaseService.SetPompaPhDown();
+                      print('stateButtonPhDown ${constant.stateButtonPhDown}');
                     },
                   );
                 },
@@ -79,13 +78,13 @@ class _TitleControlPenyiramanState extends State<TitleControlPenyiraman> {
                         .child('users')
                         .child(constant.uid)
                         .child('set_parameter')
-                        .child('set_pompa_penyiraman')
+                        .child('set_pompa_ph_down')
                         .onValue,
                     builder: (context, snapshot) {
                       final sensor =
-                          Sensor.fromSnapshotStateButtonPenyiraman(snapshot);
+                          Sensor.fromSnapshotStateButtonPhDown(snapshot);
                       return Text(
-                        constant.stateButtonPenyiramaan == true ? 'ON' : 'OFF',
+                        constant.stateButtonPhDown == true ? 'ON' : 'OFF',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,

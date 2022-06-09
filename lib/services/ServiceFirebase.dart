@@ -1,8 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
+
 import 'package:greenhouse/services/connectivity.dart';
-import 'package:greenhouse/widgets/title/title_control_penyiraman.dart';
 
 class FirebaseService {
   double? maxMoistureOn;
@@ -108,7 +108,7 @@ class FirebaseService {
       }
     });
     late String modeSrc;
-    mode == 'manual' ? modeSrc = 'otomatis' : modeSrc = 'manual';
+    mode == 'MANUAL' ? modeSrc = 'OTOMATIS' : modeSrc = 'MANUAL';
     await dataRef.update({
       'set_mode_ppm': modeSrc.toString(),
     }).then((value) {
@@ -127,7 +127,7 @@ class FirebaseService {
       }
     });
     late String modeSrc;
-    mode == 'manual' ? modeSrc = 'otomatis' : modeSrc = 'manual';
+    mode == 'MANUAL' ? modeSrc = 'OTOMATIS' : modeSrc = 'MANUAL';
     await dataRef.update({
       'set_mode_ph': modeSrc.toString(),
     }).then((value) {
@@ -146,7 +146,7 @@ class FirebaseService {
       }
     });
     late String mode;
-    modeStr == 'manual' ? mode = 'otomatis' : mode = 'manual';
+    modeStr == 'MANUAK' ? mode = 'OTOMATIS' : mode = 'MANUAL';
     print(modeStr);
     await dataRef.update({
       'set_mode_irigasi': mode.toString(),
@@ -238,11 +238,10 @@ class FirebaseService {
         return;
       }
     });
-    int maxPpm = 1300;
     double val = double.parse(values);
-    bool ppmInRange = (val <= maxPpm && val > 0) ? true : false;
+    bool ppmInRange = (val <= constant.maxPpm && val > 0) ? true : false;
     if (!ppmInRange) {
-      BotToast.showText(text: 'setting ppm harus dibawah $maxPpm');
+      BotToast.showText(text: 'setting ppm harus dibawah ${constant.maxPpm}');
       return;
     }
 
@@ -255,7 +254,7 @@ class FirebaseService {
     }
   }
 
-  static Future<void> SetPompaPenyiraman(bool state) async {
+  static Future<void> SetIntervalOnPpm(String values) async {
     //cek koneksi dahulu
     CheckInternet().then((stateInternet) {
       if (!stateInternet) {
@@ -263,11 +262,121 @@ class FirebaseService {
         return;
       }
     });
-    String status = state ? 'HIDUP' : 'MATI';
+    double val = double.parse(values);
+    bool intervalOnPPmInRange =
+        (val <= (constant.maxIntervalOnPpm / 1000) && val > 0) ? true : false;
+    if (!intervalOnPPmInRange) {
+      BotToast.showText(
+          text:
+              'setting interval on harus dibawah ${(constant.maxIntervalOnPpm / 1000).toStringAsFixed(0)} detik');
+      return;
+    }
+    val *= 1000;
+    try {
+      dataRef.update({'set_interval_on_ppm': val.ceil().toString()}).then((_) {
+        BotToast.showText(text: 'setting interval on to $values');
+      });
+    } catch (e) {
+      print('update interval on $e');
+    }
+  }
+
+  static Future<void> SetIntervalOffPh(String values) async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    double val = double.parse(values);
+    bool intervalOffPhInRange =
+        (val <= (constant.maxIntervalOffPh / 1000) && val > 0) ? true : false;
+    if (!intervalOffPhInRange) {
+      BotToast.showText(
+          text:
+              'setting interval off harus dibawah ${(constant.maxIntervalOffPh / 1000).toStringAsFixed(0)} detik');
+      return;
+    }
+    val *= 1000;
+    try {
+      dataRef.update({'set_interval_off_ph': val.ceil().toString()}).then((_) {
+        BotToast.showText(text: 'setting interval off to $values');
+      });
+    } catch (e) {
+      print('update interval off $e');
+    }
+  }
+
+  static Future<void> SetIntervalOnPh(String values) async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    double val = double.parse(values);
+    bool intervalOnPhInRange =
+        (val <= (constant.maxIntervalOnPh / 1000) && val > 0) ? true : false;
+    if (!intervalOnPhInRange) {
+      BotToast.showText(
+          text:
+              'setting interval on harus dibawah ${(constant.maxIntervalOnPh / 1000).toStringAsFixed(0)} detik');
+      return;
+    }
+    val *= 1000;
+    try {
+      dataRef.update({'set_interval_on_ph': val.ceil().toString()}).then((_) {
+        BotToast.showText(text: 'setting interval on to $values');
+      });
+    } catch (e) {
+      print('update interval on $e');
+    }
+  }
+
+  static Future<void> SetIntervalOffPpm(String values) async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    double val = double.parse(values);
+    bool intervalOffPPmInRange =
+        (val <= (constant.maxIntervalOffPpm / 1000) && val > 0) ? true : false;
+    if (!intervalOffPPmInRange) {
+      BotToast.showText(
+          text:
+              'setting interval off harus dibawah ${(constant.maxIntervalOffPpm / 1000).toStringAsFixed(0)} detik');
+      return;
+    }
+    val *= 1000;
+    try {
+      dataRef.update({'set_interval_off_ppm': val.ceil().toString()}).then((_) {
+        BotToast.showText(text: 'setting interval off to $values');
+      });
+    } catch (e) {
+      print('update interval off $e');
+    }
+  }
+
+  static Future<void> SetPompaPenyiraman() async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    constant.stateButtonPenyiramaan = !constant.stateButtonPenyiramaan;
+    String status = constant.stateButtonPenyiramaan ? 'HIDUP' : 'MATI';
+
     print('isReturn');
     try {
       dataRef.update({'set_pompa_penyiraman': status.toString()}).then((_) {
-        state == true
+        status == 'HIDUP'
             ? BotToast.showText(text: 'penyiraman dihidupkan')
             : BotToast.showText(text: 'penyiraman dimatikan');
       });
@@ -276,13 +385,200 @@ class FirebaseService {
     }
   }
 
+  static Future<void> SetPompaPengisian() async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    constant.stateButtonPengisian = !constant.stateButtonPengisian;
+    String status = constant.stateButtonPengisian ? 'HIDUP' : 'MATI';
+    print('isReturn');
+    try {
+      dataRef.update({'set_pompa_pengisian': status.toString()}).then((_) {
+        status == 'HIDUP'
+            ? BotToast.showText(text: 'Pengisian dihidupkan')
+            : BotToast.showText(text: 'Pengisian dimatikan');
+      });
+    } catch (e) {
+      print('error SetPompaPenyiraman $e');
+    }
+  }
+
+  static Future<void> SetPompaPhUp() async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    constant.stateButtonPhUp = !constant.stateButtonPhUp;
+    String status = constant.stateButtonPhUp ? 'HIDUP' : 'MATI';
+    try {
+      dataRef.update({'set_pompa_ph_up': status.toString()}).then((_) {
+        status == 'HIDUP'
+            ? BotToast.showText(text: 'Ph up dihidupkan')
+            : BotToast.showText(text: 'Ph up dimatikan');
+      });
+    } catch (e) {
+      print('error SetPompa ph up $e');
+    }
+  }
+
+  static Future<void> SetPompaPhDown() async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    constant.stateButtonPhDown = !constant.stateButtonPhDown;
+    String status = constant.stateButtonPhDown ? 'HIDUP' : 'MATI';
+    print('isReturn');
+    try {
+      dataRef.update({'set_pompa_ph_down': status.toString()}).then((_) {
+        status == 'HIDUP'
+            ? BotToast.showText(text: 'PhDown dihidupkan')
+            : BotToast.showText(text: 'PhDown dimatikan');
+      });
+    } catch (e) {
+      print('error SetPompa ph down $e');
+    }
+  }
+
+  static Future<void> SetPompaPpmUp() async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    constant.stateButtonPpmUp = !constant.stateButtonPpmUp;
+    String status = constant.stateButtonPpmUp ? 'HIDUP' : 'MATI';
+    print('isReturn');
+    try {
+      dataRef.update({'set_pompa_ppm_up': status.toString()}).then((_) {
+        status == 'HIDUP'
+            ? BotToast.showText(text: 'ppmUp dihidupkan')
+            : BotToast.showText(text: 'ppmUp dimatikan');
+      });
+    } catch (e) {
+      print('error SetPompa ppm up $e');
+    }
+  }
+
+  static Future<void> getStatusPompaPengisian() async {
+    final pompaPengisianRef = FirebaseDatabase.instance
+        .ref()
+        .child('users')
+        .child(constant.uid)
+        .child("sensor_status")
+        .child("pompa_status")
+        .get();
+
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        // BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    print('statePengisian ');
+    pompaPengisianRef.then((value) {
+      print('statePengisian ${value.value}');
+      value.value == 'HIDUP'
+          ? constant.stateButtonPengisian = true
+          : constant.stateButtonPengisian = false;
+    });
+  }
+
+  static Future<void> getStatusPompaPhUp() async {
+    final pompaPhUp = FirebaseDatabase.instance
+        .ref()
+        .child('users')
+        .child(constant.uid)
+        .child("sensor_status")
+        .child("pompaPhUpStatus")
+        .get();
+
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        // BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    print('statePhUp ');
+    pompaPhUp.then((value) {
+      print('statePhUp ${value.value}');
+      value.value == 'HIDUP'
+          ? constant.stateButtonPhUp = true
+          : constant.stateButtonPhUp = false;
+    });
+  }
+
+  static Future<void> getStatusPompaPhDown() async {
+    final pompaPhDown = FirebaseDatabase.instance
+        .ref()
+        .child('users')
+        .child(constant.uid)
+        .child("sensor_status")
+        .child("pompaPhDownStatus")
+        .get();
+
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        // BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    print('statePhUp ');
+    pompaPhDown.then((value) {
+      print('statePhDown ${value.value}');
+      value.value == 'HIDUP'
+          ? constant.stateButtonPhDown = true
+          : constant.stateButtonPhDown = false;
+    });
+  }
+
+  static Future<void> getStatusPompaPpmUp() async {
+    final pompaPhDown = FirebaseDatabase.instance
+        .ref()
+        .child('users')
+        .child(constant.uid)
+        .child("sensor_status")
+        .child("pompa_nutrisi_status")
+        .get();
+
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        // BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    print('statePpmUp ');
+    pompaPhDown.then((value) {
+      print('statePpmUp ${value.value}');
+      value.value == 'HIDUP'
+          ? constant.stateButtonPpmUp = true
+          : constant.stateButtonPpmUp = false;
+    });
+  }
+
   static Future<void> getStatusPompaPenyiraman() async {
     final pompaPenyiramanRef = FirebaseDatabase.instance
         .ref()
         .child('users')
         .child(constant.uid)
-        .child("set_parameter")
-        .child("set_pompa_penyiraman")
+        .child("sensor_status")
+        .child("pompaPenyiraman")
         .get();
 
     //cek koneksi dahulu

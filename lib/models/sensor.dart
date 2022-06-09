@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/widgets.dart';
+import 'package:greenhouse/constant/constant.dart';
 import 'package:greenhouse/models/jadwal_penyiraman.dart';
 import 'package:greenhouse/services/connectivity.dart';
 import 'dart:core';
@@ -52,7 +53,10 @@ class Sensor with ChangeNotifier {
   String? pompaPenyiramanUpdateTime;
   String? temperatureWater;
   String? temperatureWaterUpdateTime;
-
+  String? intervalOnPpm;
+  String? intervalOffPpm;
+  String? intervalOnPh;
+  String? intervalOffPh;
   List<ScheduleItem>? list_scheduler_ppm;
   List<JadwalPenyiraman>? list_scheduler_Jadwal_penyiraman;
 
@@ -174,6 +178,18 @@ class Sensor with ChangeNotifier {
       value = await ReadSensor(type);
     }
     if (type == 'temperatureWater') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'intervalOnPh') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'intervalOffPh') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'intervalOffPpm') {
+      value = await ReadSensor(type);
+    }
+    if (type == 'intervalOnPpm') {
       value = await ReadSensor(type);
     }
     if (type == 'temperatureWaterUpdateTime') {
@@ -376,6 +392,35 @@ class Sensor with ChangeNotifier {
             scheduler_jadwal_penyiraman = value;
           });
         }
+        if (data['set_interval_on_ph'] != null) {
+          print('object');
+          intervalOnPh = data['set_interval_on_ph'].toString();
+        } else {
+          ReadInternalDataOf('set_interval_on_ph').then((value) {
+            intervalOnPh = value;
+          });
+        }
+        if (data['set_interval_off_ph'] != null) {
+          intervalOffPh = data['set_interval_off_ph'].toString();
+        } else {
+          ReadInternalDataOf('set_interval_off_ph').then((value) {
+            intervalOffPh = value;
+          });
+        }
+        if (data['set_interval_off_ppm'] != null) {
+          intervalOffPpm = data['set_interval_off_ppm'].toString();
+        } else {
+          ReadInternalDataOf('set_interval_off_ppm').then((value) {
+            intervalOffPpm = value;
+          });
+        }
+        if (data['set_interval_on_ppm'] != null) {
+          intervalOnPpm = data['set_interval_on_ppm'].toString();
+        } else {
+          ReadInternalDataOf('set_interval_on_ppm').then((value) {
+            intervalOnPpm = value;
+          });
+        }
         if (data['scheduler_ppm_str'] != null) {
           try {
             list_scheduler_ppm = [];
@@ -454,24 +499,78 @@ class Sensor with ChangeNotifier {
       print('ERROR FROM fromSnapshotGrafik = $err');
     }
   }
-  Sensor.fromSnapshotSchedulerPpm(snap) {
+
+  Sensor.fromSnapshotStateButtonPenyiraman(snap) {
     try {
       if (snap.hasData) {
-        final data = snap.data.snapshot.value;
+        if (snap.data.snapshot.value == "MATI") {
+          stateButtonPenyiramaan = false;
+        } else {
+          stateButtonPenyiramaan = true;
+        }
+        // stateButtonPenyiramaan = snap.data.snapshot.value;
+        print('[penyiraman] ${snap.data.snapshot.value}');
       }
     } catch (err) {
-      print('ERROR FROM fromSnapshotSchedulerPpm $err');
+      print('ERROR FROM [penyiraman] $err');
     }
   }
-
-  Sensor.fromSnapshotSchedulerPenyiraman(snap) {
+  Sensor.fromSnapshotStateButtonPengisian(snap) {
     try {
-      if (snap.hasData) {}
+      if (snap.hasData) {
+        if (snap.data.snapshot.value == "MATI") {
+          stateButtonPengisian = false;
+        } else {
+          stateButtonPengisian = true;
+        }
+        print('[stateButtonPengisian] ${snap.data.snapshot.value}');
+      }
     } catch (err) {
-      print('ERROR FROM Snapscheduler_jadwal_penyiraman $err');
+      print('ERROR FROM [stateButtonPengisian] $err');
     }
   }
-
+  Sensor.fromSnapshotStateButtonPhUp(snap) {
+    try {
+      if (snap.hasData) {
+        if (snap.data.snapshot.value == "MATI") {
+          stateButtonPhUp = false;
+        } else {
+          stateButtonPhUp = true;
+        }
+        print('[stateButtonPhUp] ${snap.data.snapshot.value}');
+      }
+    } catch (err) {
+      print('ERROR FROM [stateButtonPhUp] $err');
+    }
+  }
+  Sensor.fromSnapshotStateButtonPhDown(snap) {
+    try {
+      if (snap.hasData) {
+        if (snap.data.snapshot.value == "MATI") {
+          stateButtonPhDown = false;
+        } else {
+          stateButtonPhDown = true;
+        }
+        print('[stateButtonPhDown] ${snap.data.snapshot.value}');
+      }
+    } catch (err) {
+      print('ERROR FROM [stateButtonPhDown] $err');
+    }
+  }
+  Sensor.fromSnapshotStateButtonPpmUp(snap) {
+    try {
+      if (snap.hasData) {
+        if (snap.data.snapshot.value == "MATI") {
+          stateButtonPpmUp = false;
+        } else {
+          stateButtonPpmUp = true;
+        }
+        print('[stateButtonPpmUp] ${snap.data.snapshot.value}');
+      }
+    } catch (err) {
+      print('ERROR FROM [stateButtonPpmUp] $err');
+    }
+  }
   Future<void> CheckAndSave(String typeSensor, String valueSensor) async {
     return ReadInternalDataOf(typeSensor).then(
       (valueFromInternal) {

@@ -229,7 +229,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
     var alert = AlertDialog(
       backgroundColor: backgroundColor,
       title: const Text(
-        "Berapa target ppm? \nmaximum ${maxPpm}",
+        "masukan target ppm? \nmaximum ${maxPpm}",
         style: TextStyle(
           color: Colors.white,
         ),
@@ -398,6 +398,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         resizeToAvoidBottomInset: false,
         backgroundColor: backgroundColor,
         appBar: AppBar(
@@ -407,6 +408,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blue,
           heroTag: 'btn1',
           onPressed: () {
             ShowDateTimePicker();
@@ -421,7 +423,6 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
               .child('set_parameter')
               .onValue,
           builder: (context, snapshot) {
-            Sensor sensor = Sensor.fromSnapshotSchedulerPpm(snapshot);
             if (snapshot.hasData) {}
             return SingleChildScrollView(
               child: Column(
