@@ -99,23 +99,20 @@ class CardContentItem extends StatelessWidget {
                     risingOrFalling(
                       type: type,
                     ),
-                    Container(
-                      color: Colors.amber,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('berubah pada',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: constant.CardLastChangeUpdateTextColor,
-                              )),
-                          //build lastchange info widget
-                          LastChangeInfoWidget(
-                            valuVar: valuVar,
-                            type: type,
-                          )
-                        ],
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('berubah pada',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: constant.CardLastChangeUpdateTextColor,
+                            )),
+                        //build lastchange info widget
+                        LastChangeInfoWidget(
+                          valuVar: valuVar,
+                          type: type,
+                        )
+                      ],
                     ),
                   ],
                 )
@@ -161,7 +158,9 @@ class risingOrFalling extends StatelessWidget {
                         size: 15,
                       ),
                 Text(
-                  (trendValue).toString(),
+                  trendValue > 0
+                      ? (trendValue).toString()
+                      : (trendValue * -1).toString(),
                   style: TextStyle(
                     color: trendValue > 0 ? Colors.green : Colors.red,
                     fontWeight: FontWeight.bold,

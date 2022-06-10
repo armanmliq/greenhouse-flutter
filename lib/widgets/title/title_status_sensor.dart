@@ -16,13 +16,13 @@ class TitleRealtimeSensor extends StatelessWidget {
             children: [
               Text(
                 'SENSOR REALTIME',
-                style: TextStyleTitleTitle,
+                style: TextStyleTitleOutside,
               ),
               const Text(
                 'Menampilkan status sensor secara realtime',
                 style: TextStyle(
                   fontSize: 15,
-                  color: constant.secondTitleText,
+                  color: constant.secondTitleOutside,
                 ),
               ),
             ],

@@ -73,15 +73,12 @@ class TitleSetPpm extends StatelessWidget {
             children: [
               Text(
                 'NUTRISI',
-                style: TextStyleTitleTitle,
+                style: constant.TextStyleTitleOutside,
               ),
               Text(
                 'atur target nutrisi dan mode',
-                style: TextStyle(
-                  fontSize: fontSize,
-                  color: constant.secondTitleText,
-                ),
-              ),
+                style: constant.TextStyleSecondTitleOutside,
+              )
             ],
           ),
         ],

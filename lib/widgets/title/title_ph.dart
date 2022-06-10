@@ -28,15 +28,10 @@ class TitleSetPh extends StatelessWidget {
             children: [
               Text(
                 'PH',
-                style: TextStyleTitleTitle,
+                style: TextStyleTitleOutside,
               ),
-              Text(
-                'atur ph target dan mode',
-                style: TextStyle(
-                  fontSize: fontSize,
-                  color: constant.secondTitleText,
-                ),
-              ),
+              Text('atur ph target dan mode',
+                  style: TextStyleSecondTitleOutside),
             ],
           ),
         ],
