@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/services/ServiceFirebase.dart';
 
+import '../../constant/constant.dart';
 import '../../models/sensor.dart';
 
 class TitleControlPengisian extends StatefulWidget {
@@ -30,19 +31,13 @@ class _TitleControlPengisianState extends State<TitleControlPengisian> {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'pengisian',
-                  style: TextStyle(
-                    color: constant.titleTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
+                  style: TextStyleTitleTitle,
                 ),
-                Text(
+                const Text(
                   'control pompa \npengisian tandon (manual)',
-                  //constant.stateButtonPenyiramaan == true ? 'STATUS:HIDUP' : 'STATUS:MATI',
                   style: TextStyle(
                     fontSize: 13,
                     color: constant.secondTitleText,

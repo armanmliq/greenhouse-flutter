@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
+import 'package:greenhouse/constant/constant.dart';
 import 'package:greenhouse/models/sensor.dart';
 import '../../constant/constant.dart' as constant;
 import '../items/show_modal_bottom.dart';
@@ -27,12 +28,7 @@ class TitleSetPh extends StatelessWidget {
             children: [
               Text(
                 'PH',
-                style: TextStyle(
-                  color: constant.titleTextColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                  letterSpacing: 2,
-                ),
+                style: TextStyleTitleTitle,
               ),
               Text(
                 'atur ph target dan mode',
@@ -443,9 +439,13 @@ class WidgetSetIntervalOnPh extends StatelessWidget {
         final sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
         print('${sensor.intervalOnPh}');
         if (snapshot.hasData) {
-          final _intervalOn = int.parse(sensor.intervalOnPh!);
-          intervalOnStr =
-              '${(_intervalOn / 1000).toStringAsFixed(0).toString()} detik';
+          try {
+            final _intervalOn = int.parse(sensor.intervalOnPh!);
+            intervalOnStr =
+                '${(_intervalOn / 1000).toStringAsFixed(0).toString()} detik';
+          } catch (e) {
+            print('error [intervalOnPh] $e');
+          }
         }
         String label = "INTERVAL ON";
         return Column(
@@ -605,12 +605,16 @@ class WidgetSetIntervalOffPh extends StatelessWidget {
     return StreamBuilder(
       stream: databaseRef.onValue,
       builder: ((context, snapshot) {
-        final sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
-        print('${sensor.intervalOffPh}');
         if (snapshot.hasData) {
-          final _intervalOn = int.parse(sensor.intervalOffPh!);
-          intervalOffStr =
-              '${(_intervalOn / 1000).toStringAsFixed(0).toString()} detik';
+          try {
+            final sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
+            print('${sensor.intervalOffPh}');
+            final _intervalOn = int.parse(sensor.intervalOffPh!);
+            intervalOffStr =
+                '${(_intervalOn / 1000).toStringAsFixed(0).toString()} detik';
+          } catch (e) {
+            print(e.toString());
+          }
         }
         String label = "INTERVAL OFF";
         return Column(

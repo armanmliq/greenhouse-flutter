@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constant/constant.dart' as constant;
+import '../../constant/constant.dart';
 
 class TitleRealtimeSensor extends StatelessWidget {
   const TitleRealtimeSensor({Key? key}) : super(key: key);
@@ -12,17 +13,12 @@ class TitleRealtimeSensor extends StatelessWidget {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'SENSOR REALTIME',
-                style: TextStyle(
-                  color: constant.titleTextColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  letterSpacing: 2,
-                ),
+                style: TextStyleTitleTitle,
               ),
-              Text(
+              const Text(
                 'Menampilkan status sensor secara realtime',
                 style: TextStyle(
                   fontSize: 15,

@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
-import 'package:greenhouse/models/sensor.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/models/jadwal_penyiraman.dart';
 
@@ -276,7 +276,10 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
         backgroundColor: backgroundColor,
         appBar: AppBar(
           backgroundColor: backgroundColor,
-          title: const Text('Schedule Penyiraman'),
+          title: Text(
+            'Schedule Penyiraman',
+            style: TextStyleAppbarTitle,
+          ),
           actions: [],
         ),
         body: const ItemList(),
@@ -326,42 +329,35 @@ class _ItemListState extends State<ItemList> {
                   String LamaPenyiraman = '';
                   int _index = 0;
                   try {
-                    waktu =
-                        'Time \n${item.TimeOfDay.toString().substring(10, 15)}';
+                    waktu = item.TimeOfDay.toString().substring(10, 15);
                   } catch (e) {}
                   try {
-                    LamaPenyiraman = 'Durasi \n${item.LamaPenyiraman} Menit';
+                    LamaPenyiraman = '${item.LamaPenyiraman} Menit';
                   } catch (e) {}
                   try {
-                    _index = ListJadwalPenyiraman.indexOf(item);
+                    _index = ListJadwalPenyiraman.indexOf(item) + 1;
                     print('[indexMapJadwalPenyiraman] ${_index + 1}');
                   } catch (e) {}
 
                   return Card(
-                    color: Colors.black12,
+                    color: Colors.white,
                     child: ListTile(
                       leading: Text(
                         _index.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: GoogleFonts.heebo(
+                          color: Colors.black,
                           fontSize: 20,
                         ),
                       ),
                       title: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              color: Colors.blue,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  waktu,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                            Text(
+                              waktu,
+                              style: GoogleFonts.anton(
+                                fontSize: 20,
                               ),
                             ),
                             const SizedBox(
@@ -370,7 +366,7 @@ class _ItemListState extends State<ItemList> {
                             Text(
                               LamaPenyiraman,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -379,7 +375,7 @@ class _ItemListState extends State<ItemList> {
                       trailing: IconButton(
                         icon: const Icon(
                           Icons.delete,
-                          color: Colors.white,
+                          color: Colors.red,
                         ),
                         onPressed: () {
                           setState(

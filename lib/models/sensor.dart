@@ -72,21 +72,7 @@ class Sensor with ChangeNotifier {
 
   Future<String> ReadInternalDataOf(String type) async {
     String? value;
-    value = await prefsRead(type);
-    return value.toString();
-  }
-
-  Future<String?> prefsRead(String type) async {
-    final _prefs = await SharedPreferences.getInstance();
-    String? value;
-    try {
-      if (_prefs.containsKey(type)) {
-        value = _prefs.getString(type)!;
-        print('reading.$type $value');
-      }
-    } catch (er) {
-      print('error Save.Sensor: $er');
-    }
+    value = await InternalPreferences().prefsRead(type);
     return value.toString();
   }
 
@@ -482,7 +468,7 @@ class Sensor with ChangeNotifier {
           (value) {
             print('[CheckAndSave] saving $typeSensor proccess... ');
             if (valueFromInternal != valueSensor && valueSensor != 'null') {
-              InternalPreferences().SaveSensor(typeSensor, valueSensor);
+              InternalPreferences().prefsSave(typeSensor, valueSensor);
               print('[CheckAndSave] success saving $typeSensor..');
               if (!typeSensor.contains('mode') &&
                   !typeSensor.contains('set_') &&
@@ -494,12 +480,12 @@ class Sensor with ChangeNotifier {
 
                   //save trend
                   InternalPreferences()
-                      .SaveSensor('${typeSensor}Trend', uptrendValue);
+                      .prefsSave('${typeSensor}Trend', uptrendValue);
                   print('[saving trend] $typeSensor.. ');
                 });
 
                 //save update time
-                InternalPreferences().SaveSensor('${typeSensor}UpdateTime',
+                InternalPreferences().prefsSave('${typeSensor}UpdateTime',
                     DateTime.now().toIso8601String());
                 print('[saving time] update time $typeSensor.. ');
               } else {

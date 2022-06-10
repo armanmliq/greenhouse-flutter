@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/services/connectivity.dart';
+import 'package:greenhouse/services/shared_pref.dart';
 
 initializeAccount() async {
   bool isInternetConnected = false;
@@ -11,8 +12,9 @@ initializeAccount() async {
     isInternetConnected = value;
 
     if (isInternetConnected) {
-      InitSensorStatus();
-      try {} catch (er) {
+      try {
+        InitSensorStatus();
+      } catch (er) {
         print('ersensor_status $er');
       }
       try {
@@ -45,6 +47,12 @@ initializeAccount() async {
         InitGrafik().InitGrafikWaterTemp();
       } catch (er) {
         print('erHUMIDITY $er');
+      }
+
+      try {
+        InitRegister();
+      } catch (er) {
+        print('erInitRegister $er');
       }
     } else {
       print('failed.initialize... \ninternet not connected');
@@ -81,6 +89,40 @@ Future InitSensorStatus() async {
             {
               print('initialize sensor_status data EXIST'),
             }
+        },
+      );
+}
+
+Future InitRegister() async {
+  final accountInfo = FirebaseDatabase.instance
+      .ref()
+      .child('users')
+      .child(constant.uid)
+      .child('account_info');
+  return await accountInfo.get().then(
+        (DocumentSnapshot) => {
+          InternalPreferences().prefsRead('email').then((_email) {
+            if (_email!.isNotEmpty) {
+              InternalPreferences().prefsRead('password').then((_password) {
+                if (_password!.isNotEmpty) {
+                  InternalPreferences().prefsRead('username').then((_username) {
+                    if (_username! != 'null') {
+                      if (!DocumentSnapshot.exists) {
+                        print('initialize accountInfo not exist, CREATE ONE');
+                        accountInfo.set({
+                          'username': _username,
+                          'email': _email,
+                          'password': _password,
+                        });
+                      } else {
+                        print('initialize accountInfo data EXIST');
+                      }
+                    }
+                  });
+                }
+              });
+            }
+          }),
         },
       );
 }

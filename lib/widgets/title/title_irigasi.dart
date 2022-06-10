@@ -6,6 +6,8 @@ import 'package:greenhouse/models/sensor.dart';
 import 'package:greenhouse/services/ServiceFirebase.dart';
 import 'package:greenhouse/widgets/items/show_modal_bottom.dart';
 
+import '../../constant/constant.dart';
+
 final databaseRef = FirebaseDatabase.instance
     .ref()
     .child('users')
@@ -22,15 +24,10 @@ class TitleSetSoil extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
-        children: const [
+        children: [
           Text(
             'SMART IRIGASI',
-            style: TextStyle(
-              color: constant.titleTextColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              letterSpacing: 2,
-            ),
+            style: TextStyleTitleTitle,
           ),
           Text(
             'atur pompa irigasi berdasarkan kelembapan tanah dan mode lainnya',

@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/screens/graph_screen.dart';
 
+import '../../constant/constant.dart';
+
 class TitleChart extends StatelessWidget {
   const TitleChart({Key? key}) : super(key: key);
 
@@ -17,15 +19,10 @@ class TitleChart extends StatelessWidget {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'GRAFIK',
-                  style: TextStyle(
-                    color: constant.titleTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
+                  style: TextStyleTitleTitle,
                 ),
                 Text(
                   'Laporan grafik informasi\ndari sensor ',

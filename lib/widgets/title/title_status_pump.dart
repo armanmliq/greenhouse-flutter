@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:greenhouse/constant/constant.dart' as constant;
+
+import '../../constant/constant.dart';
 
 class TitleControl extends StatelessWidget {
   const TitleControl({Key? key}) : super(key: key);
@@ -14,12 +14,7 @@ class TitleControl extends StatelessWidget {
           children: [
             Text(
               'Status Pompa',
-              style: GoogleFonts.heebo(
-                color: constant.titleTextColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                letterSpacing: 2,
-              ),
+              style: TextStyleTitleTitle,
             ),
             const Text(
               'menampilkan status pompa secara realtime',

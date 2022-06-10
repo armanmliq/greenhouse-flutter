@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 
+import '../../constant/constant.dart';
+
 class TitleSet extends StatelessWidget {
   const TitleSet({Key? key}) : super(key: key);
 
@@ -16,16 +18,8 @@ class TitleSet extends StatelessWidget {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'SET VALUE',
-                style: TextStyle(
-                  color: constant.titleTextColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  letterSpacing: 2,
-                ),
-              ),
+            children: [
+              Text('SET VALUE', style: TextStyleTitleTitle),
               Text(
                 'ganti value target yang diinginkan',
                 style: TextStyle(

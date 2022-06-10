@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/screens/jadwal_penyiraman.dart';
 
+import '../../constant/constant.dart';
+
 bool _stateButton = false;
 final databaseRef = FirebaseDatabase.instance
     .ref()
@@ -29,15 +31,10 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Jadwal\npenyiraman',
-                  style: TextStyle(
-                    color: constant.titleTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
+                  style: TextStyleTitleTitle,
                 ),
                 Text(
                   'Atur jadwal\npenyiraman harian',

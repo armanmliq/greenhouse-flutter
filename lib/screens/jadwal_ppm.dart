@@ -1,8 +1,8 @@
 import 'dart:core';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:greenhouse/constant/constant.dart';
-import 'package:greenhouse/models/sensor.dart';
 import 'package:greenhouse/services/connectivity.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -403,8 +403,9 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
         backgroundColor: backgroundColor,
         appBar: AppBar(
           backgroundColor: backgroundColor,
-          title: const Center(
-            child: Text('Jadwal Nutrisi'),
+          title: Text(
+            'JADWAL NUTRISI',
+            style: TextStyleAppbarTitle,
           ),
         ),
         floatingActionButton: FloatingActionButton(
@@ -433,7 +434,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                     (item) => Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: Card(
-                        color: Colors.black12,
+                        color: Colors.white,
                         child: ListTile(
                           title: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -442,10 +443,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                               children: [
                                 Text(
                                   '${item.ppm.toString()} PPM',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: TextStyleJadwalValue,
                                 ),
                               ],
                             ),
@@ -453,19 +451,20 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                           leading: Text(
                             '${ListOfSchedule.indexOf(item) + 1}',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
+                              fontSize: 20,
                             ),
                           ),
                           subtitle: Text(
                             '${f.format(item.fromDate).toString()} To ${f.format(item.toDate).toString()}',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                           trailing: IconButton(
                             icon: const Icon(
                               Icons.delete,
-                              color: Colors.white,
+                              color: Colors.red,
                             ),
                             onPressed: () {
                               setState(

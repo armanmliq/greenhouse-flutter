@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 
+import '../../constant/constant.dart';
 import '../../screens/jadwal_ppm.dart';
 
 bool _stateButton = false;
@@ -30,15 +31,10 @@ class TitleJadwalPpmState extends State<TitleJadwalPpm> {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Jadwal \nnutrisi',
-                  style: TextStyle(
-                    color: constant.titleTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
+                  style: TextStyleTitleTitle,
                 ),
                 Text(
                   'Atur jadwal \nnutrisi',

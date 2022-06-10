@@ -1,18 +1,12 @@
 import 'dart:convert';
-
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:greenhouse/models/firebaseException.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:greenhouse/services/shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
-
+import '../constant/constant.dart';
 import 'initialize_account.dart';
-
-String initialEmail = '';
-String initialPass = '';
-String initialUsername = '';
-bool isRegister = false;
 
 class AuthService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -78,7 +72,7 @@ class AuthService with ChangeNotifier {
   }
 
   //sign up email pass
-  Future<bool?> signUp(String email, String password, String Username) async {
+  Future<bool?> signUp(String email, String password, String username) async {
     try {
       //
       final authResult = await _auth.createUserWithEmailAndPassword(
@@ -88,11 +82,17 @@ class AuthService with ChangeNotifier {
       // //push new uid in document while first register
       if (user!.uid.isNotEmpty) {
         isRegister = true;
-        print('REGISTER... UID EXIST');
+        print('[REGISTER] $email $password $username');
         initialEmail = email;
         initialPass = password;
-        initialUsername = Username;
-        initializeAccount();
+        initialUsername = username;
+        InternalPreferences().prefsSave('email', email).then((value) {
+          InternalPreferences().prefsSave('password', password).then((value) {
+            InternalPreferences().prefsSave('username', username).then((value) {
+              initializeAccount();
+            });
+          });
+        });
 
         return true;
       }

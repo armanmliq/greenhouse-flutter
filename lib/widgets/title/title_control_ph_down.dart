@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
+import 'package:greenhouse/constant/constant.dart';
 import 'package:greenhouse/services/ServiceFirebase.dart';
 
 import '../../models/sensor.dart';
@@ -30,15 +31,10 @@ class _TitleControlPhDownState extends State<TitleControlPhDown> {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'ph down',
-                  style: TextStyle(
-                    color: constant.titleTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
+                  style: TextStyleTitleTitle,
                 ),
                 Text(
                   'control pompa \nph down (manual)',

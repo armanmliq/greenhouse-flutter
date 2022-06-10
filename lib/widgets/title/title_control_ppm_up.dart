@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/services/ServiceFirebase.dart';
 
+import '../../constant/constant.dart';
 import '../../models/sensor.dart';
 
 class TitleControlPpmUp extends StatefulWidget {
@@ -30,15 +31,10 @@ class _TitleControlPpmUpState extends State<TitleControlPpmUp> {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'ppm up',
-                  style: TextStyle(
-                    color: constant.titleTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
+                  style: TextStyleTitleTitle,
                 ),
                 Text(
                   'control pompa \nppm up (manual)',
