@@ -57,6 +57,7 @@ class Sensor with ChangeNotifier {
   String? intervalOffPpm;
   String? intervalOnPh;
   String? intervalOffPh;
+  String? ppmBefore;
   List<ScheduleItem>? list_scheduler_ppm;
   List<JadwalPenyiraman>? list_scheduler_Jadwal_penyiraman;
 
@@ -71,134 +72,11 @@ class Sensor with ChangeNotifier {
 
   Future<String> ReadInternalDataOf(String type) async {
     String? value;
-
-    if (type == 'humidity') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'tankLevel') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'ppm') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'ph') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'sprayer_status') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompa_status') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'temperature') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'set_moisture_on') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'set_humidity') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'set_ppm') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'set_ph') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompa_nutrisi_status') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'set_moisture_off') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'temperatureUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'humidityUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'tankLevelUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'ppmUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'phUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'setHumidityUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'setPpmUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'setPhUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'sprayer_statusUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompa_nutrisi_statusUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompa_statusUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'set_mode_ph') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'set_mode_ppm') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'set_mode_irigasi') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'scheduler_ppm_str') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'scheduler_jadwal_penyiraman') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompaPhUpStatus') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompaPhDownStatus') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompaPhUpStatusUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompaPhDownStatusUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompaPenyiramanUpdateTime') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'pompaPenyiraman') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'temperatureWater') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'intervalOnPh') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'intervalOffPh') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'intervalOffPpm') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'intervalOnPpm') {
-      value = await ReadSensor(type);
-    }
-    if (type == 'temperatureWaterUpdateTime') {
-      value = await ReadSensor(type);
-    }
+    value = await prefsRead(type);
     return value.toString();
   }
 
-  Future<String?> ReadSensor(String type) async {
+  Future<String?> prefsRead(String type) async {
     final _prefs = await SharedPreferences.getInstance();
     String? value;
     try {
@@ -242,6 +120,17 @@ class Sensor with ChangeNotifier {
             });
           }
           if (data['ppm'] != null) {
+            try {
+              double doublePpmBefore =
+                  ppmBefore!.isEmpty ? 0 : double.parse(ppmBefore!);
+              ppmBefore = (double.parse(ppm!) - doublePpmBefore).toString();
+              print(ppmBefore);
+            } catch (e) {
+              log(e.toString());
+            }
+
+            print('[ppmBefore] $ppmBefore');
+
             ppm = data['ppm'].toString();
           } else {
             ReadInternalDataOf('ppm').then((value) {
@@ -315,6 +204,21 @@ class Sensor with ChangeNotifier {
       }
     }
     print(' ========== fromSnapshotSensorStatus ====== ');
+  }
+  Future<String?> calculateUpTrend(String valueBefore, String valueLast) async {
+    double result = 0;
+    double douBefore = 0;
+    double douLast = 0;
+    // isDataDifferent(typeSensor, valueSensor);
+    try {
+      douBefore = double.parse(valueBefore);
+      douLast = double.parse(valueLast);
+    } catch (e) {
+      print('[calculateUpTrend] $e');
+    }
+
+    result = douLast - douBefore;
+    return result.toString();
   }
 
   void printData(String type, String val) {
@@ -583,6 +487,18 @@ class Sensor with ChangeNotifier {
               if (!typeSensor.contains('mode') &&
                   !typeSensor.contains('set_') &&
                   !typeSensor.contains('scheduler')) {
+                //calculate uptrend
+                calculateUpTrend(valueFromInternal, valueSensor)
+                    .then((uptrendValue) {
+                  log('[trend] $typeSensor : $uptrendValue');
+
+                  //save trend
+                  InternalPreferences()
+                      .SaveSensor('${typeSensor}Trend', uptrendValue);
+                  print('[saving trend] $typeSensor.. ');
+                });
+
+                //save update time
                 InternalPreferences().SaveSensor('${typeSensor}UpdateTime',
                     DateTime.now().toIso8601String());
                 print('[saving time] update time $typeSensor.. ');
@@ -605,12 +521,12 @@ class Sensor with ChangeNotifier {
           (value) {
             if (valueFromInternal != valueSensor && valueSensor != 'null') {
               print(
-                  'valueSensor $valueSensor is difference $valueFromInternal ');
+                  '[isDataDifferent]valueSensor $valueSensor is difference $valueFromInternal ');
 
               return true;
             } else {
               print(
-                  'valueSensor $valueSensor same with intrnal $valueFromInternal ... return false');
+                  '[isDataDifferent]valueSensor $valueSensor same with intrnal $valueFromInternal ... return false');
             }
           },
         );

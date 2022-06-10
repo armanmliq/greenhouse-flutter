@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:greenhouse/models/sensor.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
@@ -92,19 +94,29 @@ class CardContentItem extends StatelessWidget {
                             fontSize: 12, color: constant.cardTextUnitColor))
                   ],
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    const Text('update',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: constant.CardLastChangeUpdateTextColor,
-                        )),
-                    //build lastchange info widget
-                    LastChangeInfoWidget(
-                      valuVar: valuVar,
+                    risingOrFalling(
                       type: type,
-                    )
+                    ),
+                    Container(
+                      color: Colors.amber,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('berubah pada',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: constant.CardLastChangeUpdateTextColor,
+                              )),
+                          //build lastchange info widget
+                          LastChangeInfoWidget(
+                            valuVar: valuVar,
+                            type: type,
+                          )
+                        ],
+                      ),
+                    ),
                   ],
                 )
               ],
@@ -113,6 +125,52 @@ class CardContentItem extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class risingOrFalling extends StatelessWidget {
+  risingOrFalling({required this.type});
+  final String type;
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: Sensor().ReadInternalDataOf('${type}Trend'),
+        builder: (context, snapshot) {
+          double trendValue = 0;
+          if (snapshot.hasData) {
+            try {
+              trendValue = double.parse(snapshot.data.toString());
+            } catch (e) {
+              log('[trend]error $e');
+            }
+          }
+          if (trendValue == 0) {
+            return Container();
+          } else {
+            return Column(
+              children: [
+                trendValue > 0
+                    ? const Icon(
+                        Icons.arrow_upward_outlined,
+                        color: Colors.green,
+                        size: 15,
+                      )
+                    : const Icon(
+                        Icons.arrow_downward_outlined,
+                        color: Colors.red,
+                        size: 15,
+                      ),
+                Text(
+                  (trendValue).toString(),
+                  style: TextStyle(
+                    color: trendValue > 0 ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            );
+          }
+        });
   }
 }
 
@@ -143,6 +201,7 @@ class ValueInfoWidget extends StatelessWidget {
         ),
       );
     } else {
+      //readValue info widget
       return FutureBuilder(
         future: sensor.ReadInternalDataOf(type),
         builder: (context, AsyncSnapshot<String> snapshot) {

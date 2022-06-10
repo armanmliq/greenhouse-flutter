@@ -116,6 +116,10 @@ Future InitSetParameter() async {
                 'set_interval_limit': "7200000",
                 'set_interval_off': "2500",
                 'set_interval_on': "6500",
+                'set_interval_off_ppm': "2500",
+                'set_interval_on_ppm': "6500",
+                'set_interval_off_ph': "2500",
+                'set_interval_on_ph': "6500",
               }),
             }
           else

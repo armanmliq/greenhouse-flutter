@@ -82,7 +82,7 @@ class SetParameterPh extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         border: 2,
         borderRadius: constant.borderRadius,
-        height: 300,
+        height: 350,
         child: Row(
           children: const [
             SettingParameter(),
@@ -151,6 +151,7 @@ class SettingParameter extends StatelessWidget {
           const TargetPhWidget(type: 'set_mode_ph'),
           const SizedBox(height: 20),
           WidgetSetIntervalOnPh(),
+          const SizedBox(height: 20),
           WidgetSetIntervalOffPh(),
         ],
       ),
