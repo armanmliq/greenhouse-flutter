@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
+import 'package:greenhouse/widgets/items/grid_pompa.dart';
 import 'package:greenhouse/widgets/title/title_control_ph_down.dart';
 import 'package:greenhouse/widgets/title/title_control_ph_up.dart';
 import 'package:greenhouse/widgets/title/title_ph.dart';
 import 'package:greenhouse/widgets/items/grid_sensor.dart';
 import 'package:greenhouse/widgets/title/title_ppm.dart';
+import 'package:greenhouse/widgets/title/title_status_pump.dart';
 import '../../constant/constant.dart';
 import '../title/title_control_pengisian.dart';
 import '../title/title_control_penyiraman.dart';
@@ -28,19 +30,20 @@ class MainContent extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-                padding: EdgeInsets.all(
-                  constant.padding,
-                ),
-                child: Container(
-                  height: 120.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(borderRadiusGlass),
-                    image: const DecorationImage(
-                      image: AssetImage('assets/images/greenhouse.png'),
-                      fit: BoxFit.fill,
-                    ),
+              padding: EdgeInsets.all(
+                constant.padding,
+              ),
+              child: Container(
+                height: 120.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(borderRadiusGlass),
+                  image: const DecorationImage(
+                    image: AssetImage('assets/images/greenhouse.png'),
+                    fit: BoxFit.fill,
                   ),
-                )),
+                ),
+              ),
+            ),
             Padding(
               padding: EdgeInsets.all(
                 constant.padding,
@@ -48,7 +51,18 @@ class MainContent extends StatelessWidget {
               child: Column(
                 children: const [
                   TitleRealtimeSensor(),
-                  GridLiveData(),
+                  GridSensorStatus(),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(
+                constant.padding,
+              ),
+              child: Column(
+                children: const [
+                  TitlePompaStatus(),
+                  GridPompaStatus(),
                 ],
               ),
             ),

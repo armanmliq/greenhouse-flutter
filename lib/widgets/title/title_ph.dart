@@ -232,7 +232,7 @@ class BuildTargetPhWidget extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context, rootNavigator: true).pop();
                     },
-                    child: Text(
+                    child: const Text(
                       'CANCEL',
                       style: TextStyle(
                         color: Colors.white,
@@ -245,7 +245,7 @@ class BuildTargetPhWidget extends StatelessWidget {
                       InputDialog.validateVal(type, _targetPh, context);
                       Navigator.of(context, rootNavigator: true).pop();
                     },
-                    child: Text(
+                    child: const Text(
                       'OK',
                       style: TextStyle(
                         color: Colors.white,

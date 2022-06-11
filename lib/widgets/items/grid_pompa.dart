@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:greenhouse/widgets/items/sensor_card.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 
-class GridSensorStatus extends StatelessWidget {
-  const GridSensorStatus({Key? key}) : super(key: key);
+class GridPompaStatus extends StatelessWidget {
+  const GridPompaStatus({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,38 +26,38 @@ class GridGenerator extends StatelessWidget {
       crossAxisCount: 2,
       children: const [
         CardSensor(
-          type: 'ph',
-          iconVar: 'assets/icon/icon_ph.png',
-          textVar: 'ph',
-          unitVar: 'pH',
+          type: 'pompaPenyiraman',
+          iconVar: 'assets/icon/icon_pump.png',
+          textVar: 'pompa\npenyiraman',
+          unitVar: '',
           bgColor: constant.cardColor,
         ),
         CardSensor(
-          type: 'ppm',
-          iconVar: 'assets/icon/icon_ppm.png',
-          textVar: 'tds',
-          unitVar: 'PPM',
+          type: 'pompa_status',
+          iconVar: 'assets/icon/icon_pump.png',
+          textVar: 'pompa \ntandon',
+          unitVar: '',
           bgColor: constant.cardColor,
         ),
         CardSensor(
-          type: 'temperature',
-          iconVar: "assets/icon/icon_temperature.png",
-          textVar: "suhu\nruangan",
-          unitVar: "°C",
+          type: 'pompa_nutrisi_status',
+          iconVar: 'assets/icon/icon_pump_nutrition.png',
+          textVar: 'pompa\nabmix up',
+          unitVar: '',
           bgColor: constant.cardColor,
         ),
         CardSensor(
-          type: 'temperatureWater',
-          iconVar: "assets/icon/icon_water_temp.png",
-          textVar: "suhu\nair",
-          unitVar: "°C",
+          type: 'pompaPhUpStatus',
+          iconVar: 'assets/icon/icon_pump_nutrition.png',
+          textVar: 'pompa\nph up',
+          unitVar: '',
           bgColor: constant.cardColor,
         ),
         CardSensor(
-          type: 'humidity',
-          iconVar: "assets/icon/icon_humidity.png",
-          textVar: "kelemb\napan",
-          unitVar: "%",
+          type: 'pompaPhDownStatus',
+          iconVar: 'assets/icon/icon_pump_nutrition.png',
+          textVar: 'pompa\nph down',
+          unitVar: '',
           bgColor: constant.cardColor,
         ),
       ],

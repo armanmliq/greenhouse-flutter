@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 
 import 'package:greenhouse/services/connectivity.dart';
+import 'package:greenhouse/services/shared_pref.dart';
 
 class FirebaseService {
   double? maxMoistureOn;
@@ -377,8 +380,8 @@ class FirebaseService {
     try {
       dataRef.update({'set_pompa_penyiraman': status.toString()}).then((_) {
         status == 'HIDUP'
-            ? BotToast.showText(text: 'penyiraman dihidupkan')
-            : BotToast.showText(text: 'penyiraman dimatikan');
+            ? BotToast.showText(text: 'pompa penyiraman dihidupkan')
+            : BotToast.showText(text: 'pompa penyiraman dimatikan');
       });
     } catch (e) {
       print('error SetPompaPenyiraman $e');
@@ -399,8 +402,8 @@ class FirebaseService {
     try {
       dataRef.update({'set_pompa_pengisian': status.toString()}).then((_) {
         status == 'HIDUP'
-            ? BotToast.showText(text: 'Pengisian dihidupkan')
-            : BotToast.showText(text: 'Pengisian dimatikan');
+            ? BotToast.showText(text: 'pompa pengisian dihidupkan')
+            : BotToast.showText(text: 'pompa pengisian dimatikan');
       });
     } catch (e) {
       print('error SetPompaPenyiraman $e');
@@ -415,17 +418,24 @@ class FirebaseService {
         return;
       }
     });
-    constant.stateButtonPhUp = !constant.stateButtonPhUp;
-    String status = constant.stateButtonPhUp ? 'HIDUP' : 'MATI';
-    try {
-      dataRef.update({'set_pompa_ph_up': status.toString()}).then((_) {
-        status == 'HIDUP'
-            ? BotToast.showText(text: 'Ph up dihidupkan')
-            : BotToast.showText(text: 'Ph up dimatikan');
-      });
-    } catch (e) {
-      print('error SetPompa ph up $e');
-    }
+    InternalPreferences().prefsRead('set_mode_ph').then((_value) {
+      if (_value == 'OTOMATIS') {
+        BotToast.showText(text: 'dapat digunakan pada saat mode ph manual');
+        return;
+      } else {
+        constant.stateButtonPhUp = !constant.stateButtonPhUp;
+        String status = constant.stateButtonPhUp ? 'HIDUP' : 'MATI';
+        try {
+          dataRef.update({'set_pompa_ph_up': status.toString()}).then((_) {
+            status == 'HIDUP'
+                ? BotToast.showText(text: 'pompa ph up dihidupkan')
+                : BotToast.showText(text: 'pompa ph up dimatikan');
+          });
+        } catch (e) {
+          print('error SetPompa ph up $e');
+        }
+      }
+    });
   }
 
   static Future<void> SetPompaPhDown() async {
@@ -436,18 +446,26 @@ class FirebaseService {
         return;
       }
     });
-    constant.stateButtonPhDown = !constant.stateButtonPhDown;
-    String status = constant.stateButtonPhDown ? 'HIDUP' : 'MATI';
-    print('isReturn');
-    try {
-      dataRef.update({'set_pompa_ph_down': status.toString()}).then((_) {
-        status == 'HIDUP'
-            ? BotToast.showText(text: 'PhDown dihidupkan')
-            : BotToast.showText(text: 'PhDown dimatikan');
-      });
-    } catch (e) {
-      print('error SetPompa ph down $e');
-    }
+
+    InternalPreferences().prefsRead('set_mode_ph').then((_value) {
+      if (_value == 'OTOMATIS') {
+        BotToast.showText(text: 'dapat digunakan pada saat mode ph manual');
+        return;
+      } else {
+        constant.stateButtonPhDown = !constant.stateButtonPhDown;
+        String status = constant.stateButtonPhDown ? 'HIDUP' : 'MATI';
+        print('isReturn');
+        try {
+          dataRef.update({'set_pompa_ph_down': status.toString()}).then((_) {
+            status == 'HIDUP'
+                ? BotToast.showText(text: 'pompa ph down dihidupkan')
+                : BotToast.showText(text: 'pompa ph down dimatikan');
+          });
+        } catch (e) {
+          print('error SetPompa ph down $e');
+        }
+      }
+    });
   }
 
   static Future<void> SetPompaPpmUp() async {
@@ -458,18 +476,26 @@ class FirebaseService {
         return;
       }
     });
-    constant.stateButtonPpmUp = !constant.stateButtonPpmUp;
-    String status = constant.stateButtonPpmUp ? 'HIDUP' : 'MATI';
-    print('isReturn');
-    try {
-      dataRef.update({'set_pompa_ppm_up': status.toString()}).then((_) {
-        status == 'HIDUP'
-            ? BotToast.showText(text: 'ppmUp dihidupkan')
-            : BotToast.showText(text: 'ppmUp dimatikan');
-      });
-    } catch (e) {
-      print('error SetPompa ppm up $e');
-    }
+    InternalPreferences().prefsRead('set_mode_ppm').then((_value) {
+      print('[getStatusModePpm] $_value');
+      if (_value == 'OTOMATIS') {
+        BotToast.showText(text: 'dapat digunakan pada saat ppm mode manual');
+        return;
+      } else {
+        constant.stateButtonPpmUp = !constant.stateButtonPpmUp;
+        String status = constant.stateButtonPpmUp ? 'HIDUP' : 'MATI';
+        print('isReturn');
+        try {
+          dataRef.update({'set_pompa_ppm_up': status.toString()}).then((_) {
+            status == 'HIDUP'
+                ? BotToast.showText(text: 'pompa ppm up dihidupkan')
+                : BotToast.showText(text: 'pompa ppm up dimatikan');
+          });
+        } catch (e) {
+          print('error SetPompa ppm up $e');
+        }
+      }
+    });
   }
 
   static Future<void> getStatusPompaPengisian() async {
@@ -488,6 +514,7 @@ class FirebaseService {
         return;
       }
     });
+
     print('statePengisian ');
     pompaPengisianRef.then((value) {
       print('statePengisian ${value.value}');
@@ -596,4 +623,6 @@ class FirebaseService {
           : constant.stateButtonPenyiramaan = false;
     });
   }
+
+  // static Future<String?> getStatusModePpm() async {}
 }

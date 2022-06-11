@@ -16,14 +16,15 @@ const ColorHidup = Colors.blue;
 const ColorMati = Colors.blue;
 const AppBarColor = Color.fromARGB(255, 28, 49, 28);
 const cardColor = backgroundColor;
-const cardTitleColor = Colors.black;
+const cardTitleColor = Colors.grey;
 const cardTextUnitColor = Colors.grey;
 const GridValueTextColor = Colors.white;
 const CardLastChangeUpdateTextColor = Colors.white;
 const cardButtonColor = Color(0xff243D25);
-const BackgroundCardButtonColor = Colors.blue;
+const BackgroundCardButtonColor = Color.fromARGB(255, 17, 57, 33);
 const graphPlotAreadColor = Color.fromARGB(255, 50, 92, 51);
 const Color shadowColor = Colors.black;
+
 const borderRadiusGlass = 5.0;
 const Color outsideTextTitle = Colors.white;
 //
@@ -37,27 +38,25 @@ const maxPenyiraman = 300;
 const maxIntervalOnPpm = 30000;
 const maxIntervalOffPpm = 30000;
 const maxIntervalOffPh = 30000;
-const maxIntervalOnPh = 3000;
+const maxIntervalOnPh = 30000;
 
-final TextStyleSecondTitleOutside = TextStyle(
+final TextStyleSecondTitleOutside = GoogleFonts.martel(
   color: Colors.white,
   fontSize: fontSize,
 );
 final TextStyleTitleOutside = GoogleFonts.anton(
   color: Colors.white,
-  fontWeight: FontWeight.bold,
   fontSize: 20,
-  letterSpacing: 2,
+  letterSpacing: 1,
 );
 final TextStyleTitleTitle = GoogleFonts.anton(
   color: Colors.white,
-  fontWeight: FontWeight.bold,
-  fontSize: 20,
-  letterSpacing: 2,
+  fontSize: 16,
+  letterSpacing: 1,
 );
 final TextStyleSecondTitle = GoogleFonts.martel();
 final TextStyleJadwalValue = GoogleFonts.anton(
-  color: Colors.white,
+  color: Colors.black,
   fontSize: 24,
 );
 final TextStyleAppbarTitle = GoogleFonts.anton(

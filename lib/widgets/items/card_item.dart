@@ -104,7 +104,7 @@ class CardContentItem extends StatelessWidget {
                       children: [
                         const Text('berubah pada',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 9,
                               color: constant.CardLastChangeUpdateTextColor,
                             )),
                         //build lastchange info widget
@@ -185,6 +185,14 @@ class ValueInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late Color valueColor;
+    if (valuVar.contains('HIDUP')) {
+      valueColor = Colors.green;
+    } else if (valuVar.contains('MATI')) {
+      valueColor = Colors.red;
+    } else {
+      valueColor = Colors.white;
+    }
     final sensor = Sensor();
     late bool isDataNotError;
     valuVar == 'null' ? isDataNotError = false : isDataNotError = true;
@@ -193,9 +201,9 @@ class ValueInfoWidget extends StatelessWidget {
       print('[ValueInfoWidget] $valuVar $type');
       return Text(
         valuVar,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: constant.GridValueTextColor,
+          color: valueColor,
           fontSize: 30,
         ),
       );
@@ -262,7 +270,7 @@ class LastChangeInfoWidget extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-          fontSize: 10, color: constant.CardLastChangeUpdateTextColor),
+          fontSize: 9, color: constant.CardLastChangeUpdateTextColor),
     );
   }
 
@@ -277,7 +285,7 @@ class LastChangeInfoWidget extends StatelessWidget {
           return Text(
             text,
             style: const TextStyle(
-              fontSize: 11,
+              fontSize: 9,
               color: constant.CardLastChangeUpdateTextColor,
             ),
           );

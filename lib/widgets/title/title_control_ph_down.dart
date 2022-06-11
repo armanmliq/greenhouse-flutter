@@ -36,7 +36,7 @@ class _TitleControlPhDownState extends State<TitleControlPhDown> {
                   'ph down',
                   style: TextStyleTitleTitle,
                 ),
-                Text(
+                const Text(
                   'control pompa \nph down (manual)',
                   //constant.stateButtonPenyiramaan == true ? 'STATUS:HIDUP' : 'STATUS:MATI',
                   style: TextStyle(
