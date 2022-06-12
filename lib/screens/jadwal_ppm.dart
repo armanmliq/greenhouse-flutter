@@ -1,7 +1,6 @@
 import 'dart:core';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:greenhouse/constant/constant.dart';
 import 'package:greenhouse/services/connectivity.dart';
 import 'package:intl/intl.dart';
@@ -11,10 +10,11 @@ import 'package:greenhouse/constant/constant.dart' as constant;
 import 'dart:convert';
 import 'package:greenhouse/models/model_schedule_json.dart';
 
-String FormatParsingdatePicker = r'(\d{4})[-](\d{2})[-](\d{2})';
-RegExp regExp = RegExp(FormatParsingdatePicker);
+final DateRangePickerController _controller = DateRangePickerController();
+String formatParsingdatePicker = r'(\d{4})[-](\d{2})[-](\d{2})';
+RegExp regExp = RegExp(formatParsingdatePicker);
 List<DateTime> blackedList = [];
-List<ScheduleItem> ListOfSchedule = [];
+List<ScheduleItem> listOfSchedule = [];
 DateTime? fromDateStr;
 DateTime? toDateStr;
 final f = DateFormat('dd MMMM yyyy');
@@ -54,7 +54,7 @@ class ScheduleListTools {
   }
 
   static void clearListSchedule() {
-    ListOfSchedule.clear();
+    listOfSchedule.clear();
   }
 
   static void removeById(String id) {
@@ -62,7 +62,7 @@ class ScheduleListTools {
       if (!state) {
         BotToast.showText(text: 'Check Internet');
       } else {
-        ListOfSchedule.removeWhere((element) => element.id == id);
+        listOfSchedule.removeWhere((element) => element.id == id);
         updateFirebase();
       }
     });
@@ -84,7 +84,7 @@ class ScheduleListTools {
           List<DateTime> getBlackedList = [];
           final sch = scheduleItemToFirebase.fromJson(mapData);
           final schData = sch.data!;
-          ListOfSchedule.clear();
+          listOfSchedule.clear();
           blackedList.clear();
           for (var i in schData) {
             final DateTime startDate = DateTime.parse(i.dateFrom!);
@@ -94,7 +94,7 @@ class ScheduleListTools {
             if (toDate.isAfter(DateTime.now())) {
               blackedList.addAll(getBlackedList);
               ScheduleListTools.getDaysInBeteween(startDate, toDate);
-              ListOfSchedule.add(
+              listOfSchedule.add(
                 ScheduleItem(
                   fromDate: startDate,
                   toDate: toDate,
@@ -104,7 +104,7 @@ class ScheduleListTools {
                 ),
               );
             }
-            for (var i in ListOfSchedule) {
+            for (var i in listOfSchedule) {
               print(i.ppm);
             }
           }
@@ -126,15 +126,15 @@ class ScheduleListTools {
     CheckInternet().then(
       (state) {
         if (state) {
-          if (ListOfSchedule.length >= maxSchedulePpm) {
+          if (listOfSchedule.length >= maxSchedulePpm) {
             BotToast.showText(text: 'max $maxSchedulePpm jadwal');
             return;
           }
           BotToast.showText(text: 'Berhasil Menambahkan');
-          ListOfSchedule.add(
+          listOfSchedule.add(
             ScheduleItem(
               fromDate: fromDate,
-              id: (ListOfSchedule.length + 1).toString(),
+              id: (listOfSchedule.length + 1).toString(),
               toDate: toDate,
               ppm: ppm,
               blackedListItem: getBlackedList,
@@ -151,7 +151,7 @@ class ScheduleListTools {
 
 Future<void> updateFirebase() async {
   blackedList = [];
-  for (final i in ListOfSchedule) {
+  for (final i in listOfSchedule) {
     print(i.blackedListItem);
     blackedList.addAll(i.blackedListItem);
   }
@@ -161,7 +161,7 @@ Future<void> updateFirebase() async {
   final x = DateFormat('yyyy-MM-dd');
   var index = 0;
   String firebaseDataSend;
-  for (final list in ListOfSchedule) {
+  for (final list in listOfSchedule) {
     listData.add(
       Data(
         id: list.id.toString(),
@@ -198,6 +198,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
   }
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
+    BotToast.showText(text: args.value.toString());
     print(args.value);
   }
 
@@ -229,7 +230,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
     var alert = AlertDialog(
       backgroundColor: backgroundColor,
       title: const Text(
-        "masukan target ppm? \nmaximum ${maxPpm}",
+        "masukan target ppm? \nmaximum $maxPpm",
         style: TextStyle(
           color: Colors.white,
         ),
@@ -356,23 +357,37 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                   child: Column(
                     children: [
                       SfDateRangePicker(
+                        rangeTextStyle: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                        controller: _controller,
+                        todayHighlightColor: Colors.white,
+                        backgroundColor: Colors.grey,
+                        startRangeSelectionColor: Colors.blue,
+                        endRangeSelectionColor: Colors.blue,
+                        selectionColor: Colors.blue,
                         showNavigationArrow: true,
+                        rangeSelectionColor: Colors.blue,
                         onCancel: () {
                           Navigator.pop(context);
                         },
-                        onSubmit: (p0) {
-                          if (ParseFromPickerDateTimer(p0.toString())) {
-                            BotToast.showText(
-                                text: 'waktu ditambahkan, masukan ppm');
+                        onSubmit: (_) {
+                          BotToast.showText(
+                              text:
+                                  'xx - ${_controller.selectedRange.toString()}');
+                          if (ParseFromPickerDateTimer(
+                              _controller.selectedRange.toString())) {
+                            // BotToast.showText(
+                            //     text: 'waktu ditambahkan, masukan ppm');
                             Navigator.pop(context);
                             showDialogInput();
                           } else {
-                            BotToast.showText(text: 'Gagal menambah waktu');
+                            // BotToast.showText(text: 'Gagal menambah waktu');
                             Navigator.pop(context);
                           }
                         },
                         showActionButtons: true,
-                        showTodayButton: true,
                         minDate: DateTime.now(),
                         maxDate: DateTime.now().add(
                           const Duration(days: 60),
@@ -430,7 +445,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: ListTile.divideTiles(
                   color: Colors.deepPurple,
-                  tiles: ListOfSchedule.map(
+                  tiles: listOfSchedule.map(
                     (item) => Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: Card(
@@ -449,7 +464,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                             ),
                           ),
                           leading: Text(
-                            '${ListOfSchedule.indexOf(item) + 1}',
+                            '${listOfSchedule.indexOf(item) + 1}',
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 20,

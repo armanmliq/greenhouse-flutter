@@ -338,7 +338,7 @@ class Sensor with ChangeNotifier {
                 }
               },
             );
-            ListOfSchedule = list_scheduler_ppm!;
+            listOfSchedule = list_scheduler_ppm!;
             CheckAndSave('scheduler_ppm_str', scheduler_ppm_str!);
           } catch (e) {
             print('ERRROR ${e.toString()}');

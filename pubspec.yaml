@@ -53,7 +53,7 @@ dependencies:
   simple_animations: ^4.0.2
   supercharged: ^2.1.1
   syncfusion_flutter_charts: 19.4.56
-  syncfusion_flutter_datepicker: 19.4.56
+  syncfusion_flutter_datepicker: 19.4.40
 
 dev_dependencies:
   flutter_lints: ^1.0.0
@@ -85,7 +85,6 @@ flutter:
     - assets/icon/icon_pump.png
     - assets/icon/icon_ppm.png
     - assets/icon/icon_ph.png
-    #- assets/icon/icon_nutrition.png
     - assets/icon/icon_pump_nutrition.png
     - assets/icon/icon_target.png
     - assets/icon/icon_sprayer.png
