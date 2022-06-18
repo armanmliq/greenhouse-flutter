@@ -29,7 +29,7 @@ class TitleSetSoil extends StatelessWidget {
             'SMART IRIGASI',
             style: TextStyleTitleTitle,
           ),
-          Text(
+          const Text(
             'atur pompa irigasi berdasarkan kelembapan tanah dan mode lainnya',
             style: TextStyle(
               fontSize: 12,

@@ -65,6 +65,7 @@ class CardContentItem extends StatelessWidget {
       children: [
         Row(
           children: [
+            risingOrFalling(type: type),
             SizedBox(
               width: widthImage,
               height: heightImage,
@@ -89,16 +90,15 @@ class CardContentItem extends StatelessWidget {
                     //build widget for value
                     ValueInfoWidget(valuVar: valuVar, type: type),
 
-                    Text(unitVar,
-                        style: const TextStyle(
-                            fontSize: 12, color: constant.cardTextUnitColor))
+                    Text(
+                      unitVar,
+                      style: const TextStyle(
+                          fontSize: 12, color: constant.cardTextUnitColor),
+                    )
                   ],
                 ),
                 Row(
                   children: [
-                    risingOrFalling(
-                      type: type,
-                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -148,19 +148,19 @@ class risingOrFalling extends StatelessWidget {
               children: [
                 trendValue > 0
                     ? const Icon(
-                        Icons.arrow_upward_outlined,
+                        Icons.arrow_circle_up_sharp,
                         color: Colors.green,
                         size: 15,
                       )
                     : const Icon(
-                        Icons.arrow_downward_outlined,
+                        Icons.arrow_circle_down_sharp,
                         color: Colors.red,
                         size: 15,
                       ),
                 Text(
                   trendValue > 0
-                      ? (trendValue).toString()
-                      : (trendValue * -1).toString(),
+                      ? (trendValue).toStringAsFixed(1).toString()
+                      : (trendValue * -1).toStringAsFixed(1).toString(),
                   style: TextStyle(
                     color: trendValue > 0 ? Colors.green : Colors.red,
                     fontWeight: FontWeight.bold,
@@ -191,7 +191,7 @@ class ValueInfoWidget extends StatelessWidget {
     } else if (valuVar.contains('MATI')) {
       valueColor = Colors.red;
     } else {
-      valueColor = Colors.white;
+      valueColor = Colors.amber;
     }
     final sensor = Sensor();
     late bool isDataNotError;

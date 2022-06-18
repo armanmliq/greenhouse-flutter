@@ -6,59 +6,59 @@ import 'package:greenhouse/services/shared_pref.dart';
 initializeAccount() async {
   bool isInternetConnected = false;
 
-  CheckInternet().then((value) {
-    print('================= CALLING INITIALIZE >====================');
-    print('>>>INTERNET $value');
-    isInternetConnected = value;
+  CheckInternet().then(
+    (value) {
+      print('================= CALLING INITIALIZE >====================');
+      print('>>>INTERNET $value');
+      isInternetConnected = value;
 
-    if (isInternetConnected) {
-      try {
-        InitSensorStatus();
-      } catch (er) {
-        print('ersensor_status $er');
+      if (isInternetConnected) {
+        try {
+          InitSensorStatus();
+        } catch (er) {
+          print('ersensor_status $er');
+        }
+        try {
+          InitSetParameter();
+        } catch (er) {
+          print('ersetParameter $er');
+        }
+        try {
+          InitGrafik().InitGrafikPh();
+        } catch (er) {
+          print('erPH $er');
+        }
+        try {
+          InitGrafik().InitGrafikPpm();
+        } catch (er) {
+          print('erPPM $er');
+        }
+        try {
+          InitGrafik().InitGrafikTemperature();
+        } catch (er) {
+          print('erTEMPERATURE $er');
+        }
+        try {
+          InitGrafik().InitGrafikHumidity();
+        } catch (er) {
+          print('erHUMIDITY $er');
+        }
+        try {
+          InitGrafik().InitGrafikWaterTemp();
+        } catch (er) {
+          print('erHUMIDITY $er');
+        }
+        try {
+          InitRegister();
+        } catch (er) {
+          print('erInitRegister $er');
+        }
+      } else {
+        print('failed.initialize... \ninternet not connected');
       }
-      try {
-        InitSetParameter();
-      } catch (er) {
-        print('ersetParameter $er');
-      }
-
-      try {
-        InitGrafik().InitGrafikPh();
-      } catch (er) {
-        print('erPH $er');
-      }
-      try {
-        InitGrafik().InitGrafikPpm();
-      } catch (er) {
-        print('erPPM $er');
-      }
-      try {
-        InitGrafik().InitGrafikTemperature();
-      } catch (er) {
-        print('erTEMPERATURE $er');
-      }
-      try {
-        InitGrafik().InitGrafikHumidity();
-      } catch (er) {
-        print('erHUMIDITY $er');
-      }
-      try {
-        InitGrafik().InitGrafikWaterTemp();
-      } catch (er) {
-        print('erHUMIDITY $er');
-      }
-
-      try {
-        InitRegister();
-      } catch (er) {
-        print('erInitRegister $er');
-      }
-    } else {
-      print('failed.initialize... \ninternet not connected');
-    }
-    print('================= END OF CALLING INITIALIZE ====================');
-  });
+      print('================= END OF CALLING INITIALIZE ====================');
+    },
+  );
 }
 
 Future InitSensorStatus() async {
@@ -101,28 +101,37 @@ Future InitRegister() async {
       .child('account_info');
   return await accountInfo.get().then(
         (DocumentSnapshot) => {
-          InternalPreferences().prefsRead('email').then((_email) {
-            if (_email!.isNotEmpty) {
-              InternalPreferences().prefsRead('password').then((_password) {
-                if (_password!.isNotEmpty) {
-                  InternalPreferences().prefsRead('username').then((_username) {
-                    if (_username! != 'null') {
-                      if (!DocumentSnapshot.exists) {
-                        print('initialize accountInfo not exist, CREATE ONE');
-                        accountInfo.set({
-                          'username': _username,
-                          'email': _email,
-                          'password': _password,
-                        });
-                      } else {
-                        print('initialize accountInfo data EXIST');
-                      }
+          InternalPreferences().prefsRead('email').then(
+            (_email) {
+              if (_email!.isNotEmpty) {
+                InternalPreferences().prefsRead('password').then(
+                  (_password) {
+                    if (_password!.isNotEmpty) {
+                      InternalPreferences().prefsRead('username').then(
+                        (_username) {
+                          if (_username! != 'null') {
+                            if (!DocumentSnapshot.exists) {
+                              print(
+                                  'initialize accountInfo not exist, CREATE ONE');
+                              accountInfo.set(
+                                {
+                                  'username': _username,
+                                  'email': _email,
+                                  'password': _password,
+                                },
+                              );
+                            } else {
+                              print('initialize accountInfo data EXIST');
+                            }
+                          }
+                        },
+                      );
                     }
-                  });
-                }
-              });
-            }
-          }),
+                  },
+                );
+              }
+            },
+          ),
         },
       );
 }
@@ -236,9 +245,11 @@ class InitGrafik {
             if (!DocumentSnapshot.exists)
               {
                 print('initialize humidity not exist, CREATE ONE'),
-                TEMPERATURE.set({
-                  "1652790028": "5.1",
-                }),
+                TEMPERATURE.set(
+                  {
+                    "1652790028": "5.1",
+                  },
+                ),
               }
             else
               {
@@ -281,14 +292,15 @@ class InitGrafik {
         .child("grafik")
         .child('waterTemp');
     return await waterTemp.get().then(
-          // ignore: non_constant_identifier_names
           (DocumentSnapshot) => {
             if (!DocumentSnapshot.exists)
               {
                 print('initialize waterTemp not exist, CREATE ONE'),
-                waterTemp.set({
-                  "1652790028": "5.1",
-                }),
+                waterTemp.set(
+                  {
+                    "1652790028": "5.1",
+                  },
+                ),
               }
             else
               {

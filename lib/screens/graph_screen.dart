@@ -339,11 +339,11 @@ class _GraphWidgetState extends State<GraphWidget> {
 
                 LineSeries<SensorHistory, DateTime>(
                   markerSettings: const MarkerSettings(
-                    borderColor: Colors.white,
+                    borderColor: Colors.amber,
                     isVisible: true,
-                    color: Colors.white,
-                    width: 1,
-                    height: 1,
+                    color: Colors.amber,
+                    width: 3,
+                    height: 3,
                   ),
                   name: widget.SensorType,
                   enableTooltip: true,
@@ -397,7 +397,10 @@ class TextHighLowItem extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Container(
-        color: Colors.blue,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(constant.borderRadius),
+          color: constant.cardColor,
+        ),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(

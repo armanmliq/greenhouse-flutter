@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/widgets/items/grid_pompa.dart';
-import 'package:greenhouse/widgets/title/title_control_ph_down.dart';
-import 'package:greenhouse/widgets/title/title_control_ph_up.dart';
 import 'package:greenhouse/widgets/title/title_ph.dart';
 import 'package:greenhouse/widgets/items/grid_sensor.dart';
 import 'package:greenhouse/widgets/title/title_ppm.dart';
 import 'package:greenhouse/widgets/title/title_status_pump.dart';
 import '../../constant/constant.dart';
-import '../title/title_control_pengisian.dart';
-import '../title/title_control_penyiraman.dart';
-import '../title/title_control_ppm_up.dart';
+import '../title/title_control.dart';
 import '../title/title_grafik.dart';
 import '../title/title_jadwal_penyiraman.dart';
 import '../title/title_jadwal_ppm.dart';
@@ -89,8 +85,8 @@ class MainContent extends StatelessWidget {
               padding:
                   EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
               child: Column(
-                children: const [
-                  TitleControlPpmUp(),
+                children: [
+                  TitleControlPompa(),
                 ],
               ),
             ),
@@ -99,34 +95,7 @@ class MainContent extends StatelessWidget {
                   EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
               child: Column(
                 children: const [
-                  TitleControlPhDown(),
-                ],
-              ),
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
-              child: Column(
-                children: const [
-                  TitleControlPhUp(),
-                ],
-              ),
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
-              child: Column(
-                children: const [
-                  TitleControlPengisian(),
-                ],
-              ),
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.fromLTRB(constant.padding, 5, constant.padding, 0),
-              child: Column(
-                children: const [
-                  TitleControlPenyiraman(),
+                  controlPompa(),
                 ],
               ),
             ),

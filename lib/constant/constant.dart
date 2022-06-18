@@ -15,13 +15,13 @@ const lastChangeBackgroundColors = Colors.blue;
 const ColorHidup = Colors.blue;
 const ColorMati = Colors.blue;
 const AppBarColor = Color.fromARGB(255, 28, 49, 28);
-const cardColor = backgroundColor;
+const cardColor = Color.fromARGB(177, 52, 151, 90);
 const cardTitleColor = Colors.grey;
 const cardTextUnitColor = Colors.grey;
 const GridValueTextColor = Colors.white;
-const CardLastChangeUpdateTextColor = Colors.white;
-const cardButtonColor = Color(0xff243D25);
-const BackgroundCardButtonColor = Color.fromARGB(255, 17, 57, 33);
+const CardLastChangeUpdateTextColor = Colors.grey;
+const cardButtonColor = Color.fromARGB(255, 45, 79, 46);
+const BackgroundCardButtonColor = Color.fromARGB(159, 25, 71, 43);
 const graphPlotAreadColor = Color.fromARGB(255, 50, 92, 51);
 const Color shadowColor = Colors.black;
 

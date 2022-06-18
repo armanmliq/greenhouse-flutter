@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:developer';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:greenhouse/constant/constant.dart';
@@ -58,11 +59,17 @@ class ScheduleListTools {
   }
 
   static void removeById(String id) {
+    List<DateTime> getBlackedList = [];
     CheckInternet().then((state) {
       if (!state) {
         BotToast.showText(text: 'Check Internet');
       } else {
+        blackedList.clear();
         listOfSchedule.removeWhere((element) => element.id == id);
+        for (var i in listOfSchedule) {
+          getBlackedList = getDaysInBeteween(i.fromDate, i.toDate);
+          blackedList.addAll(getBlackedList);
+        }
         updateFirebase();
       }
     });
@@ -104,9 +111,6 @@ class ScheduleListTools {
                 ),
               );
             }
-            for (var i in listOfSchedule) {
-              print(i.ppm);
-            }
           }
         } catch (e) {
           print(e);
@@ -116,13 +120,13 @@ class ScheduleListTools {
   }
 
   static void addScheduleItem(
-    DateTime fromDate,
-    DateTime toDate,
+    DateTime? fromDate,
+    DateTime? toDate,
     String ppm,
   ) {
     List<DateTime> getBlackedList;
     getBlackedList = [];
-    getBlackedList = getDaysInBeteween(fromDate, toDate);
+    getBlackedList = getDaysInBeteween(fromDate!, toDate!);
     CheckInternet().then(
       (state) {
         if (state) {
@@ -198,27 +202,28 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
   }
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    BotToast.showText(text: args.value.toString());
-    print(args.value);
+    // BotToast.showText(text: args.value);
+    // print(args.value);
   }
 
   bool ParseFromPickerDateTimer(String str) {
     fromDate = null;
     toDate = null;
-    int i = 0;
-    print('try parse $str');
-    final matches = regExp.allMatches(str).map((m) => m[0]);
-    for (final m in matches) {
-      if (m!.length > 4) {
-        if (i == 0) {
-          fromDate = DateTime.parse(m);
-        } else {
-          toDate = DateTime.parse(m);
-        }
-        i++;
-      }
-    }
-    if (fromDate.toString() != 'null' && toDate.toString() != 'null') {
+    // int i = 0;
+    // print('try parse $str');
+    // final matches = regExp.allMatches(str).map((m) => m[0]);
+    // for (final m in matches) {
+    //   if (m!.length > 4) {
+    //     if (i == 0) {
+    //       fromDate = DateTime.parse(m);
+    //     } else {
+    //       toDate = DateTime.parse(m);
+    //     }
+    //     i++;
+    //   }
+    // }
+    if (_controller.selectedRange?.startDate != null &&
+        _controller.selectedRange?.endDate != null) {
       return true;
     } else {
       return false;
@@ -306,8 +311,8 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                     } else {
                       setState(() {
                         ScheduleListTools.addScheduleItem(
-                          fromDate!,
-                          toDate!,
+                          _controller.selectedRange?.startDate,
+                          _controller.selectedRange?.endDate,
                           _targetPpm,
                         );
                       });
@@ -373,17 +378,19 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                           Navigator.pop(context);
                         },
                         onSubmit: (_) {
+                          log("====================== >>>>>>>>>>> ${_controller.selectedRange?.startDate}");
+                          log("====================== >>>>>>>>>>> ${_controller.selectedRange?.endDate}");
                           BotToast.showText(
                               text:
                                   'xx - ${_controller.selectedRange.toString()}');
                           if (ParseFromPickerDateTimer(
                               _controller.selectedRange.toString())) {
-                            // BotToast.showText(
-                            //     text: 'waktu ditambahkan, masukan ppm');
+                            BotToast.showText(
+                                text: 'waktu ditambahkan, masukan ppm');
                             Navigator.pop(context);
                             showDialogInput();
                           } else {
-                            // BotToast.showText(text: 'Gagal menambah waktu');
+                            BotToast.showText(text: 'Gagal menambah waktu');
                             Navigator.pop(context);
                           }
                         },

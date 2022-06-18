@@ -19,7 +19,7 @@ class TitleRealtimeSensor extends StatelessWidget {
                 style: TextStyleTitleOutside,
               ),
               const Text(
-                'Menampilkan status sensor secara realtime',
+                'Update berbagai nilai sensor secara live',
                 style: TextStyle(
                   fontSize: 15,
                   color: constant.secondTitleOutside,
