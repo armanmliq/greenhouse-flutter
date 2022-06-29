@@ -195,8 +195,14 @@ class risingOrFalling extends StatelessWidget {
 
   double calculateTrend(AsyncSnapshot<Object?> snapshot, double trendValue) {
     print('[calculateTrend]$valuVar');
-    double valueSekarang = double.parse(valuVar);
-    double valueSebelum = double.parse(snapshot.data.toString());
+    double valueSekarang = 0;
+    double valueSebelum = 0;
+    try {
+      valueSekarang = double.parse(valuVar);
+    } catch (e) {}
+    try {
+      valueSebelum = double.parse(snapshot.data.toString());
+    } catch (e) {}
     trendValue = valueSekarang - valueSebelum;
     return trendValue;
   }

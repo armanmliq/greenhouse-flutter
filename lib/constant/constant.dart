@@ -70,6 +70,7 @@ double? width;
 double? cardWitdh;
 double padding = 10;
 String uid = '';
+String FCM_TOKEN = '';
 bool? SprayerButton;
 Map<dynamic, dynamic> grafikData = {};
 String initialEmail = '';
