@@ -14,6 +14,30 @@ final databaseRef = FirebaseDatabase.instance
     .child(constant.uid)
     .child("set_parameter");
 
+class SettingParameter extends StatelessWidget {
+  const SettingParameter({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(constant.padding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ParamPhWidget(type: 'set_ph'),
+          const SizedBox(height: 20),
+          const ParamPhWidget(type: 'set_mode_ph'),
+          const SizedBox(height: 20),
+          WidgetSetIntervalOnPh(),
+          const SizedBox(height: 20),
+          WidgetSetIntervalOffPh(),
+        ],
+      ),
+    );
+  }
+}
+
 class TitleSetPh extends StatelessWidget {
   const TitleSetPh({Key? key}) : super(key: key);
 
@@ -45,7 +69,6 @@ class SetParameterPh extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Widget SetParameter');
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GlassmorphicContainer(
@@ -84,11 +107,11 @@ class SetParameterPh extends StatelessWidget {
   }
 }
 
-class TargetPhWidget extends StatelessWidget {
-  const TargetPhWidget({
+class ParamPhWidget extends StatelessWidget {
+  const ParamPhWidget({
     Key? key,
     required this.type,
-  }) : super(key: key);
+  });
   final String type;
   @override
   Widget build(BuildContext context) {
@@ -98,7 +121,6 @@ class TargetPhWidget extends StatelessWidget {
       stream: databaseRef.onValue,
       builder: (context, snapshot) {
         Sensor sensor = Sensor.fromSnapshotSetParameterStatus(snapshot);
-        print('firing from TargetPhWidget');
         if (snapshot.hasData) {
           value = type == 'set_ph'
               ? sensor.set_ph.toString()
@@ -110,10 +132,13 @@ class TargetPhWidget extends StatelessWidget {
           builder: ((context, snapshotFromInternal) {
             if (value != 'null') {
               sensor.CheckAndSave(type, value);
-              return BuildTargetPhWidget(
-                  label: label, type: type, value: value);
+              return BuildParamPh(
+                label: label,
+                type: type,
+                value: value,
+              );
             } else {
-              return BuildTargetPhWidget(
+              return BuildParamPh(
                 label: label,
                 type: type,
                 value: snapshotFromInternal.data.toString(),
@@ -126,32 +151,9 @@ class TargetPhWidget extends StatelessWidget {
   }
 }
 
-class SettingParameter extends StatelessWidget {
-  const SettingParameter({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(constant.padding),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const TargetPhWidget(type: 'set_ph'),
-          const SizedBox(height: 20),
-          const TargetPhWidget(type: 'set_mode_ph'),
-          const SizedBox(height: 20),
-          WidgetSetIntervalOnPh(),
-          const SizedBox(height: 20),
-          WidgetSetIntervalOffPh(),
-        ],
-      ),
-    );
-  }
-}
-
-class BuildTargetPhWidget extends StatelessWidget {
-  BuildTargetPhWidget({
+//DIALOG INPUT PH TARGET
+class BuildParamPh extends StatelessWidget {
+  BuildParamPh({
     Key? key,
     required this.label,
     required this.type,
@@ -164,9 +166,73 @@ class BuildTargetPhWidget extends StatelessWidget {
   final textControl = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    void showDialogInput() {
+    void showDialogMode(String _type) {
       String _targetPh = '';
-      var alert = AlertDialog(
+      var alertSetPh = AlertDialog(
+        backgroundColor: constant.backgroundColor,
+        title: const Text(
+          "pilih mode",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: Container(
+          color: constant.backgroundColor,
+          height: 130,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: const Text(
+                  'CANCEL',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  InputDialog.validateVal(type, 'OTOMATIS', context);
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: const Text(
+                  'OTOMATIS',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  InputDialog.validateVal(type, 'MANUAL', context);
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: const Text(
+                  'MANUAL',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return alertSetPh;
+        },
+      );
+    }
+
+    void showDialogInput(String _type) {
+      String _targetPh = '';
+      var alertSetPh = AlertDialog(
         backgroundColor: constant.backgroundColor,
         title: const Text(
           "masukan target ph? \n maximum ${constant.maxPh}",
@@ -188,10 +254,9 @@ class BuildTargetPhWidget extends StatelessWidget {
                   _targetPh = value;
                 },
                 onSubmitted: (String value) {
-                  print('submitted');
                   _targetPh = value;
                 },
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                 ),
                 controller: textControl,
@@ -262,7 +327,7 @@ class BuildTargetPhWidget extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) {
-          return alert;
+          return alertSetPh;
         },
       );
     }
@@ -287,9 +352,9 @@ class BuildTargetPhWidget extends StatelessWidget {
               child: TextButton(
                 onPressed: () {
                   if (type == 'set_ph') {
-                    showDialogInput();
+                    showDialogInput(type);
                   } else {
-                    InputDialog.validateVal(type, value, context);
+                    showDialogMode(type);
                   }
                 },
                 child: Text(
@@ -324,7 +389,7 @@ class WidgetSetIntervalOnPh extends StatelessWidget {
       String _intervalOnPh = '';
       String maxIntervalOnPhStr =
           (constant.maxIntervalOnPh / 1000).toStringAsFixed(0);
-      var alert = AlertDialog(
+      var alertSetPh = AlertDialog(
         backgroundColor: constant.backgroundColor,
         title: Text(
           "masukan interval \nuntuk pompa on ph\nmaks $maxIntervalOnPhStr Detik",
@@ -397,7 +462,6 @@ class WidgetSetIntervalOnPh extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      print(' _intervalOnPh  $_intervalOnPh');
                       InputDialog.validateVal(
                         'set_interval_on_ph',
                         _intervalOnPh,
@@ -422,7 +486,7 @@ class WidgetSetIntervalOnPh extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) {
-          return alert;
+          return alertSetPh;
         },
       );
     }
@@ -493,7 +557,7 @@ class WidgetSetIntervalOffPh extends StatelessWidget {
       String _intervalOffPh = '';
       String maxIntervalOffPhStr =
           (constant.maxIntervalOffPh / 1000).toStringAsFixed(0);
-      var alert = AlertDialog(
+      var alertSetPh = AlertDialog(
         backgroundColor: constant.backgroundColor,
         title: Text(
           "masukan interval \nuntuk pompa off ph\nmaks $maxIntervalOffPhStr Detik",
@@ -566,7 +630,6 @@ class WidgetSetIntervalOffPh extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      print(' _intervalOffPh  $_intervalOffPh');
                       InputDialog.validateVal(
                         'set_interval_off_ph',
                         _intervalOffPh,
@@ -591,7 +654,7 @@ class WidgetSetIntervalOffPh extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) {
-          return alert;
+          return alertSetPh;
         },
       );
     }

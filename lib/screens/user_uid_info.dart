@@ -20,7 +20,7 @@ class UidInfoScreen extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 12,
             ),
             Center(

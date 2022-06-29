@@ -65,7 +65,10 @@ class CardContentItem extends StatelessWidget {
       children: [
         Row(
           children: [
-            risingOrFalling(type: type),
+            risingOrFalling(
+              type: type,
+              valuVar: valuVar,
+            ),
             SizedBox(
               width: widthImage,
               height: heightImage,
@@ -102,7 +105,7 @@ class CardContentItem extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('berubah pada',
+                        const Text(' ',
                             style: TextStyle(
                               fontSize: 9,
                               color: constant.CardLastChangeUpdateTextColor,
@@ -125,51 +128,77 @@ class CardContentItem extends StatelessWidget {
   }
 }
 
+double trendValue = 0;
+
 class risingOrFalling extends StatelessWidget {
-  risingOrFalling({required this.type});
+  risingOrFalling({required this.type, required this.valuVar});
   final String type;
+  final String valuVar;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Sensor().ReadInternalDataOf('${type}Trend'),
-        builder: (context, snapshot) {
-          double trendValue = 0;
-          if (snapshot.hasData) {
-            try {
-              trendValue = double.parse(snapshot.data.toString());
-            } catch (e) {
-              log('[trend]error $e');
-            }
-          }
-          if (trendValue == 0) {
-            return Container();
+      future: Sensor().ReadInternalDataOf(type),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          saveTrend(snapshot, trendValue);
+          if (valuVar.contains('HIDUP') ||
+              valuVar.contains('MATI') ||
+              valuVar.contains('null')) {
+            trendValue = 0;
           } else {
-            return Column(
-              children: [
-                trendValue > 0
-                    ? const Icon(
-                        Icons.arrow_circle_up_sharp,
-                        color: Colors.green,
-                        size: 15,
-                      )
-                    : const Icon(
-                        Icons.arrow_circle_down_sharp,
-                        color: Colors.red,
-                        size: 15,
-                      ),
-                Text(
-                  trendValue > 0
-                      ? (trendValue).toStringAsFixed(1).toString()
-                      : (trendValue * -1).toStringAsFixed(1).toString(),
-                  style: TextStyle(
-                    color: trendValue > 0 ? Colors.green : Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            );
+            log('[READTRENDB]  valu: $valuVar trend: $trendValue');
+            trendValue = calculateTrend(snapshot, trendValue);
           }
-        });
+          log('[READTREND]  valu: $valuVar trend: $trendValue $type');
+        }
+        if (trendValue == 0) {
+          return Container();
+        } else {
+          return Column(
+            children: [
+              trendValue > 0
+                  ? const Icon(
+                      Icons.arrow_circle_up_sharp,
+                      color: Colors.green,
+                      size: 15,
+                    )
+                  : const Icon(
+                      Icons.arrow_circle_down_sharp,
+                      color: Colors.red,
+                      size: 15,
+                    ),
+              Text(
+                trendValue > 0
+                    ? (trendValue).toStringAsFixed(1).toString()
+                    : (trendValue * -1).toStringAsFixed(1).toString(),
+                style: TextStyle(
+                  color: trendValue > 0 ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> saveTrend(
+      AsyncSnapshot<Object?> snapshot, double trendValue) async {
+    try {
+      trendValue = calculateTrend(snapshot, trendValue);
+      await Sensor().CheckAndSave('${type}Trend', trendValue.toString());
+    } catch (e) {
+      log('[trend]error $e');
+    }
+  }
+
+  double calculateTrend(AsyncSnapshot<Object?> snapshot, double trendValue) {
+    print('[calculateTrend]$valuVar');
+    double valueSekarang = double.parse(valuVar);
+    double valueSebelum = double.parse(snapshot.data.toString());
+    trendValue = valueSekarang - valueSebelum;
+    return trendValue;
   }
 }
 
@@ -191,7 +220,7 @@ class ValueInfoWidget extends StatelessWidget {
     } else if (valuVar.contains('MATI')) {
       valueColor = Colors.red;
     } else {
-      valueColor = Colors.amber;
+      valueColor = Colors.white;
     }
     final sensor = Sensor();
     late bool isDataNotError;
@@ -204,7 +233,7 @@ class ValueInfoWidget extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: valueColor,
-          fontSize: 30,
+          fontSize: constant.GridValueTextSize,
         ),
       );
     } else {
@@ -219,7 +248,7 @@ class ValueInfoWidget extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: constant.GridValueTextColor,
-                fontSize: 30,
+                fontSize: constant.GridValueTextSize,
               ),
             );
           } else {
@@ -228,7 +257,7 @@ class ValueInfoWidget extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: constant.GridValueTextColor,
-                fontSize: 30,
+                fontSize: constant.GridValueTextSize,
               ),
             );
           }

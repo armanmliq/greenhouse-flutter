@@ -21,10 +21,15 @@ class TitleControlPompa extends StatelessWidget {
             children: [
               Text(
                 'Kontrol Pompa',
-                style: constant.TextStyleTitleOutside,
+                style: constant.TextStyleTitleTitle,
               ),
-              Text('Kontrol Pompa Secara live',
-                  style: constant.TextStyleSecondTitleOutside),
+              const Text(
+                'Kontrol Pompa Secara manual',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey,
+                ),
+              ),
             ],
           ),
         ],
@@ -65,7 +70,7 @@ class controlPompa extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         border: 2,
         borderRadius: constant.borderRadius,
-        height: 350,
+        height: 400,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +94,7 @@ class controlPompa extends StatelessWidget {
             controlPompaItem(
               parameterName: 'set_pompa_ppm_up',
               stateButton: constant.stateButtonPpmUp,
-              buttonName: "DOSING PPM UP",
+              buttonName: "DOSING ABMIX",
             ),
             const SizedBox(
               height: 10,
@@ -106,6 +111,14 @@ class controlPompa extends StatelessWidget {
               parameterName: 'set_pompa_pengisian',
               stateButton: constant.stateButtonPengisian,
               buttonName: "PENGISIAN TANDON",
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            controlPompaItem(
+              parameterName: 'set_sprayer',
+              stateButton: constant.stateButtonSprayer,
+              buttonName: "SPRAYER",
             ),
           ],
         ),
@@ -136,7 +149,7 @@ class _controlPompaItemState extends State<controlPompaItem> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         StreamBuilder<Object>(
@@ -151,14 +164,14 @@ class _controlPompaItemState extends State<controlPompaItem> {
             final sensor = Sensor.fromSnapshotStateButtonPhUp(snapshot);
             return Container(
               child: FlutterSwitch(
-                width: 90,
-                activeColor: Colors.blue,
+                width: 70,
+                activeColor: constant.backgroundColor,
                 height: 55,
-                valueFontSize: 20,
-                toggleSize: 30.0,
+                valueFontSize: 15,
+                toggleSize: 25.0,
                 value: constant.stateButtonPhUp,
                 borderRadius: constant.borderRadius,
-                padding: 8.0,
+                padding: 2.0,
                 showOnOff: true,
                 onToggle: (val) {
                   setState(
@@ -167,12 +180,14 @@ class _controlPompaItemState extends State<controlPompaItem> {
                         FirebaseService.SetPompaPhUp();
                       } else if (widget.buttonName.contains('PH DOWN')) {
                         FirebaseService.SetPompaPhDown();
-                      } else if (widget.buttonName.contains('PPM')) {
+                      } else if (widget.buttonName.contains('ABMIX')) {
                         FirebaseService.SetPompaPpmUp();
                       } else if (widget.buttonName.contains('PENYIRAMAN')) {
                         FirebaseService.SetPompaPenyiraman();
                       } else if (widget.buttonName.contains('PENGISIAN')) {
                         FirebaseService.SetPompaPengisian();
+                      } else if (widget.buttonName.contains('SPRAYER')) {
+                        FirebaseService.SetSprayer();
                       }
                     },
                   );
@@ -187,7 +202,7 @@ class _controlPompaItemState extends State<controlPompaItem> {
         Text(
           widget.buttonName,
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 13,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),

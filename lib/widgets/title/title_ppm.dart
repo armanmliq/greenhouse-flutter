@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:greenhouse/models/sensor.dart';
 import '../../constant/constant.dart' as constant;
-import '../../constant/constant.dart';
 import '../items/show_modal_bottom.dart';
 
 double fontSize = 14;
@@ -285,7 +284,7 @@ class WidgetSetIntervalOnPpm extends StatelessWidget {
       var alert = AlertDialog(
         backgroundColor: constant.backgroundColor,
         title: Text(
-          "masukan interval \nuntuk pompa ppm\nmaks $maxIntervalOnPpmStr Detik",
+          "masukan interval \nuntuk pompa ppm\nmaks $maxIntervalOnPpmStr detik",
           style: const TextStyle(
             color: Colors.white,
           ),
@@ -494,6 +493,69 @@ class BuildWidgetSetPpm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void showDialogMode(String _type) {
+      var alertSetPh = AlertDialog(
+        backgroundColor: constant.backgroundColor,
+        title: const Text(
+          "pilih mode",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        content: Container(
+          color: constant.backgroundColor,
+          height: 130,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: const Text(
+                  'CANCEL',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  InputDialog.validateVal(_type, 'OTOMATIS', context);
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: const Text(
+                  'OTOMATIS',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  InputDialog.validateVal(_type, 'MANUAL', context);
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: const Text(
+                  'MANUAL',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return alertSetPh;
+        },
+      );
+    }
+
     void showDialogInput() {
       String _intervalOnPpm = '';
       var alert = AlertDialog(
@@ -615,7 +677,7 @@ class BuildWidgetSetPpm extends StatelessWidget {
               child: TextButton(
                 onPressed: () {
                   if (type.contains('mode')) {
-                    InputDialog.validateVal(type, value, context);
+                    showDialogMode(type);
                   } else {
                     showDialogInput();
                   }

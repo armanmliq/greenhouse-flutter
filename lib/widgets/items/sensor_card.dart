@@ -56,7 +56,7 @@ class CardSensor extends StatelessWidget {
         } else if (type.contains("POMPA NUTRISI")) {
           isOnOff = MatiApaHidup(sensor.pompa_nutrisi_status.toString());
         } else if (type.contains("SPRAYER")) {
-          isOnOff = MatiApaHidup(sensor.sprayer_status.toString());
+          isOnOff = MatiApaHidup(sensor.sprayerStatus.toString());
         } else if (type.contains("pompaPhUpStatus")) {
           isOnOff = MatiApaHidup(sensor.pompaPhUpStatus.toString());
         } else if (type.contains("pompaPhDownStatus")) {
@@ -142,8 +142,8 @@ class CardContent extends StatelessWidget {
       valuVar = sensor.ppm.toString();
     } else if (type == 'ph') {
       valuVar = sensor.ph.toString();
-    } else if (type == 'sprayer_status') {
-      valuVar = sensor.sprayer_status.toString();
+    } else if (type == 'sprayer') {
+      valuVar = sensor.sprayerStatus.toString();
     } else if (type == 'pompa_nutrisi_status') {
       valuVar = sensor.pompa_nutrisi_status.toString();
     } else if (type == 'pompa_status') {

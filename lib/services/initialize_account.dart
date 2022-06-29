@@ -83,6 +83,7 @@ Future InitSensorStatus() async {
                 'pompaPhUpStatus': "MATI",
                 'pompaPhDownStatus': "MATI",
                 'pompaPenyiraman': "MATI",
+                'sprayer': "MATI",
               }),
             }
           else
@@ -171,6 +172,7 @@ Future InitSetParameter() async {
                 'set_interval_on_ppm': "6500",
                 'set_interval_off_ph': "2500",
                 'set_interval_on_ph': "6500",
+                'set_sprayer': "6500",
               }),
             }
           else

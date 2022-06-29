@@ -36,7 +36,7 @@ class TitleJadwalPpmState extends State<TitleJadwalPpm> {
                   'Jadwal \nnutrisi',
                   style: TextStyleTitleTitle,
                 ),
-                Text(
+                const Text(
                   'Atur jadwal \nnutrisi',
                   style: TextStyle(
                     fontSize: 13,

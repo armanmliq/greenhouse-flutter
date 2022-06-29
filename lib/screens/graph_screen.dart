@@ -4,17 +4,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:greenhouse/constant/constant.dart' as constant;
-import 'package:intl/intl.dart';
+import '../models/sensor_history.dart';
+import '../widgets/items/table.dart';
 
-List<SensorHistory> SensorHistoryList = [];
 String? minVal;
 String? maxVal;
 
-class SensorHistory {
-  SensorHistory(this.unix, this.ValueSensor);
-  final DateTime unix;
-  final double ValueSensor;
-}
+List<SensorHistory> SensorHistoryList = [];
 
 class Graph1 extends StatefulWidget {
   @override
@@ -49,26 +45,26 @@ class _Graph1State extends State<Graph1> with SingleTickerProviderStateMixin {
               isScrollable: true,
               tabs: [
                 Tab(
-                  text: 'Ph\nair',
+                  text: 'ph air',
                 ),
                 Tab(
-                  text: 'Ppm\nair',
+                  text: 'ppm air',
                 ),
                 Tab(
-                  text: 'Temp\nroom',
+                  text: 'temp ruangan',
                 ),
                 Tab(
-                  text: 'Humid\nroom',
+                  text: 'humid room',
                 ),
                 Tab(
-                  text: 'Temp\nair',
+                  text: 'temp air',
                 ),
                 Tab(
-                  text: 'peny\niraman',
+                  text: 'penyiraman',
                 ),
               ],
             ),
-            title: const Text('Grafik'),
+            title: const Text('Report'),
           ),
           body: const TabBarView(
             physics: NeverScrollableScrollPhysics(),
@@ -247,7 +243,7 @@ class _GraphWidgetState extends State<GraphWidget> {
               log("[_GraphWidgetState]print compare ");
               bool parsingOnlyLastDays = dateGraph.isAfter(
                 now.subtract(
-                  Duration(days: 1),
+                  const Duration(days: 1),
                 ),
               );
               if (parsingOnlyLastDays) {
@@ -288,79 +284,86 @@ class _GraphWidgetState extends State<GraphWidget> {
       SensorHistory(DateTime.now(), 0.0);
     }
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Container(
-            height: constant.height! * 0.6,
-            color: Colors.white,
-            child: SfCartesianChart(
-              zoomPanBehavior: zoomPanBehavior,
-              legend: Legend(
-                isVisible: true,
-                // Legend will be placed at the left
-              ),
-              enableAxisAnimation: false,
-              primaryXAxis: DateTimeAxis(
-                intervalType: DateTimeIntervalType.auto,
-                desiredIntervals: 10,
-                enableAutoIntervalOnZooming: true,
-                dateFormat: DateFormat.jms(),
-                borderColor: Colors.red,
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              primaryYAxis: NumericAxis(
-                minimum: minXAxis,
-                maximum: maxXAxis,
-                majorTickLines: const MajorTickLines(size: 0),
-                labelAlignment: LabelAlignment.end,
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              tooltipBehavior: TooltipBehavior(
-                enable: true,
-              ),
-              plotAreaBackgroundColor: Colors.white10,
-              borderColor: Colors.white,
-              title: ChartTitle(
-                textStyle: const TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.normal,
-                    color: Colors.white),
-                text: 'Hari Ini',
-              ),
-              backgroundColor: constant.backgroundColor,
-              series: <ChartSeries>[
-                // Renders line chart
-
-                LineSeries<SensorHistory, DateTime>(
-                  markerSettings: const MarkerSettings(
-                    borderColor: Colors.amber,
-                    isVisible: true,
-                    color: Colors.amber,
-                    width: 3,
-                    height: 3,
-                  ),
-                  name: widget.SensorType,
-                  enableTooltip: true,
-                  xAxisName: 'time',
-                  yAxisName: '${widget.SensorType} ',
-                  color: Colors.white,
-                  dataSource: SensorHistoryList,
-                  xValueMapper: (SensorHistory history, _) => history.unix,
-                  yValueMapper: (SensorHistory history, _) =>
-                      history.ValueSensor,
-                )
-              ],
-            ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          reportTable(
+            sensorType: widget.SensorType,
+            SensorHistoryList: SensorHistoryList,
           ),
-        ),
-        TextHighLow(maxVal: maxVal.toString(), minVal: minVal.toString())
-      ],
+          // TextHighLow(maxVal: maxVal.toString(), minVal: minVal.toString()),
+          // Padding(
+          //   padding: const EdgeInsets.all(18.0),
+          //   child: Container(
+          //     height: constant.height! * 0.6,
+          //     color: Colors.white,
+          //     child: SfCartesianChart(
+          //       zoomPanBehavior: zoomPanBehavior,
+          //       legend: Legend(
+          //         isVisible: true,
+          //         // Legend will be placed at the left
+          //       ),
+          //       enableAxisAnimation: false,
+          //       primaryXAxis: DateTimeAxis(
+          //         visibleMinimum: DateTime.now(),
+          //         visibleMaximum:
+          //             DateTime.now().subtract(const Duration(hours: 1)),
+          //         intervalType: DateTimeIntervalType.auto,
+          //         desiredIntervals: 10,
+          //         enableAutoIntervalOnZooming: true,
+          //         dateFormat: DateFormat.jms(),
+          //         borderColor: Colors.red,
+          //         labelStyle: const TextStyle(
+          //           color: Colors.white,
+          //         ),
+          //       ),
+          //       primaryYAxis: NumericAxis(
+          //         minimum: minXAxis,
+          //         maximum: maxXAxis,
+          //         majorTickLines: const MajorTickLines(size: 0),
+          //         labelAlignment: LabelAlignment.end,
+          //         labelStyle: const TextStyle(
+          //           color: Colors.white,
+          //         ),
+          //       ),
+          //       tooltipBehavior: TooltipBehavior(
+          //         enable: true,
+          //       ),
+          //       plotAreaBackgroundColor: Colors.white10,
+          //       borderColor: Colors.white,
+          //       title: ChartTitle(
+          //         textStyle: const TextStyle(
+          //             fontSize: 12,
+          //             fontStyle: FontStyle.normal,
+          //             color: Colors.white),
+          //         text: 'Hari Ini',
+          //       ),
+          //       backgroundColor: constant.backgroundColor,
+          //       series: <ChartSeries>[
+          //         LineSeries<SensorHistory, DateTime>(
+          //           markerSettings: const MarkerSettings(
+          //             borderColor: Colors.black,
+          //             isVisible: true,
+          //             color: Colors.black,
+          //             width: 3,
+          //             height: 3,
+          //           ),
+          //           name: widget.SensorType,
+          //           enableTooltip: true,
+          //           xAxisName: 'time',
+          //           yAxisName: '${widget.SensorType} ',
+          //           color: Colors.white,
+          //           dataSource: SensorHistoryList,
+          //           xValueMapper: (SensorHistory history, _) => history.unix,
+          //           yValueMapper: (SensorHistory history, _) =>
+          //               history.ValueSensor,
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
+        ],
+      ),
     );
   }
 }

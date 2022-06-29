@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -10,6 +11,9 @@ import 'package:greenhouse/constant/constant.dart' as constant;
 import 'package:greenhouse/models/jadwal_penyiraman.dart';
 
 import '../services/connectivity.dart';
+
+int? masukanMenitVar;
+int? masukanDetikVar;
 
 class JadwalPenyiramanTools {
   static final databaseRef = FirebaseDatabase.instance
@@ -73,7 +77,7 @@ class JadwalPenyiramanTools {
       (state) {
         if (state) {
           if (ListJadwalPenyiraman.length >= maxSchedulePenyiraman) {
-            BotToast.showText(text: 'max $maxSchedulePenyiraman jadwal');
+            BotToast.showText(text: 'maximum');
             return;
           }
           BotToast.showText(text: 'Berhasil Menambahkan');
@@ -119,7 +123,7 @@ Future<void> updateFirebase() async {
 }
 
 class JadwalPenyiramanScreen extends StatefulWidget {
-  JadwalPenyiramanScreen({Key? key}) : super(key: key);
+  const JadwalPenyiramanScreen({Key? key}) : super(key: key);
 
   @override
   State<JadwalPenyiramanScreen> createState() => _JadwalPenyiramanScreenState();
@@ -135,125 +139,248 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
     JadwalPenyiramanTools.setListJadwal();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    void _onChange(ToD) {
-      print(ToD);
-      String number_input = '';
-      var alert = AlertDialog(
-        backgroundColor: backgroundColor,
-        title: const Text(
-          "interval penyiraman aktif in minute\nmaks $maxPenyiraman min",
-          style: TextStyle(
-            color: Colors.white,
-          ),
+  void masukanDetik(var _ToD) {
+    masukanDetikVar = 0;
+    textControl.clear();
+    print(_ToD);
+    String number_input = '';
+    var masukanDetik = AlertDialog(
+      backgroundColor: backgroundColor,
+      title: const Text(
+        "masukan interval dalam DETIK, max 60",
+        style: TextStyle(
+          color: Colors.white,
         ),
-        content: Container(
-          color: backgroundColor,
-          height: 130,
-          child: Column(
-            children: [
-              TextField(
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                keyboardType: TextInputType.number,
-                maxLines: 1,
-                autofocus: false,
-                enabled: true,
-                onChanged: (String value) {
-                  number_input = value;
-                },
-                onSubmitted: (String value) {
-                  number_input = value;
-                },
-                controller: textControl,
-                decoration: InputDecoration(
-                  errorStyle: const TextStyle(color: Colors.redAccent),
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Colors.white,
-                      width: 3,
-                    ),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Colors.white,
-                      width: 3,
-                    ),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Colors.white,
-                      width: 3,
-                    ),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.confirmation_num,
+      ),
+      content: Container(
+        color: backgroundColor,
+        height: 130,
+        child: Column(
+          children: [
+            TextField(
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+              keyboardType: TextInputType.number,
+              maxLines: 1,
+              autofocus: false,
+              enabled: true,
+              onChanged: (String value) {
+                number_input = value;
+              },
+              onSubmitted: (String value) {
+                number_input = value;
+              },
+              controller: textControl,
+              decoration: InputDecoration(
+                errorStyle: const TextStyle(color: Colors.redAccent),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
                     color: Colors.white,
-                    size: 18.0,
+                    width: 3,
                   ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: const Icon(
+                  Icons.confirmation_num,
+                  color: Colors.white,
+                  size: 18.0,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context, rootNavigator: true).pop();
-                    },
-                    child: const Text(
-                      'CANCEL',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(
+                      color: Colors.white,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      int? number;
-                      String numberStr = textControl.text;
-                      try {
-                        number = int.parse(numberStr);
-                      } catch (e) {
-                        BotToast.showText(text: 'Gagal');
-                        return;
-                      }
-                      if (number > maxPenyiraman) {
-                        BotToast.showText(text: 'maximum $maxPenyiraman min');
-                      } else {
-                        JadwalPenyiramanTools.addJadwalPenyiraman(
-                          (ListJadwalPenyiraman.length + 1).toString(),
-                          number.toString(),
-                          ToD.toString(),
-                        );
-                        BotToast.showText(text: 'menambahkan..');
-                      }
-                      Navigator.of(context, rootNavigator: true).pop();
-                    },
-                    child: const Text(
-                      'OK',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    masukanDetikVar = 0;
+                    String numberStr = textControl.text;
+                    try {
+                      masukanDetikVar = int.parse(numberStr);
+                    } catch (e) {
+                      BotToast.showText(text: 'Gagal');
+                      return;
+                    }
+                    if (masukanDetikVar! > 60) {
+                      BotToast.showText(text: 'maximum 60 detik');
+                    } else {
+                      int value = masukanDetikVar! + (masukanMenitVar! * 60);
+                      JadwalPenyiramanTools.addJadwalPenyiraman(
+                        (ListJadwalPenyiraman.length + 1).toString(),
+                        value.toString(),
+                        _ToD.toString(),
+                      );
+                      BotToast.showText(text: 'menambahkan..');
+                    }
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
                   ),
-                ],
-              )
-            ],
-          ),
+                ),
+              ],
+            )
+          ],
         ),
-      );
+      ),
+    );
 
-      showDialog(
-        context: context,
-        builder: (context) {
-          return alert;
-        },
-      );
-    }
+    showDialog(
+      context: context,
+      builder: (context) {
+        return masukanDetik;
+      },
+    );
+  }
 
+  void masukanMenit(ToD) {
+    print(ToD);
+    masukanMenitVar = 0;
+    textControl.clear();
+    String number_input = '';
+    var masukanMenit = AlertDialog(
+      backgroundColor: backgroundColor,
+      title: const Text(
+        "masukan interval dalam MENIT, max $maxPenyiraman",
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+      content: Container(
+        color: backgroundColor,
+        height: 130,
+        child: Column(
+          children: [
+            TextField(
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+              keyboardType: TextInputType.number,
+              maxLines: 1,
+              autofocus: false,
+              enabled: true,
+              onChanged: (String value) {
+                number_input = value;
+              },
+              onSubmitted: (String value) {
+                number_input = value;
+              },
+              controller: textControl,
+              decoration: InputDecoration(
+                errorStyle: const TextStyle(color: Colors.redAccent),
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: const Icon(
+                  Icons.confirmation_num,
+                  color: Colors.white,
+                  size: 18.0,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    masukanMenitVar = 0;
+                    String numberStr = textControl.text;
+                    try {
+                      masukanMenitVar = int.parse(numberStr);
+                    } catch (e) {
+                      BotToast.showText(text: 'Gagal');
+                      return;
+                    }
+                    if (masukanMenitVar! > maxPenyiraman) {
+                      BotToast.showText(text: 'maximum $maxPenyiraman min');
+                    } else {
+                      // JadwalPenyiramanTools.addJadwalPenyiraman(
+                      //   (ListJadwalPenyiraman.length + 1).toString(),
+                      //   masukanMenitVar.toString(),
+                      //   ToD.toString(),
+                      // );
+                      BotToast.showText(text: 'menambahkan..');
+                    }
+                    Navigator.of(context, rootNavigator: true).pop();
+                    masukanDetik(ToD);
+                  },
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return masukanMenit;
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -264,7 +391,7 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
             Navigator.of(context).push(
               showPicker(
                 context: context,
-                onChange: _onChange,
+                onChange: masukanMenit,
                 value: TimeOfDay.now(),
               ),
             );
@@ -273,14 +400,14 @@ class _JadwalPenyiramanScreenState extends State<JadwalPenyiramanScreen> {
             Icons.add,
           ),
         ),
-        backgroundColor: backgroundColor,
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: backgroundColor,
           title: Text(
-            'Schedule Penyiraman',
+            'penyiraman aktif',
             style: TextStyleAppbarTitle,
           ),
-          actions: [],
+          actions: const [],
         ),
         body: const ItemList(),
       ),
@@ -332,7 +459,11 @@ class _ItemListState extends State<ItemList> {
                     waktu = item.TimeOfDay.toString().substring(10, 15);
                   } catch (e) {}
                   try {
-                    LamaPenyiraman = '${item.LamaPenyiraman} Menit';
+                    int _menit = int.parse(item.LamaPenyiraman);
+                    int minutes = (_menit / 60).truncate();
+                    int _detik = int.parse(item.LamaPenyiraman) % 60;
+                    // print('[masukan] $_detik $_menit');
+                    LamaPenyiraman = '$minutes menit,  $_detik detik';
                   } catch (e) {}
                   try {
                     _index = ListJadwalPenyiraman.indexOf(item) + 1;
@@ -340,7 +471,7 @@ class _ItemListState extends State<ItemList> {
                   } catch (e) {}
 
                   return Card(
-                    color: Colors.white,
+                    color: Colors.white70,
                     child: ListTile(
                       leading: Text(
                         _index.toString(),
@@ -366,7 +497,7 @@ class _ItemListState extends State<ItemList> {
                             Text(
                               LamaPenyiraman,
                               style: const TextStyle(
-                                color: Colors.black,
+                                color: Colors.blue,
                               ),
                             ),
                           ],

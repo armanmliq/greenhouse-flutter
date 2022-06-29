@@ -422,7 +422,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         resizeToAvoidBottomInset: false,
-        backgroundColor: backgroundColor,
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: backgroundColor,
           title: Text(
@@ -456,7 +456,7 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                     (item) => Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: Card(
-                        color: Colors.white,
+                        color: Colors.white70,
                         child: ListTile(
                           title: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -478,9 +478,9 @@ class JadwalPpmScreenState extends State<JadwalPpmScreen> {
                             ),
                           ),
                           subtitle: Text(
-                            '${f.format(item.fromDate).toString()} To ${f.format(item.toDate).toString()}',
+                            '${f.format(item.fromDate).toString()} to ${f.format(item.toDate).toString()}',
                             style: const TextStyle(
-                              color: Colors.black,
+                              color: Colors.blue,
                             ),
                           ),
                           trailing: IconButton(

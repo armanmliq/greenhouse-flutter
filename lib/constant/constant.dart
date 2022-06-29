@@ -6,7 +6,7 @@ double borderRadius = 5.0;
 
 const bgColor = Colors.blue;
 const backgroundColor = Color.fromARGB(255, 7, 36, 18);
-const palleteColor = Color.fromARGB(255, 11, 43, 15);
+const palleteColor = Color.fromARGB(235, 30, 82, 29);
 const titleTextColor = Colors.white;
 const secondTitleText = Colors.white;
 const titleTextOutside = Colors.white;
@@ -15,11 +15,12 @@ const lastChangeBackgroundColors = Colors.blue;
 const ColorHidup = Colors.blue;
 const ColorMati = Colors.blue;
 const AppBarColor = Color.fromARGB(255, 28, 49, 28);
-const cardColor = Color.fromARGB(177, 52, 151, 90);
+const cardColor = Color.fromARGB(255, 28, 49, 28);
 const cardTitleColor = Colors.grey;
 const cardTextUnitColor = Colors.grey;
 const GridValueTextColor = Colors.white;
-const CardLastChangeUpdateTextColor = Colors.grey;
+const GridValueTextSize = 25.0;
+const CardLastChangeUpdateTextColor = Colors.white;
 const cardButtonColor = Color.fromARGB(255, 45, 79, 46);
 const BackgroundCardButtonColor = Color.fromARGB(159, 25, 71, 43);
 const graphPlotAreadColor = Color.fromARGB(255, 50, 92, 51);
@@ -32,7 +33,7 @@ const maxPh = 12;
 const maxPpm = 1200;
 const maxHumidity = 100;
 const maxMoisture = 100;
-const maxSchedulePpm = 7;
+const maxSchedulePpm = 4;
 const maxSchedulePenyiraman = 9;
 const maxPenyiraman = 300;
 const maxIntervalOnPpm = 30000;
@@ -56,7 +57,7 @@ final TextStyleTitleTitle = GoogleFonts.anton(
 );
 final TextStyleSecondTitle = GoogleFonts.martel();
 final TextStyleJadwalValue = GoogleFonts.anton(
-  color: Colors.black,
+  color: Colors.red,
   fontSize: 24,
 );
 final TextStyleAppbarTitle = GoogleFonts.anton(
@@ -77,6 +78,7 @@ String initialUsername = '';
 bool isRegister = false;
 bool stateButtonPenyiramaan = false;
 bool stateButtonPengisian = false;
+bool stateButtonSprayer = false;
 bool stateButtonPhUp = false;
 bool stateButtonPhDown = false;
 bool stateButtonPpmUp = false;

@@ -60,6 +60,13 @@ class GridGenerator extends StatelessWidget {
           unitVar: '',
           bgColor: constant.cardColor,
         ),
+        CardSensor(
+          type: 'sprayer',
+          iconVar: 'assets/icon/icon_sprayer.png',
+          textVar: 'sprayer',
+          unitVar: '',
+          bgColor: constant.cardColor,
+        ),
       ],
     );
   }

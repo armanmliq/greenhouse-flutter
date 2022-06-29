@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../constant/constant.dart' as constant;
 import '../../constant/constant.dart';
 
 class TitleRealtimeSensor extends StatelessWidget {
@@ -19,10 +18,10 @@ class TitleRealtimeSensor extends StatelessWidget {
                 style: TextStyleTitleOutside,
               ),
               const Text(
-                'Update berbagai nilai sensor secara live',
+                'update berbagai nilai sensor secara live',
                 style: TextStyle(
                   fontSize: 15,
-                  color: constant.secondTitleOutside,
+                  color: Colors.grey,
                 ),
               ),
             ],

@@ -36,7 +36,7 @@ class _TitleJadwalState extends State<TitleJadwalPenyiraman> {
                   'Jadwal\npenyiraman',
                   style: TextStyleTitleTitle,
                 ),
-                Text(
+                const Text(
                   'Atur jadwal\npenyiraman harian',
                   style: TextStyle(
                     fontSize: 13,

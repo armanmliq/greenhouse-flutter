@@ -19,7 +19,7 @@ class TitlePompaStatus extends StatelessWidget {
                 style: TextStyleTitleTitle,
               ),
               const Text(
-                'menampilkan status pompa realtime',
+                'menampilkan status pompa pada\ncontroller realtime',
                 style: TextStyle(
                   fontSize: 15,
                   color: Colors.grey,

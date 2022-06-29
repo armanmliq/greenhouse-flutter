@@ -45,6 +45,8 @@ class Sensor with ChangeNotifier {
   String? set_mode_irigasi;
   String? scheduler_ppm_str;
   String? scheduler_jadwal_penyiraman;
+  String? sprayerStatus;
+  String? sprayerStatusUpdateTime;
   String? pompaPhUpStatus;
   String? pompaPhUpStatusUpdateTime;
   String? pompaPhDownStatus;
@@ -58,6 +60,7 @@ class Sensor with ChangeNotifier {
   String? intervalOnPh;
   String? intervalOffPh;
   String? ppmBefore;
+
   List<ScheduleItem>? list_scheduler_ppm;
   List<JadwalPenyiraman>? list_scheduler_Jadwal_penyiraman;
 
@@ -66,6 +69,8 @@ class Sensor with ChangeNotifier {
   Map<dynamic, dynamic> GrafikPpm = {timestamp1.toString(): '0.0'};
   Map<dynamic, dynamic> GrafikHumidity = {timestamp1.toString(): '0.0'};
   Map<dynamic, dynamic> GrafikWaterTemp = {timestamp1.toString(): '0.0'};
+  Map<dynamic, dynamic> aktifitas = {timestamp1.toString(): '0.0'};
+  Map<dynamic, dynamic> rawAktifitas = {};
   Map<dynamic, dynamic> GrafikstatusPompaPenyiraman = {
     timestamp1.toString(): '0.0'
   };
@@ -182,6 +187,14 @@ class Sensor with ChangeNotifier {
               temperatureWater = value;
             });
           }
+          if (data['sprayer'] != null) {
+            log(data['sprayer']);
+            sprayerStatus = data['sprayer'].toString();
+          } else {
+            ReadInternalDataOf('sprayer').then((value) {
+              sprayerStatus = value;
+            });
+          }
         } catch (e) {
           print(e);
         }
@@ -190,21 +203,6 @@ class Sensor with ChangeNotifier {
       }
     }
     print(' ========== fromSnapshotSensorStatus ====== ');
-  }
-  Future<String?> calculateUpTrend(String valueBefore, String valueLast) async {
-    double result = 0;
-    double douBefore = 0;
-    double douLast = 0;
-    // isDataDifferent(typeSensor, valueSensor);
-    try {
-      douBefore = double.parse(valueBefore);
-      douLast = double.parse(valueLast);
-    } catch (e) {
-      print('[calculateUpTrend] $e');
-    }
-
-    result = douLast - douBefore;
-    return result.toString();
   }
 
   void printData(String type, String val) {
@@ -447,6 +445,7 @@ class Sensor with ChangeNotifier {
       print('ERROR FROM [stateButtonPhDown] $err');
     }
   }
+
   Sensor.fromSnapshotStateButtonPpmUp(snap) {
     try {
       if (snap.hasData) {
@@ -461,11 +460,31 @@ class Sensor with ChangeNotifier {
       print('ERROR FROM [stateButtonPpmUp] $err');
     }
   }
+  Sensor.fromSnapshotAktifitas(snap) {
+    try {
+      if (snap.hasData) {
+        aktifitas = snap.data.snapshot.value;
+        aktifitas.forEach((key, value) {
+          String timestamp = value['ts'].toString();
+          String actifityInfo = value['value'];
+          try {
+            rawAktifitas[timestamp] = actifityInfo;
+            log('[fromSnapshotAktifitas]\n ${rawAktifitas.toString()}');
+          } catch (e) {
+            log('[fromSnapshotAktifitas] $e');
+          }
+        });
+      }
+    } catch (err) {
+      print('ERROR FROM [fromSnapshotAktifitas] $err');
+    }
+  }
+
   Future<void> CheckAndSave(String typeSensor, String valueSensor) async {
     return ReadInternalDataOf(typeSensor).then(
       (valueFromInternal) {
         CheckInternet().then(
-          (value) {
+          (value) async {
             print('[CheckAndSave] saving $typeSensor proccess... ');
             if (valueFromInternal != valueSensor && valueSensor != 'null') {
               InternalPreferences().prefsSave(typeSensor, valueSensor);
@@ -473,17 +492,6 @@ class Sensor with ChangeNotifier {
               if (!typeSensor.contains('mode') &&
                   !typeSensor.contains('set_') &&
                   !typeSensor.contains('scheduler')) {
-                //calculate uptrend
-                calculateUpTrend(valueFromInternal, valueSensor)
-                    .then((uptrendValue) {
-                  log('[trend] $typeSensor : $uptrendValue');
-
-                  //save trend
-                  InternalPreferences()
-                      .prefsSave('${typeSensor}Trend', uptrendValue);
-                  print('[saving trend] $typeSensor.. ');
-                });
-
                 //save update time
                 InternalPreferences().prefsSave('${typeSensor}UpdateTime',
                     DateTime.now().toIso8601String());
@@ -534,6 +542,8 @@ class Sensor with ChangeNotifier {
       GrafikWaterTemp = {};
     } else if (SensorType == 'statusPompaPenyiraman') {
       GrafikstatusPompaPenyiraman = {};
+    } else if (SensorType == 'aktifitas') {
+      rawAktifitas = {};
     }
   }
 
@@ -542,7 +552,6 @@ class Sensor with ChangeNotifier {
     var map;
     try {
       data = snap.data.snapshot.value;
-      printData('data', data);
       map = HashMap.from(data[SensorType]);
     } catch (er) {
       print('error $SensorType reading HashMap');
@@ -560,6 +569,9 @@ class Sensor with ChangeNotifier {
       GrafikWaterTemp.addAll(map);
     } else if (SensorType == 'statusPompaPenyiraman') {
       GrafikstatusPompaPenyiraman.addAll(map);
+    } else if (SensorType == 'aktifitas') {
+      log('[fromSnapshotAktifitas] $map');
+      aktifitas.addAll(map);
     }
   }
 }

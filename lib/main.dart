@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:greenhouse/services/auth.dart';
+import 'package:greenhouse/services/local_notification.dart';
 import 'package:greenhouse/services/notification.dart';
 import 'package:greenhouse/services/shared_pref.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ String uid = '';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await LocalNotification().notificationHandler();
   runApp(
     MaterialApp(home: MyApp()),
   );
@@ -44,6 +46,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
               print('>>> ${snapshot.data} <<<');
+
               return HomeScreen();
             } else {
               return const LoginScreen();

@@ -108,12 +108,10 @@ class FirebaseService {
         return;
       }
     });
-    late String modeSrc;
-    mode == 'MANUAL' ? modeSrc = 'OTOMATIS' : modeSrc = 'MANUAL';
     await dataRef.update({
-      'set_mode_ppm': modeSrc.toString(),
+      'set_mode_ppm': mode.toString(),
     }).then((value) {
-      BotToast.showText(text: 'Mode PPM $modeSrc');
+      BotToast.showText(text: 'Mode PPM $mode');
     }).catchError((er) {
       BotToast.showText(text: 'GAGAL');
     });
@@ -127,12 +125,11 @@ class FirebaseService {
         return;
       }
     });
-    late String modeSrc;
-    mode == 'MANUAL' ? modeSrc = 'OTOMATIS' : modeSrc = 'MANUAL';
+
     await dataRef.update({
-      'set_mode_ph': modeSrc.toString(),
+      'set_mode_ph': mode.toString(),
     }).then((value) {
-      BotToast.showText(text: 'Mode PH $modeSrc');
+      BotToast.showText(text: 'Mode PH $mode');
     }).catchError((er) {
       BotToast.showText(text: 'GAGAL');
     });
@@ -418,7 +415,7 @@ class FirebaseService {
     });
     InternalPreferences().prefsRead('set_mode_ph').then((_value) {
       if (_value == 'OTOMATIS') {
-        BotToast.showText(text: 'dapat digunakan pada saat mode ph manual');
+        BotToast.showText(text: 'warning: dapat digunakan pada mode manual');
         return;
       } else {
         constant.stateButtonPhUp = !constant.stateButtonPhUp;
@@ -447,7 +444,7 @@ class FirebaseService {
 
     InternalPreferences().prefsRead('set_mode_ph').then((_value) {
       if (_value == 'OTOMATIS') {
-        BotToast.showText(text: 'dapat digunakan pada saat mode ph manual');
+        BotToast.showText(text: 'warning: dapat digunakan pada mode manual');
         return;
       } else {
         constant.stateButtonPhDown = !constant.stateButtonPhDown;
@@ -477,7 +474,7 @@ class FirebaseService {
     InternalPreferences().prefsRead('set_mode_ppm').then((_value) {
       print('[getStatusModePpm] $_value');
       if (_value == 'OTOMATIS') {
-        BotToast.showText(text: 'dapat digunakan pada saat ppm mode manual');
+        BotToast.showText(text: 'warning: dapat digunakan pada mode manual');
         return;
       } else {
         constant.stateButtonPpmUp = !constant.stateButtonPpmUp;
@@ -486,13 +483,60 @@ class FirebaseService {
         try {
           dataRef.update({'set_pompa_ppm_up': status.toString()}).then((_) {
             status == 'HIDUP'
-                ? BotToast.showText(text: 'pompa ppm up dihidupkan')
-                : BotToast.showText(text: 'pompa ppm up dimatikan');
+                ? BotToast.showText(text: 'pompa abmix dihidupkan')
+                : BotToast.showText(text: 'pompa abmix dimatikan');
           });
         } catch (e) {
           print('error SetPompa ppm up $e');
         }
       }
+    });
+  }
+
+  static Future<void> SetSprayer() async {
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+    InternalPreferences().prefsRead('set_sprayer').then((_value) {
+      constant.stateButtonSprayer = !constant.stateButtonSprayer;
+      String status = constant.stateButtonSprayer ? 'HIDUP' : 'MATI';
+      try {
+        dataRef.update({'set_sprayer': status.toString()}).then((_) {
+          status == 'HIDUP'
+              ? BotToast.showText(text: 'sprayer dihidupkan')
+              : BotToast.showText(text: 'sprayer dimatikan');
+        });
+      } catch (e) {
+        print('error SetSprayer ppm up $e');
+      }
+    });
+  }
+
+  static Future<void> getStatusSprayer() async {
+    final pompaSprayer = FirebaseDatabase.instance
+        .ref()
+        .child('users')
+        .child(constant.uid)
+        .child("sensor_status")
+        .child("sprayer")
+        .get();
+
+    //cek koneksi dahulu
+    CheckInternet().then((stateInternet) {
+      if (!stateInternet) {
+        // BotToast.showText(text: 'tidak ada koneksi internet');
+        return;
+      }
+    });
+
+    pompaSprayer.then((value) {
+      value.value == 'HIDUP'
+          ? constant.stateButtonSprayer = true
+          : constant.stateButtonSprayer = false;
     });
   }
 
